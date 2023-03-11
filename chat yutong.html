@@ -17,7 +17,7 @@
       recognition.onresult = function(event) {
         const result = event.results[event.results.length - 1][0].transcript;
         document.getElementById('output').innerHTML = result;
-        answer('我不知道');
+        answer('chat yutong:我不知道');
       };
 
       // 开始语音识别
