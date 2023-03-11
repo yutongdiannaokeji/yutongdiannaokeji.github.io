@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>于桐锭恼科寄智障语音助手</title>
+  </head>
+  <body>
+    <h1>chat yutong</h1>
+    <p>请说出你的问题</p >
+    <div id="output"></div>
+    <script>
+      // 创建一个语音识别对象
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'zh-CN';
+      recognition.continuous = true;
+
+      // 监听语音识别结果
+      recognition.onresult = function(event) {
+        const result = event.results[event.results.length - 1][0].transcript;
+        document.getElementById('output').innerHTML = result;
+        answer('我不知道');
+      };
+
+      // 开始语音识别
+      recognition.start();
+
+      // 回答问题
+      function answer(text) {
+        const output = document.getElementById('output');
+        const answer = document.createElement('p');
+        answer.innerHTML = text;
+        output.appendChild(answer);
+      }
+    </script>
+  </body>
+</html>
