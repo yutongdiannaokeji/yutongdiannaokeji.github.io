@@ -1,0 +1,73 @@
+/* ==============================
+    CTA SECTION CSS
+================================= */ 
+
+.cta-section {
+
+  .cta-wrapper {
+    padding: 65px;
+    background-image: url('../images/cta/cta-bg.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    overflow: hidden;
+
+    @media #{$lg} {
+      padding: 60px 30px;
+    }
+
+    .cta-title {
+
+      @media #{$md, $xs} {
+        margin-bottom: 50px;
+      }
+
+      h2 {
+        font-size: 45px;
+        color: $white;
+      }
+    }
+
+    .subscribe-form-wrapper {
+
+      form {
+        display: flex;
+        align-items: center;
+
+        @media #{$xs} {
+          display: block;
+        }
+
+        input {
+          width: 100%;
+          background: transparent;
+          border: 1px solid transparent;
+          border-bottom: 1px solid $white;
+          color: $white;
+          margin-right: 20px;
+          padding: 10px 0;
+
+          &::placeholder {
+            color: inherit;
+          }
+
+          @media #{$xs} {
+            margin-bottom: 30px;
+          }
+        }
+
+        button {
+          background: $white;
+          color: $primary-color;
+          text-transform: uppercase;
+          max-width: 150px;
+          width: 100%;
+          text-align: center;
+          padding: 15px 0;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+/* ========================
+		TESTIMONIAL CSS
+=========================== */
+
+.testimonial-section {
+	padding-top: 150px;
+
+	@media #{$lg} {
+		padding-top: 100px;
+	}
+
+	.testimonial-active-wrapper {
+		position: relative;
+
+		.tns-controls {
+			position: absolute;
+			z-index: 2;
+			display: flex;
+			align-items: center;
+			top: 50%;
+			left: 20px;
+			width: calc(100% - 40px);
+			justify-content: space-between;
+			@include transform(translateY(-50%));
+
+			@media #{$xs} {
+				width: 100%;
+				left: 0;
+			}
+
+
+			button {
+				width: 55px;
+				height: 55px;
+				border-radius: 50%;
+				border: 1px solid $primary-color;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: $white;
+				@include transition(.3s);
+				@include box-shadow(0px 5px 25px rgba(220, 223, 255, 0.5));
+
+				&:hover {
+					background: $primary-color;
+					color: $white;
+				}
+
+				@media #{$xs} {
+					width: 32px;
+					height: 32px;
+					font-size: 14px;
+				}
+			}
+		}
+
+		.single-testimonial {
+			
+			.testimonial-content {
+				@include box-shadow(0px 25px 55px rgba(204, 198, 198, 0.25));
+				background: $white;
+				border-radius: 10px;
+				padding: 12px 60px;
+				text-align: center;
+				margin: 50px;
+				position: relative;
+
+				@media #{$xs} {
+					margin: 50px 10px;
+					@include box-shadow(0px 0px 15px rgba(204, 198, 198, 0.25));
+					padding: 12px 30px;
+				}
+
+				.testimonial-image {
+					width: 100px;
+					height: 100px;
+					border: 3px solid $white;
+					border-radius: 50%;
+					margin: auto;
+					margin-bottom: 24px;
+					margin-top: -50px;
+
+					img {
+						width: 100%;
+					}
+				}
+
+				.quote {
+					position: absolute;
+					top: 10px;
+					left: 60px;
+					font-size: 50px;
+					line-height: 1;
+					opacity: .1;
+
+					@media #{$xs} {
+						left: 30px;
+					}
+				}
+
+				.content {
+
+					p {
+						font-size: 30px;
+						margin-bottom: 25px;
+						line-height: 45px;
+
+						@media #{$lg} {
+							font-size: 25px;
+							line-height: 35px;
+						}
+
+						@media #{$md} {
+							font-size: 22px;
+							line-height: 32px;
+						}
+
+						@media #{$xs} {
+							font-size: 18px;
+							line-height: 26px;
+						}
+					}
+				}
+
+				.info {
+
+					h5 {
+						font-size: 18px;
+					}
+
+					p {
+						color: $black-50;
+						font-weight: 300;
+					}
+				}
+			}
+
+
+		}
+
+	}
+
+}

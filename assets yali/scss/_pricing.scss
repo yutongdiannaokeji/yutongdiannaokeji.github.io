@@ -1,0 +1,133 @@
+/* =====================
+    HOW WORKS CSS
+======================== */
+
+.pricing-section {
+  padding-top: 160px;
+
+  @media #{$lg, $md, $xs} {
+    padding-top: 100px;
+  }
+
+  .section-title {
+    margin-bottom: 40px;
+    
+    @media #{$desktop, $laptop} {
+      padding: 0px 40px;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+  }
+}
+
+.single-pricing {
+  @include box-shadow(0px 0px 50px rgba(183, 199, 240, 0.25));
+  border-radius: 5px;
+  padding: 30px 50px;
+  margin: 50px auto;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  text-align: center;
+
+  @media #{$lg} {
+    padding: 30px 20px;
+  }
+
+  .pricing-header {
+    border-bottom: 1px solid $black-10;
+
+    h5 {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+  }
+
+  .pricing-body {
+    padding-top: 30px;
+    padding-bottom: 25px;
+
+    ul {
+
+      li {
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+
+        i {
+          margin-right: 15px;
+          max-width: 18px;
+          width: 100%;
+
+
+          &.active {
+            color: $primary-color;
+          }
+
+          @media #{$lg} {
+            margin-right: 10px;
+          }
+        }
+
+        p {
+          margin-bottom: 0px;
+        }
+      }
+    }
+  }
+
+  .price {
+    margin-bottom: 35px;
+
+    h2 {
+      font-size: 40px;
+      color: $primary-color;
+    }
+  }
+
+  .pricing-footer {
+
+    .border-btn {
+      color: $primary-color;
+      background: transparent;
+      border-color: $primary-color;
+
+      &:hover {
+        color: $primary-color;
+        
+        &::after {
+          background: rgba($primary-color, .1);
+        }
+      }
+    }
+  }
+
+
+  &.standard {
+    @include transform(scale(1.12));
+    padding: 60px 50px;
+
+    @media #{$lg} {
+      padding: 40px 20px;
+    }
+
+    .pricing-header {
+
+      .package-name {
+        color: $primary-color;
+      }
+    }
+
+  }
+}

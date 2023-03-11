@@ -1,0 +1,78 @@
+
+/* ======== feature-section-1 ======== */ 
+
+.feature-section-1 {
+  position: relative;
+  z-index: 1;
+  height: 600px;
+  display: flex;
+  align-items: center;
+
+  @media #{$laptop, $lg} {
+    height: 500px;
+  }
+
+  @media #{$md, $xs} {
+    height: auto;
+    padding-top: 120px;
+  }
+
+  .feature-image {
+    position: absolute;
+    left: -50px;
+    top: 50%;
+    width: 50%;
+    @include transform(translateY(-50%));
+
+    @media #{$md, $xs} {
+      margin-top: 60px;
+      position: static;
+      @include transform(translateY(0));
+      width: 100%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+  }
+}
+
+
+/* ======== feature-section-2 ======== */ 
+
+.feature-section-2 {
+  position: relative;
+  z-index: 1;
+  height: 600px;
+  display: flex;
+  align-items: center;
+
+  @media #{$lg} {
+    height: 550px;
+  }
+
+  @media #{$md, $xs} {
+    height: auto;
+    padding-top: 120px;
+  }
+
+  .feature-image {
+    position: absolute;
+    right: -50px;
+    top: 50%;
+    width: 50%;
+    @include transform(translateY(-50%));
+
+    @media #{$md, $xs} {
+      margin-top: 60px;
+      position: static;
+      @include transform(translateY(0));
+      width: 100%;
+    }
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+}

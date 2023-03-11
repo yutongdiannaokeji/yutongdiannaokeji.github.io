@@ -1,0 +1,95 @@
+/* ==========================
+    FOOTER CSS
+============================= */
+
+.footer {
+	position: relative;
+	z-index: 1;
+
+	.shape {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		z-index: -1;
+	}
+
+	.footer-widget {
+		margin-bottom: 50px;
+
+		.logo {
+			margin-bottom: 30px;
+		}
+
+		.desc {
+			margin-bottom: 25px;
+
+			@media #{$desktop} {
+				padding-right: 50px;
+			}
+		}
+
+		.social-links {
+			display: flex;
+			align-items: center;
+
+			li {
+
+				a {
+					width: 32px;
+					height: 32px;
+					border-radius: 10px;
+					background: rgba($primary-color, .1);
+					color: $primary-color;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					margin-right: 18px;
+
+					&:hover {
+						background: $primary-color;
+						color: $white;
+					}
+				}
+			}
+		}
+
+		h3 {
+			margin-bottom: 30px;
+			margin-top: 10px;
+		}
+
+		.links {
+
+			li {
+
+				a {
+					font-size: 16px;
+					line-height: 30px;
+					color: $black-70;
+
+
+					&:hover {
+						padding-left: 8px;
+						color: $primary-color;
+					}
+				}
+			}
+		}
+
+	}
+
+	.copyright {
+		padding: 18px 0;
+		text-align: center;
+		color: rgba($black-100, .2);
+		border-top: 1px solid $black-10;
+
+		a {
+			color: inherit;
+
+			&:hover {
+				color: $primary-color;
+			}
+		}
+	}
+}

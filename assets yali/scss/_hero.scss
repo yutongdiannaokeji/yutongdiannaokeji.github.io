@@ -1,0 +1,89 @@
+/* ====================
+		HERO CSS
+======================= */
+
+.hero-section {
+	position: relative;
+	overflow: hidden;
+	height: 820px;
+	display: flex;
+	align-items: center;
+	background-image: url('../images/hero/hero-bg.svg');
+	background-size: cover;
+	background-position: bottom center;
+	background-repeat: no-repeat;
+	z-index: 1;
+
+	@media #{$laptop} {
+		height: 750px;
+	}
+	@media #{$lg} {
+		height: 700px;
+	}
+
+	@media #{$md, $xs} {
+		height: auto;
+		padding: 150px 0 50px;
+	}
+
+
+	.hero-content {
+
+		h1 {
+			margin-bottom: 15px;
+
+			@media #{$lg} {
+				font-size: 50px;
+			}
+
+			@media #{$xs} {
+				font-size: 45px;
+			}
+
+			span {
+				color: $primary-color;
+			}
+
+		}
+
+		p {
+			margin-bottom: 30px;
+			font-size: 18px;
+		}
+
+		.main-btn {
+			@include box-shadow(0px 5px 15px rgba(96, 110, 255, 0.45));
+		}
+	}
+
+	.hero-image {
+		padding-top: 50px;
+
+		img {
+
+			@media #{$lg, $laptop} {
+				width: 100%;
+			}
+
+			@media #{$md, $xs} {
+				max-width: 100%;
+				margin: auto;
+			}
+		}
+	}
+}
+
+/* =========== Brands Section ============= */ 
+
+.brands-section {
+
+	.single-brands {
+		text-align: center;
+		padding: 15px 0;
+
+		img {
+			max-width: 100%;
+			margin: auto;
+		}
+	}
+}
