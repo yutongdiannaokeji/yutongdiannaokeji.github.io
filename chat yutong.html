@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>于桐锭恼科寄智障语音助手</title>
+    <title>chat yutong2.0</title>
+    <meta charset="UTF-8">
   </head>
   <body>
     <h1>chat yutong</h1>
-    <p>请说出你的问题</p >
-    <div id="output"></div>
+    <input type="text" id="question" placeholder="请输入您的问题">
+    <button onclick="getTextAnswer()">文字提问</button>
+    <button onclick="getVoiceAnswer()">语音提问</button>
+    <p id="answer"></p >
+
     <script>
-      // 创建一个语音识别对象
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = 'zh-CN';
-      recognition.continuous = true;
+      function getTextAnswer() {
+        const question = document.getElementById("question").value;
+        const answer = "我不知道。";
 
-      // 监听语音识别结果
-      recognition.onresult = function(event) {
-        const result = event.results[event.results.length - 1][0].transcript;
-        document.getElementById('output').innerHTML = result;
-        answer('chat yutong:我不知道');
-      };
+        document.getElementById("answer").innerHTML = answer;
+      }
 
-      // 开始语音识别
-      recognition.start();
+      function getVoiceAnswer() {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = "zh-CN";
 
-      // 回答问题
-      function answer(text) {
-        const output = document.getElementById('output');
-        const answer = document.createElement('p');
-        answer.innerHTML = text;
-        output.appendChild(answer);
+        recognition.onresult = function(event) {
+          const result = event.results[0][0].transcript;
+          document.getElementById("question").value = result;
+          getTextAnswer();
+        }
+
+        recognition.onerror = function(event) {
+          console.error(event.error);
+        }
+
+        recognition.start();
       }
     </script>
   </body>
