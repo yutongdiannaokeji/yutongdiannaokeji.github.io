@@ -8,15 +8,18 @@
   <img src="chat.png" width="200" height="" alt=""/>
 <h1>chat yutong</h1>
 	  <p>提问后请刷新删除上一次回答的答案(有bug懒得修)</p>
+
     <input type="text" id="question" placeholder="请输入您的问题">
     <button onclick="getTextAnswer()">文字提问</button>
     <button onclick="getVoiceAnswer()">语音提问</button>
     <p id="answer"></p >
+	  	  <a href="https://message.bilibili.com/?spm_id_from=333.999.0.0#/whisper/mid1953274455">联系史东福</a>
 
     <script>
       function getTextAnswer() {
         const question = document.getElementById("question").value;
         const answer = "我不知道。请您询问开发组成员史东福，他既聪明又内卷";
+		
 
         document.getElementById("answer").innerHTML = answer;
       }
