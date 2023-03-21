@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>于桐计算器</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    .calculator {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="text-center mt-5 mb-5">于桐计算器</h1>
+    <div class="calculator">
+      <input type="text" class="form-control mb-3" id="input" placeholder="输入一个运算式或函数">
+      <div class="text-center">
+        <button class="btn btn-primary" id="calculate">计算</button>
+        <button class="btn btn-secondary" id="plot">画图</button>
+      </div>
+      <div class="mt-3 mb-3">
+        <h3 class="text-center">结果</h3>
+        <p class="text-center" id="result"></p >
+      </div>
+      <div class="mt-3">
+        <h3 class="text-center">函数图像</h3>
+        <div id="plot-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js"></script>
+  <script>
+    const input = document.getElementById('input');
+    const result = document.getElementById('result');
+    const calculateBtn = document.getElementById('calculate');
+    const plotBtn = document.getElementById('plot');
+    const plotContainer = document.getElementById('plot-container');
+
+    calculateBtn.addEventListener('click', () => {
+      try {
+        const expression = input.value;
+        const answer = math.evaluate(expression);
+        result.textContent = answer;
+      } catch (error) {
+        result.textContent = '运算错误，请检查输入';
+      }
+    });
+
+    plotBtn.addEventListener('click', () => {
+      try {
+        const expression = input.value;
+        const func = math.compile(expression);
+        const xValues = math.range(-10, 10, 0.1).toArray();
+        const yValues = xValues.map(x => func.evaluate({x}));
+
+        const trace = {
+          x: xValues,
+          y: yValues,
+          mode: 'lines'
+        };
+
+        const layout = {
+          title: '函数图像',
+          xaxis: { title: 'x' },
+          yaxis: { title: 'y' },
+          margin: { t: 20, l: 40, r: 20, b: 40 }
+        };
+
+        Plotly.newPlot(plotContainer, [trace], layout);
+      } catch (error) {
+        result.textContent = '绘图错误，请检查输入';
+      }
+    });
+  </script>
+</body>
+</html>
