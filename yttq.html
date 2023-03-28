@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>于桐天气</title>
+	<style>* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #84f, #15cfd6);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 350px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.city {
+  color: #fff;
+  font-size: 24px;
+}
+
+.temp {
+  color: #fff;
+  font-size: 48px;
+  margin: 10px 0;
+}
+
+.description {
+  color: #fff;
+  font-size: 18px;
+}
+
+.refresh-btn {
+  background-color: #fff;
+  color: #84f;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.refresh-btn:hover {
+  background-color: #84f;
+  color: #fff;
+}</style>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+	<div class="container">
+    <div class="glass">
+      <h1 class="title">于桐天气</h1>
+      <div class="weather-info">
+        <h2 class="city">唐山</h2>
+        <div class="temp">114514°</div>
+        <div class="description">晴朗</div>
+      </div>
+      <button class="refresh-btn">刷新</button>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+
+</html>
