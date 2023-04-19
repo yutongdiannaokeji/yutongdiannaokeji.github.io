@@ -5,20 +5,20 @@
     <meta charset="UTF-8">
   </head>
   <body>
-  <img src="chat.png" width="200" height="" alt=""/>
-<h1>chat yutong</h1>
-	  <p>提问后请刷新删除上一次回答的答案(有bug懒得修)</p>
+  
+<h1>于桐翻译</h1>
+	  <p>提问后请刷新删除上一次的翻译结果(有bug懒得修)</p>
 
-    <input type="text" id="question" placeholder="请输入您的问题">
-    <button onclick="getTextAnswer()">文字提问</button>
-    <button onclick="getVoiceAnswer()">语音提问</button>
+    <input type="text" id="question" placeholder="请输入需要翻译的短语/句子">
+    <button onclick="getTextAnswer()">英-汉</button>
+    <button onclick="getTextAnswer()">汉-英</button>
     <p id="answer"></p >
-	  	  <a href="https://space.bilibili.com/1953274455?spm_id_from=333.337.0.0">联系史东福</a>
+	  	  
 
     <script>
       function getTextAnswer() {
         const question = document.getElementById("question").value;
-        const answer = "我不知道。请您询问开发组成员史东福，他既聪明又内卷";
+        const answer = "翻译结果:English";
 		
 
         document.getElementById("answer").innerHTML = answer;
