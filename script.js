@@ -42,7 +42,7 @@ function handleInput(input) {
         output.textContent += `\n${weatherInfo}`;
     } else if (input.includes('讲个笑话')) {
         // 示例：返回一个笑话
-        const joke = '为什么程序员喜欢喝咖啡？因为他们不能咖啡因！';
+        const joke = '为什么某些东西不怕simuqin，因为它们没有';
         output.textContent += `\n${joke}`;
     } else if (input.includes('设置提醒')) {
         // 示例：返回固定的提醒信息
