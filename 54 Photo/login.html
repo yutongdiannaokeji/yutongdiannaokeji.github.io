@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>54中照片 - 登录</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      height: 100vh;
+      background: url('back.jpg') no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      padding: 40px 60px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 300px;
+    }
+    h1 {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
+  <script>
+    function validateLogin() {
+      const passwordInput = document.getElementById('password').value;
+      const correctPassword = '215403';
+      const errorMessage = document.getElementById('error-message');
+
+      if (passwordInput === correctPassword) {
+        window.location.href = 'main.html';
+      } else {
+        errorMessage.textContent = '访问码错误，请重试！';
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="login-container">
+    <h1>54中照片</h1>
+    <input type="password" id="password" placeholder="请输入访问码">
+    <button onclick="validateLogin()">登录</button>
+    <p id="error-message" class="error-message"></p>
+  </div>
+</body>
+</html>
