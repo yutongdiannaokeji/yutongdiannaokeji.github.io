@@ -2,10 +2,10 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Chatyutong 语音助手</title>
     <style>
-       
+        /* 背景设置 */
         body {
             text-align: center;
             font-family: Arial, sans-serif;
@@ -17,15 +17,15 @@
             margin: 0;
         }
 
-      
+        /* 毛玻璃容器 */
         .container {
             width: 320px;
             padding: 20px;
             border-radius: 15px;
-            background: rgba(255, 255, 255, 0.1); /* 半透明 */
+            background: rgba(255, 255, 255, 0.15);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(15px); /* 毛玻璃效果 */
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
@@ -35,13 +35,12 @@
             color: white;
         }
 
-   
         input {
             width: 90%;
             padding: 10px;
             margin: 10px 0;
             font-size: 16px;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 5px;
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -53,30 +52,40 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
- 
+        /* 按钮容器 */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* 按钮样式 */
         button {
-            font-size: 18px;
-            padding: 10px 20px;
-            margin: 10px;
+            flex: 1;
+            max-width: 120px;
+            padding: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
             border: none;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.3);
             color: white;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+            /* 兼容 iPad Safari */
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
         }
 
         button:hover {
             background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             transform: scale(1.05);
         }
 
-     
         #output {
             font-size: 18px;
             margin-top: 20px;
@@ -91,13 +100,15 @@
         <h1>Chatyutong 语音助手</h1>
         <input type="text" id="textInput" placeholder="输入文字..." />
         <br>
-        <button onclick="startListening()">🎤 语音</button>
-        <button onclick="handleTextInput()">📝 文字</button>
+        <div class="button-container">
+            <button onclick="startListening()">🎤 语音</button>
+            <button onclick="handleTextInput()">📝 文字</button>
+        </div>
         <p id="output">等待输入...</p >
     </div>
 
     <script>
-        // 🎙 语音识别 API（仅支持 Chrome）
+        // 语音识别 API（仅支持 Chrome）
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'zh-CN';
         recognition.interimResults = false;
@@ -134,7 +145,7 @@
 
             document.getElementById("output").textContent = response;
 
-           
+            // 语音回复
             const synth = window.speechSynthesis;
             const utterance = new SpeechSynthesisUtterance(response);
             utterance.lang = 'zh-CN';
