@@ -1,22 +1,146 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatYuTong5.0</title>
-    <link rel="stylesheet" href="styles ct.css">
+    <title>Chatyutong 语音助手</title>
+    <style>
+       
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #A1C4FD, #C2E9FB);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+      
+        .container {
+            width: 320px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1); /* 半透明 */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px); /* 毛玻璃效果 */
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+   
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+ 
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transform: scale(1.05);
+        }
+
+     
+        #output {
+            font-size: 18px;
+            margin-top: 20px;
+            min-height: 40px;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>ChatYuTong </h1>
-        <div id="output"></div>
-        <input type="text" id="textInput" placeholder="输入你的问题(试着对我说：“天气” “时间” “讲个笑话” “设置提醒”)">
-        <div class="button-container">
-            <button id="textButton">文字</button>
-            <button id="startButton">语音</button>
-        </div>
+        <h1>Chatyutong 语音助手</h1>
+        <input type="text" id="textInput" placeholder="输入文字..." />
+        <br>
+        <button onclick="startListening()">🎤 语音</button>
+        <button onclick="handleTextInput()">📝 文字</button>
+        <p id="output">等待输入...</p >
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 🎙 语音识别 API（仅支持 Chrome）
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'zh-CN';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        function startListening() {
+            document.getElementById("output").textContent = "听你说话中...";
+            recognition.start();
+        }
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById("textInput").value = transcript;
+            respond(transcript);
+        };
+
+        recognition.onerror = function(event) {
+            document.getElementById("output").textContent = "语音识别错误：" + event.error;
+        };
+
+        function handleTextInput() {
+            const text = document.getElementById("textInput").value.trim();
+            respond(text);
+        }
+
+        function respond(text) {
+            let response = "我不知道，请询问开发组成员史东福。";
+
+            if (text.includes("你好")) {
+                response = "你好！我是 Chatyutong，很高兴见到你。";
+            } else if (text.includes("时间")) {
+                response = "现在的时间是：" + new Date().toLocaleTimeString();
+            }
+
+            document.getElementById("output").textContent = response;
+
+           
+            const synth = window.speechSynthesis;
+            const utterance = new SpeechSynthesisUtterance(response);
+            utterance.lang = 'zh-CN';
+            synth.speak(utterance);
+        }
+    </script>
+
 </body>
 </html>
