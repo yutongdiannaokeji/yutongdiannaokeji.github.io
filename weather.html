@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>于桐天气</title>
+  <!-- 引入谷歌 Roboto 字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* 全局设置 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(120deg, #2193b0, #6dd5ed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      transition: background 0.5s ease-in-out;
+    }
+    .container {
+      position: relative;
+      width: 360px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header {
+      background: #4285f4;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 500;
+    }
+    .search-wrapper {
+      position: relative;
+      padding: 16px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 24px;
+      font-size: 16px;
+      outline: none;
+      transition: box-shadow 0.3s ease;
+    }
+    .search-input:focus {
+      box-shadow: 0 2px 8px rgba(66,133,244,0.5);
+      border-color: #4285f4;
+    }
+    .suggestions {
+      position: absolute;
+      top: 60px;
+      left: 16px;
+      right: 16px;
+      background: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      z-index: 10;
+    }
+    .suggestions.show {
+      max-height: 200px;
+    }
+    .suggestion-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .suggestion-item:hover {
+      background: #f1f1f1;
+    }
+    .weather-content {
+      padding: 16px;
+      text-align: center;
+    }
+    .weather-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 12px;
+      display: block;
+    }
+    .temperature {
+      font-size: 48px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .weather-text {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .info {
+      display: flex;
+      justify-content: space-around;
+      font-size: 16px;
+    }
+    .info-item {
+      text-align: center;
+    }
+    .info-item p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">于桐天气</div>
+    <div class="search-wrapper">
+      <input type="text" id="cityInput" class="search-input" placeholder="搜索城市...">
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+    <div class="weather-content">
+      <h2 id="displayCity">城市</h2>
+      
+      <div class="temperature" id="temperature">--°C</div>
+      <div class="weather-text" id="weatherText">天气状况</div>
+      <div class="info">
+        <div class="info-item">
+          <p>风速</p >
+          <p id="windSpeed">-- km/h</p >
+        </div>
+        <div class="info-item">
+          <p>湿度</p >
+          <p id="humidity">--%</p >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const apiKey = "80e49589601a4bb581ee45d2aa5d81a7";
+    const cityInput = document.getElementById("cityInput");
+    const suggestionsDiv = document.getElementById("suggestions");
+
+    // 搜索输入事件（实时查询城市建议）
+    cityInput.addEventListener("input", () => {
+      const query = cityInput.value.trim();
+      if (!query) {
+        suggestionsDiv.classList.remove("show");
+        suggestionsDiv.innerHTML = "";
+        return;
+      }
+      fetch(`https://geoapi.qweather.com/v2/city/lookup?location=${encodeURIComponent(query)}&key=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.code === "200" && data.location && data.location.length > 0) {
+            suggestionsDiv.innerHTML = "";
+            data.location.forEach(city => {
+              const item = document.createElement("div");
+              item.className = "suggestion-item";
+              // 显示：城市名称 - 行政区域（可选） - 国家
+              item.innerText = `${city.name} ${city.adm2 || ""} ${city.adm1 || ""} ${city.country || ""}`.trim();
+              item.addEventListener("click", () => {
+                // 选择后将输入框置为选中项，并触发天气查询
+                cityInput.value = city.name;
+                suggestionsDiv.classList.remove("show");
+                suggestionsDiv.innerHTML = "";
+                getWeather(city.id, city.name);
+              });
+              suggestionsDiv.appendChild(item);
+            });
+            suggestionsDiv.classList.add("show");
+          } else {
+            suggestionsDiv.classList.remove("show");
+            suggestionsDiv.innerHTML = "";
+          }
+        })
+        .catch(error => console.error("城市查询出错:", error));
+    });
+
+    // 点击页面其它区域时关闭下拉菜单
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-wrapper")) {
+        suggestionsDiv.classList.remove("show");
+      }
+    });
+
+    // 根据城市ID获取天气数据
+    function getWeather(cityId, cityName) {
+      fetch(`https://devapi.qweather.com/v7/weather/now?location=${cityId}&key=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+          console.log("API返回的数据:", data);
+          if (data.code === "200" && data.now) {
+            updateUI(data.now, cityName);
+          }
+        })
+        .catch(error => console.error("天气获取出错:", error));
+    }
+
+    // 更新 UI 显示天气数据
+    function updateUI(weatherData, cityName) {
+      document.getElementById("displayCity").innerText = cityName;
+      document.getElementById("temperature").innerText = `${weatherData.temp}°C`;
+      document.getElementById("weatherText").innerText = weatherData.text;
+      document.getElementById("windSpeed").innerText = `${weatherData.windSpeed} km/h`;
+      document.getElementById("humidity").innerText = `${weatherData.humidity}%`;
+      
+      // 采用和风天气提供的图标，注意部分 API 返回的 icon 代码可能需要与图标 URL 对应调整
+      document.getElementById("weatherIcon").src = `https://icons.qweather.com/assets/icons/${weatherData.icon}.svg`;
+
+      // 根据天气状况调整背景（简单示例）
+      const backgroundMap = {
+        "晴": "linear-gradient(120deg, #ffafbd, #ffc3a0)",
+        "多云": "linear-gradient(120deg, #89f7fe, #66a6ff)",
+        "阴": "linear-gradient(120deg, #616161, #9bc5c3)",
+        "小雨": "linear-gradient(120deg, #005aa7, #fffde4)",
+        "中雨": "linear-gradient(120deg, #004e92, #000428)",
+        "大雨": "linear-gradient(120deg, #373B44, #4286f4)",
+        "雷阵雨": "linear-gradient(120deg, #141E30, #243B55)"
+      };
+      document.body.style.background = backgroundMap[weatherData.text] || "linear-gradient(120deg, #2193b0, #6dd5ed)";
+    }
+  </script>
+</body>
+</html>
