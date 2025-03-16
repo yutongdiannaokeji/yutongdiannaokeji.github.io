@@ -2,84 +2,155 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>于桐计算器</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <!-- Reset CSS，保证在各浏览器上统一显示 -->
   <style>
-    .calculator {
-      max-width: 400px;
+    /* 基本页面样式 */
+    body {
+      background: #f0f0f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
       margin: 0 auto;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    /* 模块容器样式 */
+    .module {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .module:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    /* 表单元素样式 */
+    input[type="text"] {
+      width: calc(100% - 22px);
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    /* 显示结果的区域 */
+    #calcResult {
+      font-size: 18px;
+      margin-top: 10px;
+      text-align: center;
+      min-height: 24px;
+    }
+    /* 绘图区域 */
+    #plot {
+      width: 100%;
+      height: 400px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-<img src="assets/images/logo/logo.jpg" width="190" height="" alt=""/>
-<div class="container">
-  <h1 class="text-center mt-5 mb-5">于桐计算器</h1>
-	<p>*某些函数图像可能不准确</p>
-    <div class="calculator">
-      <input type="text" class="form-control mb-3" id="input" placeholder="输入一个运算式或函数">
-      <div class="text-center">
-        <button class="btn btn-primary" id="calculate">计算</button>
-        <button class="btn btn-secondary" id="plot">画图</button>
-      </div>
-      <div class="mt-3 mb-3">
-        <h3 class="text-center">结果</h3>
-        <p class="text-center" id="result"></p >
-      </div>
-      <div class="mt-3">
-        <h3 class="text-center">函数图像</h3>
-        <div id="plot-container"></div>
-      </div>
+  <div class="container">
+    <h1>于桐计算器2.0</h1>
+    
+    <!-- 计算器模块 -->
+    <div class="module" id="calculator">
+      <h2>计算器</h2>
+      <input type="text" id="calcInput" placeholder="请输入数学表达式，如：2+3*4 或 sqrt(16)">
+      <button onclick="calculate()">计算</button>
+      <div id="calcResult"></div>
+    </div>
+    
+    <!-- 函数绘图模块 -->
+    <div class="module" id="plotter">
+      <h2>函数绘图</h2>
+      <input type="text" id="funcInput" placeholder="请输入函数表达式，如：sin(x) 或 x^2">
+      <button onclick="plotFunction()">绘图</button>
+      <div id="plot"></div>
     </div>
   </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js"></script>
+  
+  <!-- 引入 math.js 用于数学表达式求值 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+  <!-- 引入 Plotly.js 用于函数绘图 -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script>
-    const input = document.getElementById('input');
-    const result = document.getElementById('result');
-    const calculateBtn = document.getElementById('calculate');
-    const plotBtn = document.getElementById('plot');
-    const plotContainer = document.getElementById('plot-container');
-
-    calculateBtn.addEventListener('click', () => {
+    // 计算器函数：获取输入表达式，并计算结果显示
+    function calculate() {
+      const expr = document.getElementById('calcInput').value;
+      let result;
       try {
-        const expression = input.value;
-        const answer = math.evaluate(expression);
-        result.textContent = answer;
-      } catch (error) {
-        result.textContent = '运算错误，请检查输入';
+        result = math.evaluate(expr);
+      } catch(e) {
+        result = '错误的表达式';
       }
-    });
+      document.getElementById('calcResult').innerText = '结果： ' + result;
+    }
 
-    plotBtn.addEventListener('click', () => {
-      try {
-        const expression = input.value;
-        const func = math.compile(expression);
-        const xValues = math.range(-10, 10, 0.1).toArray();
-        const yValues = xValues.map(x => func.evaluate({x}));
-
-        const trace = {
-          x: xValues,
-          y: yValues,
-          mode: 'lines'
-        };
-
-        const layout = {
-          title: '函数图像',
-          xaxis: { title: 'x' },
-          yaxis: { title: 'y' },
-          margin: { t: 20, l: 40, r: 20, b: 40 }
-        };
-
-        Plotly.newPlot(plotContainer, [trace], layout);
-      } catch (error) {
-        result.textContent = '绘图错误，请检查输入';
+    // 绘图函数：根据用户输入的函数表达式绘制图像
+    function plotFunction() {
+      const expr = document.getElementById('funcInput').value;
+      let xValues = [];
+      let yValues = [];
+      // 生成 -10 到 10 的 x 值，步长 0.1
+      for(let x = -10; x <= 10; x += 0.1) {
+        xValues.push(x);
+        try {
+          // 使用 math.js 计算函数值，此处传入变量 x
+          let y = math.evaluate(expr, {x: x});
+          // 如果计算结果为复数或异常，标记为 NaN
+          if (typeof y === 'object') y = NaN;
+          yValues.push(y);
+        } catch(e) {
+          yValues.push(NaN);
+        }
       }
-    });
+      
+      // 定义绘图数据与布局
+      let trace = {
+        x: xValues,
+        y: yValues,
+        mode: 'lines',
+        line: { color: '#007BFF' }
+      };
+      let data = [trace];
+      let layout = {
+        title: '函数图像: y = ' + expr,
+        xaxis: { title: 'x' },
+        yaxis: { title: 'y' },
+        margin: { t: 50 }
+      };
+      // 使用 Plotly 绘制图像，同时保证响应式布局
+      Plotly.newPlot('plot', data, layout, {responsive: true});
+    }
   </script>
 </body>
 </html>
