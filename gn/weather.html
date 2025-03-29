@@ -6,6 +6,8 @@
     <title>于桐天气 - 精准天气预报</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 使用Weather Icons作为天气图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <style>
         :root {
             --primary-color: #4285F4;
@@ -54,7 +56,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            animation: fadeIn 0.6s var(--transition-timing);
         }
         
         header {
@@ -68,8 +69,6 @@
             padding: 15px 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: all var(--transition-duration) var(--transition-timing);
-            transform-origin: top center;
-            animation: slideDown 0.5s var(--transition-timing);
         }
         
         .logo {
@@ -118,8 +117,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             width: 100%;
             transition: all var(--transition-duration) var(--transition-timing);
-            transform-origin: right center;
-            animation: scaleIn 0.5s var(--transition-timing);
         }
         
         .search-bar:focus-within {
@@ -207,8 +204,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             flex-shrink: 0;
             transition: all var(--transition-duration) var(--transition-timing);
-            transform-origin: center;
-            animation: scaleIn 0.5s var(--transition-timing) 0.1s backwards;
         }
         
         .theme-toggle:hover {
@@ -224,7 +219,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             text-align: center;
             transition: all var(--transition-duration) var(--transition-timing);
-            animation: fadeInUp 0.6s var(--transition-timing) 0.2s backwards;
         }
         
         .location {
@@ -262,16 +256,10 @@
         }
         
         .weather-icon {
-            width: 120px;
-            height: 120px;
+            font-size: 80px;
             margin-right: 24px;
+            color: var(--primary-color);
             transition: all 0.5s ease;
-            animation: pulse 2s infinite alternate;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
         }
         
         .temperature {
@@ -363,7 +351,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-align: center;
             transition: all 0.3s ease;
-            animation: fadeInUp 0.5s var(--transition-timing) backwards;
         }
         
         .forecast-card:hover {
@@ -378,14 +365,10 @@
         }
         
         .forecast-icon {
-            width: 48px;
-            height: 48px;
+            font-size: 48px;
             margin: 8px auto;
+            color: var(--primary-color);
             transition: all 0.5s ease;
-        }
-        
-        .forecast-card:hover .forecast-icon {
-            animation: bounce 0.6s ease;
         }
         
         .forecast-temp {
@@ -412,7 +395,6 @@
             margin-bottom: 24px;
             overflow-x: auto;
             transition: all var(--transition-duration) var(--transition-timing);
-            animation: fadeInUp 0.6s var(--transition-timing) 0.3s backwards;
         }
         
         .hourly-scroll {
@@ -443,14 +425,10 @@
         }
         
         .hour-icon {
-            width: 32px;
-            height: 32px;
+            font-size: 32px;
             margin-bottom: 8px;
+            color: var(--primary-color);
             transition: all 0.5s ease;
-        }
-        
-        .hour-item:hover .hour-icon {
-            animation: wobble 0.5s ease;
         }
         
         .hour-temp {
@@ -465,7 +443,6 @@
             padding: 24px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all var(--transition-duration) var(--transition-timing);
-            animation: fadeInUp 0.6s var(--transition-timing) 0.4s backwards;
         }
         
         .details-title {
@@ -530,7 +507,6 @@
             border-radius: 16px;
             margin-top: 24px;
             transition: all var(--transition-duration) var(--transition-timing);
-            animation: fadeIn 0.6s var(--transition-timing) 0.5s backwards;
         }
         
         .loading {
@@ -566,79 +542,17 @@
             text-align: center;
             opacity: 0.8;
             transition: color var(--transition-duration) var(--transition-timing);
-            animation: fadeIn 0.6s var(--transition-timing) 0.3s backwards;
-        }
-        
-        .country-flag {
-            width: 16px;
-            height: 12px;
-            margin-right: 6px;
-            vertical-align: middle;
-            border-radius: 2px;
         }
         
         /* 动画定义 */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes fadeInUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes slideDown {
-            from { 
-                opacity: 0;
-                transform: translateY(-20px) scale(0.95);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        @keyframes scaleIn {
-            from { 
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to { 
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes wobble {
+        @keyframes spin {
             0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            50% { transform: rotate(-5deg); }
-            75% { transform: rotate(3deg); }
-            100% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        /* 天气卡片加载动画 */
-        .weather-card-enter {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        
-        .weather-card-enter-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.4s var(--transition-timing);
+        .spin {
+            animation: spin 2s linear infinite;
+            margin-right: 8px;
         }
         
         /* 移动端适配 */
@@ -722,7 +636,7 @@
                         <input type="text" id="search-input" placeholder="搜索全球城市 (如: 北京、New York)" autocomplete="off">
                     </div>
                     <div class="search-results" id="search-results"></div>
-                   
+                    <div class="search-hint">支持城市名、拼音或邮政编码 (全球覆盖)</div>
                 </div>
                 <button class="theme-toggle" id="theme-toggle">
                     <i class="material-icons" id="theme-icon">brightness_4</i>
@@ -758,7 +672,7 @@
         </section>
         
         <footer>
-            <p>©2025于桐天气 - 数据由和风天气提供</p>
+            <p>© 2023 于桐天气 - 数据由和风天气提供</p>
         </footer>
     </div>
 
@@ -787,15 +701,6 @@
         const hourlyForecastSection = document.getElementById('hourly-forecast');
         const detailsGrid = document.getElementById('details-grid');
         const errorMessage = document.getElementById('error-message');
-        
-        // 国家代码到国旗emoji的映射
-        const countryFlags = {
-            'CN': '🇨🇳', 'US': '🇺🇸', 'JP': '🇯🇵', 'KR': '🇰🇷', 
-            'UK': '🇬🇧', 'FR': '🇫🇷', 'DE': '🇩🇪', 'IT': '🇮🇹',
-            'RU': '🇷🇺', 'CA': '🇨🇦', 'AU': '🇦🇺', 'BR': '🇧🇷',
-            'IN': '🇮🇳', 'SG': '🇸🇬', 'MY': '🇲🇾', 'TH': '🇹🇭'
-            // 可以添加更多国家
-        };
         
         // 初始化页面
         document.addEventListener('DOMContentLoaded', () => {
@@ -881,17 +786,9 @@
             locations.forEach((location, index) => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'search-result-item';
-                resultItem.style.animationDelay = `${index * 0.05}s`;
-                resultItem.style.animation = 'fadeInUp 0.3s ease-out backwards';
-                
-                // 获取国家国旗emoji
-                const flag = countryFlags[location.country] || '🌐';
                 
                 resultItem.innerHTML = `
-                    <div class="search-result-name">
-                        <span class="country-flag">${flag}</span>
-                        ${location.name}
-                    </div>
+                    <div class="search-result-name">${location.name}</div>
                     <div class="search-result-location">
                         ${location.adm2 || ''} ${location.adm1 || ''} ${location.country || ''}
                     </div>
@@ -1040,18 +937,15 @@
             };
             const dateTimeStr = updateTime.toLocaleDateString('zh-CN', options);
             
-            // 获取国家国旗emoji
-            const flag = countryFlags[currentCity.country] || '';
-            
             currentWeatherSection.innerHTML = `
                 <h2 class="location">
-                    ${flag} ${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}
+                    ${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}
                     <i class="material-icons" title="刷新天气" onclick="refreshWeather()">refresh</i>
                 </h2>
                 <p class="date-time">${dateTimeStr}</p>
                 
                 <div class="weather-main">
-                    <img class="weather-icon" src="${getWeatherIcon(now.icon)}" alt="${now.text}">
+                    <i class="wi weather-icon ${getWeatherIcon(now.icon)}"></i>
                     <div class="temperature">${now.temp}</div>
                 </div>
                 
@@ -1080,9 +974,6 @@
                     </div>
                 </div>
             `;
-            
-            // 添加进入动画
-            currentWeatherSection.style.animation = 'fadeInUp 0.6s var(--transition-timing)';
         }
         
         // 更新每日预报
@@ -1101,7 +992,7 @@
                 forecastCard.style.animationDelay = `${index * 0.1}s`;
                 forecastCard.innerHTML = `
                     <div class="forecast-day">${dayName}</div>
-                    <img class="forecast-icon" src="${getWeatherIcon(day.iconDay)}" alt="${day.textDay}">
+                    <i class="wi forecast-icon ${getWeatherIcon(day.iconDay)}"></i>
                     <div class="forecast-temp">
                         <span class="high-temp">${day.tempMax}°</span>
                         <span class="low-temp">${day.tempMin}°</span>
@@ -1128,10 +1019,9 @@
                 const hourItem = document.createElement('div');
                 hourItem.className = 'hour-item';
                 hourItem.style.animationDelay = `${index * 0.05}s`;
-                hourItem.style.animation = 'fadeIn 0.3s ease-out backwards';
                 hourItem.innerHTML = `
                     <div class="hour-time">${timeStr}</div>
-                    <img class="hour-icon" src="${getWeatherIcon(hour.icon)}" alt="${hour.text}">
+                    <i class="wi hour-icon ${getWeatherIcon(hour.icon)}"></i>
                     <div class="hour-temp">${hour.temp}°</div>
                 `;
                 
@@ -1191,7 +1081,6 @@
                 const detailCard = document.createElement('div');
                 detailCard.className = 'detail-card';
                 detailCard.style.animationDelay = `${index * 0.1}s`;
-                detailCard.style.animation = 'fadeInUp 0.4s var(--transition-timing) backwards';
                 detailCard.innerHTML = `
                     <div class="detail-card-title">
                         <i class="material-icons">${detail.icon}</i>
@@ -1204,10 +1093,64 @@
             });
         }
         
-        // 获取天气图标（使用和风天气官方图标）
+        // 获取天气图标
         function getWeatherIcon(iconCode) {
-            // 和风天气图标URL格式
-            return `https://a.hecdn.net/img/common/icon/202106d/${iconCode}.png`;
+            // 和风天气图标代码到Weather Icons的映射
+            const iconMap = {
+                '100': 'wi-day-sunny',          // 晴
+                '101': 'wi-cloudy',             // 多云
+                '102': 'wi-day-cloudy',         // 少云
+                '103': 'wi-day-cloudy-high',    // 晴间多云
+                '104': 'wi-cloud',              // 阴
+                '200': 'wi-windy',              // 有风
+                '201': 'wi-windy',              // 平静
+                '202': 'wi-windy',              // 微风
+                '203': 'wi-strong-wind',        // 和风
+                '204': 'wi-strong-wind',        // 清风
+                '205': 'wi-hurricane',          // 强风/劲风
+                '206': 'wi-tornado',            // 疾风
+                '207': 'wi-tornado',            // 大风
+                '208': 'wi-tornado',            // 烈风
+                '209': 'wi-thunderstorm',       // 风暴
+                '210': 'wi-thunderstorm',       // 狂爆风
+                '211': 'wi-hurricane',          // 飓风
+                '212': 'wi-tornado',            // 龙卷风
+                '213': 'wi-hurricane',          // 热带风暴
+                '300': 'wi-rain',               // 阵雨
+                '301': 'wi-rain',               // 强阵雨
+                '302': 'wi-thunderstorm',       // 雷阵雨
+                '303': 'wi-thunderstorm',       // 强雷阵雨
+                '304': 'wi-hail',               // 雷阵雨伴有冰雹
+                '305': 'wi-sprinkle',           // 小雨
+                '306': 'wi-rain',               // 中雨
+                '307': 'wi-rain',               // 大雨
+                '308': 'wi-rain-wind',          // 极端降雨
+                '309': 'wi-sprinkle',           // 毛毛雨/细雨
+                '310': 'wi-rain',               // 暴雨
+                '311': 'wi-rain',               // 大暴雨
+                '312': 'wi-rain',               // 特大暴雨
+                '313': 'wi-rain-mix',           // 冻雨
+                '400': 'wi-snow',               // 小雪
+                '401': 'wi-snow',               // 中雪
+                '402': 'wi-snow',               // 大雪
+                '403': 'wi-snow-wind',          // 暴雪
+                '404': 'wi-rain-mix',           // 雨夹雪
+                '405': 'wi-rain-mix',           // 雨雪天气
+                '406': 'wi-rain-mix',           // 阵雨夹雪
+                '407': 'wi-snow',               // 阵雪
+                '500': 'wi-fog',                // 薄雾
+                '501': 'wi-fog',                // 雾
+                '502': 'wi-smog',               // 霾
+                '503': 'wi-dust',               // 扬沙
+                '504': 'wi-dust',               // 浮尘
+                '507': 'wi-sandstorm',          // 沙尘暴
+                '508': 'wi-sandstorm',          // 强沙尘暴
+                '900': 'wi-hot',                // 热
+                '901': 'wi-snowflake-cold',     // 冷
+                '999': 'wi-na'                  // 未知
+            };
+            
+            return iconMap[iconCode] || 'wi-day-sunny';
         }
         
         // 显示错误消息
@@ -1241,20 +1184,6 @@
         
         // 暴露刷新函数到全局
         window.refreshWeather = refreshWeather;
-        
-        // 添加旋转动画
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            .spin {
-                animation: spin 2s linear infinite;
-                margin-right: 8px;
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
