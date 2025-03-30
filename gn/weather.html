@@ -6,6 +6,8 @@
     <title>于桐天气 - 精准天气预报</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 使用Weather Icons作为天气图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <style>
         :root {
             --primary-color: #4285F4;
@@ -18,9 +20,8 @@
             --card-bg: #FFFFFF;
             --header-bg: #FFFFFF;
             --footer-bg: #F1F3F4;
-            --transition-duration: 0.2s;
-            --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
-            --bounce-timing: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+            --transition-duration: 0.4s;
+            --transition-timing: cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
         .dark-mode {
@@ -40,10 +41,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: color var(--transition-duration) var(--transition-timing),
-                        background-color var(--transition-duration) var(--transition-timing),
-                        border-color var(--transition-duration) var(--transition-timing),
-                        box-shadow var(--transition-duration) var(--transition-timing);
         }
         
         body {
@@ -52,67 +49,49 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-        }
-        
-        /* 排除不需要过渡的元素 */
-        img, svg, canvas, video, iframe {
-            transition: none !important;
+            transition: background-color var(--transition-duration) var(--transition-timing);
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 15px 0;
             margin-bottom: 20px;
             background-color: var(--header-bg);
             border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: gentleDrop 0.5s var(--bounce-timing);
-        }
-        
-        @keyframes gentleDrop {
-            0% { opacity: 0; transform: translateY(-20px); }
-            100% { opacity: 1; transform: translateY(0); }
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .logo {
             display: flex;
             align-items: center;
-            transition: transform 0.3s var(--bounce-timing);
+            transition: transform 0.3s ease;
         }
         
         .logo:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
         
         .logo i {
             color: var(--primary-color);
             font-size: 36px;
             margin-right: 10px;
-            animation: gentlePulse 4s infinite alternate;
-        }
-        
-        @keyframes gentlePulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .logo h1 {
             font-size: 24px;
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .header-controls {
@@ -121,7 +100,6 @@
             gap: 15px;
             position: relative;
             width: 100%;
-
             max-width: 500px;
         }
         
@@ -136,18 +114,20 @@
             background-color: var(--card-bg);
             border-radius: 24px;
             padding: 8px 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             width: 100%;
             transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .search-bar:focus-within {
-            box-shadow: 0 0 0 2px var(--primary-color);
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
+            transform: scale(1.02);
         }
         
         .search-bar i {
             color: var(--text-secondary);
             margin-right: 10px;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .search-bar input {
@@ -157,6 +137,7 @@
             font-size: 16px;
             outline: none;
             color: var(--text-primary);
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .search-results {
@@ -166,14 +147,14 @@
             right: 0;
             background-color: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 100;
             max-height: 300px;
             overflow-y: auto;
             display: none;
             opacity: 0;
             transform: translateY(-10px);
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s var(--transition-timing);
         }
         
         .search-results.show {
@@ -186,21 +167,27 @@
             padding: 12px 16px;
             cursor: pointer;
             border-bottom: 1px solid var(--bg-color);
-            transition: all 0.2s ease-out;
+            transition: all 0.2s ease;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
         }
         
         .search-result-item:hover {
             background-color: var(--bg-color);
-            transform: translateX(5px);
+            transform: translateX(4px);
         }
         
         .search-result-name {
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .search-result-location {
             font-size: 12px;
             color: var(--text-secondary);
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .theme-toggle {
@@ -214,13 +201,14 @@
             justify-content: center;
             cursor: pointer;
             color: var(--text-primary);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.3s var(--bounce-timing);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .theme-toggle:hover {
             transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .current-weather {
@@ -228,22 +216,16 @@
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             text-align: center;
-            min-height: 400px;
-            position: relative;
-            animation: gentleFadeIn 0.5s ease-out 0.1s both;
-        }
-        
-        @keyframes gentleFadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .location {
             font-size: 22px;
             margin-bottom: 8px;
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .location i {
@@ -251,17 +233,18 @@
             vertical-align: middle;
             margin-left: 8px;
             cursor: pointer;
-            transition: all 0.3s var(--bounce-timing);
+            transition: transform 0.3s ease;
         }
         
         .location i:hover {
-            transform: rotate(180deg) scale(1.2);
+            transform: rotate(180deg);
         }
         
         .date-time {
             color: var(--text-secondary);
             margin-bottom: 24px;
             font-size: 14px;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .weather-main {
@@ -272,31 +255,18 @@
             flex-wrap: wrap;
         }
         
-        .weather-icon-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-right: 24px;
-        }
-        
         .weather-icon {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-8px) rotate(2deg); }
+            font-size: 80px;
+            margin-right: 24px;
+            color: var(--primary-color);
+            transition: all 0.5s ease;
         }
         
         .temperature {
             font-size: 64px;
             font-weight: 300;
             position: relative;
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s ease;
         }
         
         .temperature:hover {
@@ -315,6 +285,7 @@
             font-size: 18px;
             color: var(--text-secondary);
             margin-bottom: 24px;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .weather-details {
@@ -331,38 +302,39 @@
             flex-direction: column;
             align-items: center;
             min-width: 100px;
-            padding: 16px;
+            padding: 12px;
             border-radius: 12px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s ease;
         }
         
         .detail-item:hover {
             background-color: var(--bg-color);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .detail-item i {
-            font-size: 24px;
+            font-size: 20px;
             margin-bottom: 8px;
             color: var(--primary-color);
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s ease;
         }
         
         .detail-item:hover i {
-            transform: scale(1.2) rotate(15deg);
+            transform: scale(1.2);
         }
         
         .detail-label {
             font-size: 12px;
             color: var(--text-secondary);
             margin-bottom: 4px;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .detail-value {
             font-size: 16px;
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .forecast-container {
@@ -376,45 +348,27 @@
             background-color: var(--card-bg);
             border-radius: 12px;
             padding: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-align: center;
-            min-height: 180px;
-            transition: all 0.3s var(--bounce-timing);
-            perspective: 1000px;
+            transition: all 0.3s ease;
         }
         
         .forecast-card:hover {
-            transform: translateY(-5px) rotateX(3deg);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
         
         .forecast-day {
             font-weight: 500;
             margin-bottom: 12px;
-        }
-        
-        .forecast-icon-container {
-            width: 48px;
-            height: 48px;
-            margin: 8px auto;
-            position: relative;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .forecast-icon {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
-        .forecast-card:hover .forecast-icon {
-            animation: bounce 0.6s var(--bounce-timing);
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            25% { transform: translateY(-8px) scale(1.1); }
-            50% { transform: translateY(0) scale(0.95); }
-            75% { transform: translateY(-4px) scale(1.05); }
+            font-size: 48px;
+            margin: 8px auto;
+            color: var(--primary-color);
+            transition: all 0.5s ease;
         }
         
         .forecast-temp {
@@ -425,26 +379,28 @@
         
         .high-temp {
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .low-temp {
             color: var(--text-secondary);
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .hourly-forecast {
             background-color: var(--card-bg);
             border-radius: 16px;
             padding: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 24px;
             overflow-x: auto;
+            transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .hourly-scroll {
             display: flex;
             gap: 16px;
             padding: 8px 0;
-            min-width: max-content;
         }
         
         .hour-item {
@@ -452,9 +408,9 @@
             flex-direction: column;
             align-items: center;
             min-width: 60px;
-            padding: 12px;
+            padding: 8px;
             border-radius: 8px;
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s ease;
         }
         
         .hour-item:hover {
@@ -465,51 +421,35 @@
         .hour-time {
             font-size: 14px;
             margin-bottom: 8px;
-        }
-        
-        .hour-icon-container {
-            width: 32px;
-            height: 32px;
-            margin-bottom: 8px;
-            position: relative;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .hour-icon {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
-        .hour-item:hover .hour-icon {
-            animation: wobble 0.6s var(--bounce-timing);
-        }
-        
-        @keyframes wobble {
-            0% { transform: rotate(0deg) scale(1); }
-            15% { transform: rotate(5deg) scale(1.1); }
-            30% { transform: rotate(-5deg) scale(1.1); }
-            45% { transform: rotate(4deg) scale(1.05); }
-            60% { transform: rotate(-4deg) scale(1.05); }
-            75% { transform: rotate(2deg) scale(1.02); }
-            100% { transform: rotate(0deg) scale(1); }
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            transition: all 0.5s ease;
         }
         
         .hour-temp {
             font-size: 16px;
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .more-details {
             background-color: var(--card-bg);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .details-title {
             font-size: 18px;
             font-weight: 500;
             margin-bottom: 16px;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .details-grid {
@@ -521,16 +461,15 @@
         .detail-card {
             display: flex;
             flex-direction: column;
-            padding: 16px;
+            padding: 12px;
             border-radius: 12px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s ease;
         }
         
         .detail-card:hover {
             background-color: var(--bg-color);
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .detail-card-title {
@@ -539,22 +478,24 @@
             color: var(--text-secondary);
             font-size: 14px;
             margin-bottom: 8px;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         .detail-card-title i {
             margin-right: 8px;
             font-size: 18px;
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s ease;
         }
         
         .detail-card:hover .detail-card-title i {
-            transform: rotate(15deg) scale(1.2);
+            transform: rotate(15deg);
             color: var(--primary-color);
         }
         
         .detail-card-value {
             font-size: 18px;
             font-weight: 500;
+            transition: color var(--transition-duration) var(--transition-timing);
         }
         
         footer {
@@ -565,6 +506,7 @@
             background-color: var(--footer-bg);
             border-radius: 16px;
             margin-top: 24px;
+            transition: all var(--transition-duration) var(--transition-timing);
         }
         
         .loading {
@@ -573,16 +515,6 @@
             align-items: center;
             height: 100px;
             color: var(--text-secondary);
-            gap: 8px;
-        }
-        
-        .loading i {
-            animation: spin 1.5s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         
         .error-message {
@@ -592,15 +524,35 @@
             background-color: var(--card-bg);
             border-radius: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(234, 67, 53, 0.1);
-            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(234, 67, 53, 0.2);
+            transform: scale(0.9);
             opacity: 0;
-            transition: all 0.3s var(--bounce-timing);
+            transition: all 0.3s var(--transition-timing);
         }
         
         .error-message.show {
             transform: scale(1);
             opacity: 1;
+        }
+        
+        .search-hint {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+            opacity: 0.8;
+            transition: color var(--transition-duration) var(--transition-timing);
+        }
+        
+        /* 动画定义 */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spin {
+            animation: spin 2s linear infinite;
+            margin-right: 8px;
         }
         
         /* 移动端适配 */
@@ -615,14 +567,26 @@
                 gap: 12px;
             }
             
+            .search-container {
+                width: 100%;
+            }
+            
             .weather-main {
                 flex-direction: column;
                 text-align: center;
             }
             
-            .weather-icon-container {
+            .weather-icon {
                 margin-right: 0;
                 margin-bottom: 16px;
+            }
+            
+            .weather-details {
+                justify-content: center;
+            }
+            
+            .detail-item {
+                min-width: 80px;
             }
             
             .forecast-container {
@@ -672,6 +636,7 @@
                         <input type="text" id="search-input" placeholder="搜索全球城市 (如: 北京、New York)" autocomplete="off">
                     </div>
                     <div class="search-results" id="search-results"></div>
+                    <div class="search-hint">支持城市名、拼音或邮政编码 (全球覆盖)</div>
                 </div>
                 <button class="theme-toggle" id="theme-toggle">
                     <i class="material-icons" id="theme-icon">brightness_4</i>
@@ -717,61 +682,6 @@
         const BASE_URL = "https://devapi.qweather.com/v7";
         const GEO_API_URL = "https://geoapi.qweather.com/v2";
         
-        // 天气图标映射 (使用和风天气官方图标)
-        const WEATHER_ICONS = {
-            '100': 'https://a.hecdn.net/img/common/icon/202106d/100.png',
-            '101': 'https://a.hecdn.net/img/common/icon/202106d/101.png',
-            '102': 'https://a.hecdn.net/img/common/icon/202106d/102.png',
-            '103': 'https://a.hecdn.net/img/common/icon/202106d/103.png',
-            '104': 'https://a.hecdn.net/img/common/icon/202106d/104.png',
-            '200': 'https://a.hecdn.net/img/common/icon/202106d/200.png',
-            '201': 'https://a.hecdn.net/img/common/icon/202106d/201.png',
-            '202': 'https://a.hecdn.net/img/common/icon/202106d/202.png',
-            '203': 'https://a.hecdn.net/img/common/icon/202106d/203.png',
-            '204': 'https://a.hecdn.net/img/common/icon/202106d/204.png',
-            '205': 'https://a.hecdn.net/img/common/icon/202106d/205.png',
-            '206': 'https://a.hecdn.net/img/common/icon/202106d/206.png',
-            '207': 'https://a.hecdn.net/img/common/icon/202106d/207.png',
-            '208': 'https://a.hecdn.net/img/common/icon/202106d/208.png',
-            '209': 'https://a.hecdn.net/img/common/icon/202106d/209.png',
-            '210': 'https://a.hecdn.net/img/common/icon/202106d/210.png',
-            '211': 'https://a.hecdn.net/img/common/icon/202106d/211.png',
-            '212': 'https://a.hecdn.net/img/common/icon/202106d/212.png',
-            '213': 'https://a.hecdn.net/img/common/icon/202106d/213.png',
-            '300': 'https://a.hecdn.net/img/common/icon/202106d/300.png',
-            '301': 'https://a.hecdn.net/img/common/icon/202106d/301.png',
-            '302': 'https://a.hecdn.net/img/common/icon/202106d/302.png',
-            '303': 'https://a.hecdn.net/img/common/icon/202106d/303.png',
-            '304': 'https://a.hecdn.net/img/common/icon/202106d/304.png',
-            '305': 'https://a.hecdn.net/img/common/icon/202106d/305.png',
-            '306': 'https://a.hecdn.net/img/common/icon/202106d/306.png',
-            '307': 'https://a.hecdn.net/img/common/icon/202106d/307.png',
-            '308': 'https://a.hecdn.net/img/common/icon/202106d/308.png',
-            '309': 'https://a.hecdn.net/img/common/icon/202106d/309.png',
-            '310': 'https://a.hecdn.net/img/common/icon/202106d/310.png',
-            '311': 'https://a.hecdn.net/img/common/icon/202106d/311.png',
-            '312': 'https://a.hecdn.net/img/common/icon/202106d/312.png',
-            '313': 'https://a.hecdn.net/img/common/icon/202106d/313.png',
-            '400': 'https://a.hecdn.net/img/common/icon/202106d/400.png',
-            '401': 'https://a.hecdn.net/img/common/icon/202106d/401.png',
-            '402': 'https://a.hecdn.net/img/common/icon/202106d/402.png',
-            '403': 'https://a.hecdn.net/img/common/icon/202106d/403.png',
-            '404': 'https://a.hecdn.net/img/common/icon/202106d/404.png',
-            '405': 'https://a.hecdn.net/img/common/icon/202106d/405.png',
-            '406': 'https://a.hecdn.net/img/common/icon/202106d/406.png',
-            '407': 'https://a.hecdn.net/img/common/icon/202106d/407.png',
-            '500': 'https://a.hecdn.net/img/common/icon/202106d/500.png',
-            '501': 'https://a.hecdn.net/img/common/icon/202106d/501.png',
-            '502': 'https://a.hecdn.net/img/common/icon/202106d/502.png',
-            '503': 'https://a.hecdn.net/img/common/icon/202106d/503.png',
-            '504': 'https://a.hecdn.net/img/common/icon/202106d/504.png',
-            '507': 'https://a.hecdn.net/img/common/icon/202106d/507.png',
-            '508': 'https://a.hecdn.net/img/common/icon/202106d/508.png',
-            '900': 'https://a.hecdn.net/img/common/icon/202106d/900.png',
-            '901': 'https://a.hecdn.net/img/common/icon/202106d/901.png',
-            '999': 'https://a.hecdn.net/img/common/icon/202106d/999.png'
-        };
-        
         // 默认城市 (北京)
         let currentCity = {
             id: "101010100",
@@ -795,9 +705,21 @@
         // 初始化页面
         document.addEventListener('DOMContentLoaded', () => {
             // 检查本地存储的主题偏好
-            if (localStorage.getItem('theme') === 'dark') {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
                 themeIcon.textContent = 'brightness_7';
+            }
+            
+            // 检查本地存储的城市信息
+            const savedCity = localStorage.getItem('savedCity');
+            if (savedCity) {
+                currentCity = JSON.parse(savedCity);
+                searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
+                fetchWeatherData(currentCity.id);
+            } else {
+                // 如果没有保存的城市信息，尝试获取当前位置
+                tryGetLocation();
             }
             
             // 设置搜索事件监听器
@@ -805,60 +727,45 @@
             
             // 设置主题切换事件监听器
             themeToggle.addEventListener('click', toggleTheme);
-            
-            // 尝试获取用户位置
-            getLocation();
         });
         
-        // 获取用户当前位置
-        function getLocation() {
-            // 检查本地存储中是否有上次获取的位置
-            const savedLocation = localStorage.getItem('userLocation');
-            if (savedLocation) {
-                try {
-                    const location = JSON.parse(savedLocation);
-                    if (location.id && location.timestamp && Date.now() - location.timestamp < 86400000) { // 24小时内有效
-                        currentCity = {
-                            id: location.id,
-                            name: location.name,
-                            adm2: location.adm2,
-                            adm1: location.adm1,
-                            country: location.country
-                        };
-                        fetchWeatherData(currentCity.id);
-                        return;
-                    }
-                } catch (e) {
-                    console.error("解析保存的位置失败:", e);
-                }
-            }
-            
-            // 如果没有保存的位置或已过期，尝试获取新位置
+        // 尝试获取位置（仅在首次访问时）
+        function tryGetLocation() {
             if (navigator.geolocation) {
+                currentWeatherSection.innerHTML = `
+                    <div class="loading">
+                        <i class="material-icons spin">refresh</i>
+                        <span>正在获取您的位置...</span>
+                    </div>
+                `;
+                
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         const { latitude, longitude } = position.coords;
-                        fetchCityByGeo(latitude, longitude);
+                        getCityByCoordinates(latitude, longitude);
                     },
                     error => {
-                        console.log("获取位置失败:", error);
-                        // 使用默认城市
+                        console.error("获取位置失败:", error);
+                        // 如果获取位置失败，使用默认城市
+                        showError("无法获取您的位置，已显示默认城市天气");
                         fetchWeatherData(currentCity.id);
                     },
-                    { 
+                    {
                         enableHighAccuracy: true,
-                        maximumAge: 3600000, // 1小时缓存
-                        timeout: 10000
+                        timeout: 5000,
+                        maximumAge: 0
                     }
                 );
             } else {
-                // 浏览器不支持Geolocation API
+                console.log("浏览器不支持地理位置");
+                // 浏览器不支持地理位置，使用默认城市
+                showError("您的浏览器不支持地理位置服务，已显示默认城市天气");
                 fetchWeatherData(currentCity.id);
             }
         }
         
-        // 通过经纬度获取城市信息
-        async function fetchCityByGeo(lat, lon) {
+        // 根据经纬度获取城市信息
+        async function getCityByCoordinates(lat, lon) {
             try {
                 const url = `${GEO_API_URL}/city/lookup?key=${API_KEY}&location=${lon},${lat}`;
                 const response = await fetch(url);
@@ -874,20 +781,21 @@
                         country: location.country
                     };
                     
-                    // 保存位置信息到本地存储
-                    localStorage.setItem('userLocation', JSON.stringify({
-                        ...currentCity,
-                        timestamp: Date.now()
-                    }));
+                    // 保存城市信息到本地存储
+                    localStorage.setItem('savedCity', JSON.stringify(currentCity));
                     
+                    // 更新搜索框显示
+                    searchInput.value = `${location.name}, ${location.adm1 || location.adm2 || location.country}`;
+                    
+                    // 获取天气数据
                     fetchWeatherData(currentCity.id);
                 } else {
-                    // 使用默认城市
-                    fetchWeatherData(currentCity.id);
+                    throw new Error("未找到匹配的城市");
                 }
             } catch (error) {
-                console.error("获取城市信息失败:", error);
-                // 使用默认城市
+                console.error("根据坐标获取城市失败:", error);
+                showError("无法获取当前位置的城市信息，已显示默认城市天气");
+                // 如果失败，使用默认城市
                 fetchWeatherData(currentCity.id);
             }
         }
@@ -957,7 +865,6 @@
             locations.forEach((location, index) => {
                 const resultItem = document.createElement('div');
                 resultItem.className = 'search-result-item';
-                resultItem.style.animationDelay = `${index * 0.05}s`;
                 
                 resultItem.innerHTML = `
                     <div class="search-result-name">${location.name}</div>
@@ -974,6 +881,10 @@
                         adm1: location.adm1,
                         country: location.country
                     };
+                    
+                    // 保存选择的城市到本地存储
+                    localStorage.setItem('savedCity', JSON.stringify(currentCity));
+                    
                     searchInput.value = `${location.name}, ${location.adm1 || location.adm2 || location.country}`;
                     hideSearchResults();
                     
@@ -993,16 +904,13 @@
             setTimeout(() => {
                 currentWeatherSection.style.opacity = '1';
                 currentWeatherSection.style.transform = 'scale(1)';
-                currentWeatherSection.style.transition = 'all 0.3s var(--bounce-timing)';
+                currentWeatherSection.style.transition = 'all 0.4s var(--transition-timing)';
             }, 100);
         }
         
         // 切换主题
         function toggleTheme() {
-            // 切换主题类
             document.body.classList.toggle('dark-mode');
-            
-            // 更新图标和本地存储
             if (document.body.classList.contains('dark-mode')) {
                 themeIcon.textContent = 'brightness_7';
                 localStorage.setItem('theme', 'dark');
@@ -1012,10 +920,10 @@
             }
             
             // 主题切换动画
-            themeToggle.style.transform = 'scale(1.1)';
+            themeToggle.style.transform = 'scale(1.2)';
             setTimeout(() => {
                 themeToggle.style.transform = 'scale(1)';
-            }, 200);
+            }, 300);
         }
         
         // 获取天气数据
@@ -1115,14 +1023,12 @@
             currentWeatherSection.innerHTML = `
                 <h2 class="location">
                     ${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}
-                    <i class="material-icons" title="刷新天气" onclick="refreshWeather()">refresh</i>
+                    <i class="material-icons" title="刷新位置和天气" onclick="refreshLocationAndWeather()">refresh</i>
                 </h2>
                 <p class="date-time">${dateTimeStr}</p>
                 
                 <div class="weather-main">
-                    <div class="weather-icon-container">
-                        <img class="weather-icon" src="${getWeatherIcon(now.icon)}" alt="${now.text}">
-                    </div>
+                    <i class="wi weather-icon ${getWeatherIcon(now.icon)}"></i>
                     <div class="temperature">${now.temp}</div>
                 </div>
                 
@@ -1169,9 +1075,7 @@
                 forecastCard.style.animationDelay = `${index * 0.1}s`;
                 forecastCard.innerHTML = `
                     <div class="forecast-day">${dayName}</div>
-                    <div class="forecast-icon-container">
-                        <img class="forecast-icon" src="${getWeatherIcon(day.iconDay)}" alt="${day.textDay}">
-                    </div>
+                    <i class="wi forecast-icon ${getWeatherIcon(day.iconDay)}"></i>
                     <div class="forecast-temp">
                         <span class="high-temp">${day.tempMax}°</span>
                         <span class="low-temp">${day.tempMin}°</span>
@@ -1200,9 +1104,7 @@
                 hourItem.style.animationDelay = `${index * 0.05}s`;
                 hourItem.innerHTML = `
                     <div class="hour-time">${timeStr}</div>
-                    <div class="hour-icon-container">
-                        <img class="hour-icon" src="${getWeatherIcon(hour.icon)}" alt="${hour.text}">
-                    </div>
+                    <i class="wi hour-icon ${getWeatherIcon(hour.icon)}"></i>
                     <div class="hour-temp">${hour.temp}°</div>
                 `;
                 
@@ -1276,7 +1178,62 @@
         
         // 获取天气图标
         function getWeatherIcon(iconCode) {
-            return WEATHER_ICONS[iconCode] || WEATHER_ICONS['100'];
+            // 和风天气图标代码到Weather Icons的映射
+            const iconMap = {
+                '100': 'wi-day-sunny',          // 晴
+                '101': 'wi-cloudy',             // 多云
+                '102': 'wi-day-cloudy',         // 少云
+                '103': 'wi-day-cloudy-high',    // 晴间多云
+                '104': 'wi-cloud',              // 阴
+                '200': 'wi-windy',              // 有风
+                '201': 'wi-windy',              // 平静
+                '202': 'wi-windy',              // 微风
+                '203': 'wi-strong-wind',        // 和风
+                '204': 'wi-strong-wind',        // 清风
+                '205': 'wi-hurricane',          // 强风/劲风
+                '206': 'wi-tornado',            // 疾风
+                '207': 'wi-tornado',            // 大风
+                '208': 'wi-tornado',            // 烈风
+                '209': 'wi-thunderstorm',       // 风暴
+                '210': 'wi-thunderstorm',       // 狂爆风
+                '211': 'wi-hurricane',          // 飓风
+                '212': 'wi-tornado',            // 龙卷风
+                '213': 'wi-hurricane',          // 热带风暴
+                '300': 'wi-rain',               // 阵雨
+                '301': 'wi-rain',               // 强阵雨
+                '302': 'wi-thunderstorm',       // 雷阵雨
+                '303': 'wi-thunderstorm',       // 强雷阵雨
+                '304': 'wi-hail',               // 雷阵雨伴有冰雹
+                '305': 'wi-sprinkle',           // 小雨
+                '306': 'wi-rain',               // 中雨
+                '307': 'wi-rain',               // 大雨
+                '308': 'wi-rain-wind',          // 极端降雨
+                '309': 'wi-sprinkle',           // 毛毛雨/细雨
+                '310': 'wi-rain',               // 暴雨
+                '311': 'wi-rain',               // 大暴雨
+                '312': 'wi-rain',               // 特大暴雨
+                '313': 'wi-rain-mix',           // 冻雨
+                '400': 'wi-snow',               // 小雪
+                '401': 'wi-snow',               // 中雪
+                '402': 'wi-snow',               // 大雪
+                '403': 'wi-snow-wind',          // 暴雪
+                '404': 'wi-rain-mix',           // 雨夹雪
+                '405': 'wi-rain-mix',           // 雨雪天气
+                '406': 'wi-rain-mix',           // 阵雨夹雪
+                '407': 'wi-snow',               // 阵雪
+                '500': 'wi-fog',                // 薄雾
+                '501': 'wi-fog',                // 雾
+                '502': 'wi-smog',               // 霾
+                '503': 'wi-dust',               // 扬沙
+                '504': 'wi-dust',               // 浮尘
+                '507': 'wi-sandstorm',          // 沙尘暴
+                '508': 'wi-sandstorm',          // 强沙尘暴
+                '900': 'wi-hot',                // 热
+                '901': 'wi-snowflake-cold',     // 冷
+                '999': 'wi-na'                  // 未知
+            };
+            
+            return iconMap[iconCode] || 'wi-day-sunny';
         }
         
         // 显示错误消息
@@ -1295,8 +1252,8 @@
             errorMessage.classList.remove('show');
         }
         
-        // 刷新天气
-        function refreshWeather() {
+        // 刷新位置和天气
+        function refreshLocationAndWeather() {
             // 添加刷新动画
             const refreshIcon = document.querySelector('.location i');
             refreshIcon.style.animation = 'spin 0.6s ease';
@@ -1304,12 +1261,14 @@
                 refreshIcon.style.animation = '';
             }, 600);
             
+            // 清除保存的城市信息，强制重新获取位置
+            localStorage.removeItem('savedCity');
             animateWeatherRefresh();
-            fetchWeatherData(currentCity.id);
+            tryGetLocation();
         }
         
         // 暴露刷新函数到全局
-        window.refreshWeather = refreshWeather;
+        window.refreshLocationAndWeather = refreshLocationAndWeather;
     </script>
 </body>
 </html>
