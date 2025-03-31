@@ -6,7 +6,6 @@
     <title>于桐天气 - 精准天气预报</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- 使用Weather Icons作为天气图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
     <style>
         :root {
@@ -20,7 +19,7 @@
             --card-bg: #FFFFFF;
             --header-bg: #FFFFFF;
             --footer-bg: #F1F3F4;
-            --transition-duration: 0.4s;
+            --transition-duration: 0.3s;
             --transition-timing: cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         
@@ -50,6 +49,13 @@
             line-height: 1.6;
             min-height: 100vh;
             transition: background-color var(--transition-duration) var(--transition-timing);
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .container {
@@ -106,6 +112,7 @@
         .search-container {
             position: relative;
             flex-grow: 1;
+            z-index: 100;
         }
         
         .search-bar {
@@ -148,7 +155,7 @@
             background-color: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            z-index: 100;
+            z-index: 1000;
             max-height: 300px;
             overflow-y: auto;
             display: none;
@@ -691,6 +698,12 @@
             country: "CN"
         };
         
+        // 定位城市
+        let locatedCity = null;
+        
+        // 是否是首次加载
+        let isFirstLoad = true;
+        
         // DOM元素
         const searchInput = document.getElementById('search-input');
         const searchResults = document.getElementById('search-results');
@@ -711,25 +724,37 @@
                 themeIcon.textContent = 'brightness_7';
             }
             
-            // 检查本地存储的城市信息
-            const savedCity = localStorage.getItem('savedCity');
-            if (savedCity) {
-                currentCity = JSON.parse(savedCity);
-                searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
-                fetchWeatherData(currentCity.id);
-            } else {
-                // 如果没有保存的城市信息，尝试获取当前位置
-                tryGetLocation();
-            }
-            
             // 设置搜索事件监听器
             setupSearch();
             
             // 设置主题切换事件监听器
             themeToggle.addEventListener('click', toggleTheme);
+            
+            // 检查是否有定位城市
+            const savedLocatedCity = localStorage.getItem('locatedCity');
+            if (savedLocatedCity) {
+                locatedCity = JSON.parse(savedLocatedCity);
+            }
+            
+            // 检查本地存储的城市信息
+            const savedCurrentCity = localStorage.getItem('currentCity');
+            if (savedCurrentCity) {
+                currentCity = JSON.parse(savedCurrentCity);
+                searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
+                fetchWeatherData(currentCity.id);
+            } else {
+                // 如果没有保存的城市信息，尝试获取当前位置
+                if (isFirstLoad) {
+                    tryGetLocation();
+                    isFirstLoad = false;
+                } else {
+                    // 不是首次加载且没有保存的城市，使用默认城市
+                    fetchWeatherData(currentCity.id);
+                }
+            }
         });
         
-        // 尝试获取位置（仅在首次访问时）
+        // 尝试获取位置
         function tryGetLocation() {
             if (navigator.geolocation) {
                 currentWeatherSection.innerHTML = `
@@ -748,6 +773,8 @@
                         console.error("获取位置失败:", error);
                         // 如果获取位置失败，使用默认城市
                         showError("无法获取您的位置，已显示默认城市天气");
+                        locatedCity = {...currentCity};
+                        localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
                         fetchWeatherData(currentCity.id);
                     },
                     {
@@ -760,6 +787,8 @@
                 console.log("浏览器不支持地理位置");
                 // 浏览器不支持地理位置，使用默认城市
                 showError("您的浏览器不支持地理位置服务，已显示默认城市天气");
+                locatedCity = {...currentCity};
+                localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
                 fetchWeatherData(currentCity.id);
             }
         }
@@ -773,7 +802,7 @@
                 
                 if (data.code === "200" && data.location && data.location.length > 0) {
                     const location = data.location[0];
-                    currentCity = {
+                    locatedCity = {
                         id: location.id,
                         name: location.name,
                         adm2: location.adm2,
@@ -781,11 +810,15 @@
                         country: location.country
                     };
                     
-                    // 保存城市信息到本地存储
-                    localStorage.setItem('savedCity', JSON.stringify(currentCity));
+                    // 保存定位城市
+                    localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
+                    
+                    // 设置当前城市为定位城市
+                    currentCity = {...locatedCity};
+                    localStorage.setItem('currentCity', JSON.stringify(currentCity));
                     
                     // 更新搜索框显示
-                    searchInput.value = `${location.name}, ${location.adm1 || location.adm2 || location.country}`;
+                    searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
                     
                     // 获取天气数据
                     fetchWeatherData(currentCity.id);
@@ -795,7 +828,8 @@
             } catch (error) {
                 console.error("根据坐标获取城市失败:", error);
                 showError("无法获取当前位置的城市信息，已显示默认城市天气");
-                // 如果失败，使用默认城市
+                locatedCity = {...currentCity};
+                localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
                 fetchWeatherData(currentCity.id);
             }
         }
@@ -882,8 +916,8 @@
                         country: location.country
                     };
                     
-                    // 保存选择的城市到本地存储
-                    localStorage.setItem('savedCity', JSON.stringify(currentCity));
+                    // 保存当前城市（临时）
+                    localStorage.setItem('currentCity', JSON.stringify(currentCity));
                     
                     searchInput.value = `${location.name}, ${location.adm1 || location.adm2 || location.country}`;
                     hideSearchResults();
@@ -1023,7 +1057,7 @@
             currentWeatherSection.innerHTML = `
                 <h2 class="location">
                     ${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}
-                    <i class="material-icons" title="刷新位置和天气" onclick="refreshLocationAndWeather()">refresh</i>
+                    <i class="material-icons" title="刷新天气" onclick="refreshWeather()">refresh</i>
                 </h2>
                 <p class="date-time">${dateTimeStr}</p>
                 
@@ -1072,7 +1106,6 @@
                 
                 const forecastCard = document.createElement('div');
                 forecastCard.className = 'forecast-card';
-                forecastCard.style.animationDelay = `${index * 0.1}s`;
                 forecastCard.innerHTML = `
                     <div class="forecast-day">${dayName}</div>
                     <i class="wi forecast-icon ${getWeatherIcon(day.iconDay)}"></i>
@@ -1101,7 +1134,6 @@
                 
                 const hourItem = document.createElement('div');
                 hourItem.className = 'hour-item';
-                hourItem.style.animationDelay = `${index * 0.05}s`;
                 hourItem.innerHTML = `
                     <div class="hour-time">${timeStr}</div>
                     <i class="wi hour-icon ${getWeatherIcon(hour.icon)}"></i>
@@ -1163,7 +1195,6 @@
             details.forEach((detail, index) => {
                 const detailCard = document.createElement('div');
                 detailCard.className = 'detail-card';
-                detailCard.style.animationDelay = `${index * 0.1}s`;
                 detailCard.innerHTML = `
                     <div class="detail-card-title">
                         <i class="material-icons">${detail.icon}</i>
@@ -1252,8 +1283,8 @@
             errorMessage.classList.remove('show');
         }
         
-        // 刷新位置和天气
-        function refreshLocationAndWeather() {
+        // 刷新天气
+        function refreshWeather() {
             // 添加刷新动画
             const refreshIcon = document.querySelector('.location i');
             refreshIcon.style.animation = 'spin 0.6s ease';
@@ -1261,14 +1292,18 @@
                 refreshIcon.style.animation = '';
             }, 600);
             
-            // 清除保存的城市信息，强制重新获取位置
-            localStorage.removeItem('savedCity');
+            // 如果有定位城市，则使用定位城市
+            if (locatedCity) {
+                currentCity = {...locatedCity};
+                localStorage.setItem('currentCity', JSON.stringify(currentCity));
+            }
+            
             animateWeatherRefresh();
-            tryGetLocation();
+            fetchWeatherData(currentCity.id);
         }
         
         // 暴露刷新函数到全局
-        window.refreshLocationAndWeather = refreshLocationAndWeather;
+        window.refreshWeather = refreshWeather;
     </script>
 </body>
 </html>
