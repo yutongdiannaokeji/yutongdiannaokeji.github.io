@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>软件下载</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-light: #F0F4C3;  /* 淡黄色 */
+            --primary: #CDDC39;       /* 浅绿色 */
+            --primary-dark: #AFB42B;  /* 深一点的绿色 */
+            --secondary: #8BC34A;     /* 辅助绿色 */
+            --text-primary: #212121;  /* 主要文字 */
+            --text-secondary: #757575; /* 次要文字 */
+            --background: #FFFDE7;     /* 淡黄色背景 */
+            --surface: #FFFFFF;       /* 卡片背景 */
+            --error: #F44336;        /* 错误色 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 1.5rem 1rem;
+            background-color: var(--primary);
+            color: var(--text-primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            margin-right: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 1rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .app-card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .app-icon-container {
+            height: 160px;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-icon {
+            font-size: 3.5rem;
+            color: var(--primary-dark);
+        }
+
+        .app-content {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-name {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-version {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: auto;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .download-icon {
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        footer {
+            background-color: var(--primary-light);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .app-icon-container {
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-text {
+                font-size: 1.1rem;
+            }
+            
+            .logo-icon {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="material-icons logo-icon">apps</span>
+                <span class="logo-text">软件下载</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="apps-grid">
+            <!-- 于桐电脑科技客户端 -->
+            <div class="app-card">
+                <div class="app-icon-container">
+                    <span class="material-icons app-icon">computer</span>
+                </div>
+                <div class="app-content">
+                    <h3 class="app-name">于桐电脑科技客户端</h3>
+                    <span class="app-version">兼容操作系统：Android</span>
+                    <a href="https://www.123912.com/s/0EVbVv-9oEPh" class="download-btn">
+                        <span class="material-icons download-icon">download</span>
+                        下载
+                    </a >
+                </div>
+            </div>
+
+            <!-- 于桐计算器 -->
+            <div class="app-card">
+                <div class="app-icon-container">
+                    <span class="material-icons app-icon">calculate</span>
+                </div>
+                <div class="app-content">
+                    <h3 class="app-name">于桐计算器</h3>
+                    <span class="app-version">兼容操作系统：Windows</span>
+                    <a href="https://share.feijipan.com/s/CmESkGMN" class="download-btn">
+                        <span class="material-icons download-icon">download</span>
+                        下载
+                    </a >
+                </div>
+            </div>
+
+            <!-- 于桐天气 -->
+            <div class="app-card">
+                <div class="app-icon-container">
+                    <span class="material-icons app-icon">cloud</span>
+                </div>
+                <div class="app-content">
+                    <h3 class="app-name">于桐天气</h3>
+                    <span class="app-version">兼容操作系统：Android</span>
+                    <a href="https://www.123912.com/s/0EVbVv-QoEPh" class="download-btn">
+                        <span class="material-icons download-icon">download</span>
+                        下载
+                    </a >
+                </div>
+            </div>
+
+            <!-- 六人团软件包 -->
+            <div class="app-card">
+                <div class="app-icon-container">
+                    <span class="material-icons app-icon">group_work</span>
+                </div>
+                <div class="app-content">
+                    <h3 class="app-name">六人团软件包</h3>
+                    <span class="app-version">兼容操作系统：Windows</span>
+                    <a href="https://www.123912.com/s/0EVbVv-HoEPh" class="download-btn">
+                        <span class="material-icons download-icon">download</span>
+                        下载
+                    </a >
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 于桐电脑科技 | 版权所有</p >
+        </div>
+    </footer>
+</body>
+</html>
