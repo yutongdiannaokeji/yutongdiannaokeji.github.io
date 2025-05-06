@@ -8,15 +8,15 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root {
-            --primary-light: #F0F4C3;  /* 淡黄色 */
-            --primary: #CDDC39;       /* 浅绿色 */
-            --primary-dark: #AFB42B;  /* 深一点的绿色 */
-            --secondary: #8BC34A;     /* 辅助绿色 */
+            --primary-light: #c7fbfe;  /* 浅蓝绿色 */
+            --primary: #00B4CC;       /* 主蓝绿色 */
+            --primary-dark: #008899;  /* 深蓝绿色 */
+            --secondary: #FF7E5F;     /* 辅助色-珊瑚橙 */
             --text-primary: #212121;  /* 主要文字 */
             --text-secondary: #757575; /* 次要文字 */
-            --background: #FFFDE7;     /* 淡黄色背景 */
+            --background: #F0FDFF;    /* 淡蓝绿色背景 */
             --surface: #FFFFFF;       /* 卡片背景 */
-            --error: #F44336;        /* 错误色 */
+            --error: #FF5252;        /* 错误色 */
         }
 
         * {
@@ -36,9 +36,9 @@
 
         header {
             padding: 1.5rem 1rem;
-            background-color: var(--primary);
-            color: var(--text-primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,180,204,0.2);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -59,12 +59,13 @@
         .logo-icon {
             font-size: 2rem;
             margin-right: 0.5rem;
-            color: var(--text-primary);
+            color: white;
         }
 
         .logo-text {
             font-size: 1.25rem;
             font-weight: 500;
+            color: white;
         }
 
         main {
@@ -85,28 +86,40 @@
             background-color: var(--surface);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,180,204,0.1);
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
+            border: 1px solid rgba(0,180,204,0.1);
         }
 
         .app-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,180,204,0.2);
         }
 
         .app-icon-container {
             height: 160px;
-            background-color: var(--primary-light);
+            background: linear-gradient(135deg, var(--primary-light), rgba(199,251,254,0.7));
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .app-card:hover .app-icon-container {
+            background: linear-gradient(135deg, var(--primary-light), rgba(199,251,254,0.9));
         }
 
         .app-icon {
             font-size: 3.5rem;
             color: var(--primary-dark);
+            transition: all 0.3s ease;
+        }
+
+        .app-card:hover .app-icon {
+            transform: scale(1.1);
+            color: var(--primary);
         }
 
         .app-content {
@@ -120,6 +133,7 @@
             font-size: 1.125rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
+            color: var(--primary-dark);
         }
 
         .app-version {
@@ -134,7 +148,7 @@
             justify-content: center;
             padding: 0.75rem 1.5rem;
             background-color: var(--primary);
-            color: var(--text-primary);
+            color: white;
             border: none;
             border-radius: 8px;
             font-size: 1rem;
@@ -143,10 +157,13 @@
             transition: all 0.2s ease;
             margin-top: auto;
             text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,180,204,0.3);
         }
 
         .download-btn:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,180,204,0.4);
         }
 
         .download-icon {
@@ -160,6 +177,7 @@
             text-align: center;
             color: var(--text-primary);
             font-size: 0.875rem;
+            border-top: 1px solid rgba(0,180,204,0.2);
         }
 
         .footer-content {
@@ -213,7 +231,7 @@
                 <div class="app-content">
                     <h3 class="app-name">于桐电脑科技客户端</h3>
                     <span class="app-version">兼容操作系统：Android</span>
-                    <a href="https://www.123912.com/s/0EVbVv-9oEPh" class="download-btn">
+                    <a href=" " class="download-btn">
                         <span class="material-icons download-icon">download</span>
                         下载
                     </a >
