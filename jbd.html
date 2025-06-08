@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集八达语 Jibadà - 一门独一无二的构造语言</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #E0F7F7;
+            background-color: #0A0F11;
+            overflow-x: hidden;
+        }
+
+        /* 配色体系 */
+        :root {
+            --bg-color: #0A0F11;
+            --primary-color: #00B8B8;
+            --primary-light: #20E0D0;
+            --primary-dark: #145F5F;
+            --text-color: #E0F7F7;
+            --text-light: #9ACDCD;
+            --card-bg: #111A1A;
+            --border-color: #1F2F2F;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 24px rgba(0, 184, 184, 0.2);
+            --gradient: linear-gradient(135deg, #00B8B8, #145F5F);
+        }
+
+        /* 导航栏样式 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 5%;
+            background-color: rgba(10, 15, 17, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--text-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 2rem;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-light);
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-light);
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* 移动端导航按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--primary-light);
+        }
+
+        /* 主要内容区域 */
+        main {
+            margin-top: 80px;
+            padding: 0 5%;
+        }
+
+        section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        /* Hero Section 样式 */
+        .hero {
+            height: 80vh;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--gradient);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><circle cx="25" cy="25" r="2" fill="rgba(224,247,247,0.2)"/><circle cx="75" cy="75" r="3" fill="rgba(224,247,247,0.2)"/><circle cx="15" cy="85" r="2" fill="rgba(224,247,247,0.2)"/><circle cx="85" cy="15" r="1" fill="rgba(224,247,247,0.2)"/><circle cx="50" cy="50" r="1" fill="rgba(224,247,247,0.2)"/></svg>');
+            background-size: 100px 100px;
+            opacity: 0.5;
+            animation: particleMove 20s linear infinite;
+        }
+
+        @keyframes particleMove {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 100px 100px;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        /* 语言特色卡片 */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .feature-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .feature-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-color);
+        }
+
+        .feature-card h3 {
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+        }
+
+        /* 语法展示区 */
+        .syntax-box {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin: 2rem 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 0.4s forwards;
+            border: 1px solid var(--border-color);
+        }
+
+        .syntax-box h3 {
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .syntax-example {
+            font-family: monospace;
+            background: rgba(0, 184, 184, 0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        /* 示例句区域 */
+        .examples-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .example {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+        }
+
+        .example.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 1;
+        }
+
+        .example-text {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .example-translation {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .example-pinyin {
+            color: var(--primary-light);
+            font-style: italic;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .example.active .example-pinyin {
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .example-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .example-nav button {
+            background: var(--border-color);
+            border: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .example-nav button.active {
+            background-color: var(--primary-light);
+            transform: scale(1.2);
+        }
+
+        /* 下载区域 */
+        .download-section {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 184, 184, 0.3);
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease 0.6s forwards;
+            border: 2px solid transparent;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(32, 224, 208, 0.4);
+            border-color: var(--primary-light);
+        }
+
+        /* 页脚样式 */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* 动画定义 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: rgba(17, 26, 26, 0.95);
+                backdrop-filter: blur(10px);
+                box-shadow: var(--shadow);
+                padding: 1rem;
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            nav.active {
+                transform: translateY(0);
+            }
+
+            nav ul {
+                flex-direction: column;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 2rem 0;
+            }
+        }
+
+        /* 辅助类 */
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-light);
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 1rem auto 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <a href="#" class="logo">集八达语 <span>Jibadà</span></a>
+        <button class="mobile-menu-btn">☰</button>
+        <nav>
+            <ul>
+                <li><a href="#features">语言特色</a></li>
+                <li><a href="#syntax">语法结构</a></li>
+                <li><a href="#examples">示例句</a></li>
+                <li><a href="#download">词典下载</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>欢迎来到集八达语的世界</h1>
+                <p>一门独一无二的构造语言</p>
+            </div>
+        </section>
+
+        <!-- 语言特色区 -->
+        <section id="features">
+            <h2 class="section-title">语言特色</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>独特语序</h3>
+                    <p>集八达语采用SOV(主-宾-谓)语序，结合灵活的修饰语位置，形成独特的表达方式，既符合逻辑又富有诗意。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>丰富词根</h3>
+                    <p>拥有超过2000个基础词根，通过复合、派生和屈折变化，可以表达丰富的语义层次和细微差别。</p>
+                </div>
+                <div class="feature-card">
+                    <h3>强逻辑性</h3>
+                    <p>语法规则高度系统化，减少例外情况，使语言学习更加直观，表达更加精确。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 语法展示区 -->
+        <section id="syntax">
+            <h2 class="section-title">语法结构</h2>
+            <div class="syntax-box">
+                <h3>SOV基本语序</h3>
+                <p>集八达语的基本语序为主语-宾语-谓语(SOV)，这与许多亚洲语言相似，但修饰语的位置更加灵活。</p>
+                <div class="syntax-example">
+                    Noa milata junok ɦarda-ki.<br>
+                    (我 第五医院 不配 收-现在时)<br>
+                    "第五医院不配收我"
+                </div>
+            </div>
+        </section>
+
+        <!-- 示例句区域 -->
+        <section id="examples">
+            <h2 class="section-title">示例句</h2>
+            <div class="examples-container">
+                <div class="example active" data-index="0">
+                    <div class="example-text">Zunai kavara lito-mo.</div>
+                    <div class="example-translation">太阳温暖地照耀着。</div>
+                    <div class="example-pinyin">Zu-nai ka-va-ra li-to-mo.</div>
+                </div>
+                <div class="example" data-index="1">
+                    <div class="example-text">Mira toba-sen juna-ki.</div>
+                    <div class="example-translation">我们正在学习语言。</div>
+                    <div class="example-pinyin">Mi-ra to-ba-sen ju-na-ki.</div>
+                </div>
+                <div class="example" data-index="2">
+                    <div class="example-text">Hala pireto vunai-sa noka-ro.</div>
+                    <div class="example-translation">那只鸟昨天飞走了。</div>
+                    <div class="example-pinyin">Ha-la pi-re-to vu-nai-sa no-ka-ro.</div>
+                </div>
+                <div class="example-nav">
+                    <button class="active" data-target="0"></button>
+                    <button data-target="1"></button>
+                    <button data-target="2"></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 下载区域 -->
+        <section id="download" class="download-section">
+            <h2 class="section-title">开始学习</h2>
+            <a href="#" class="download-btn">📘 下载小词典（Word版）</a>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2025 集八达语</p>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                nav.classList.remove('active');
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 示例句轮播
+        const examples = document.querySelectorAll('.example');
+        const navButtons = document.querySelectorAll('.example-nav button');
+        let currentIndex = 0;
+
+        function showExample(index) {
+            examples.forEach(example => example.classList.remove('active'));
+            navButtons.forEach(button => button.classList.remove('active'));
+            
+            examples[index].classList.add('active');
+            navButtons[index].classList.add('active');
+            currentIndex = index;
+        }
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetIndex = parseInt(button.getAttribute('data-target'));
+                showExample(targetIndex);
+            });
+        });
+
+        // 自动轮播
+        let interval = setInterval(() => {
+            let nextIndex = (currentIndex + 1) % examples.length;
+            showExample(nextIndex);
+        }, 5000);
+
+        // 鼠标悬停时暂停轮播
+        const examplesContainer = document.querySelector('.examples-container');
+        examplesContainer.addEventListener('mouseenter', () => {
+            clearInterval(interval);
+        });
+
+        examplesContainer.addEventListener('mouseleave', () => {
+            interval = setInterval(() => {
+                let nextIndex = (currentIndex + 1) % examples.length;
+                showExample(nextIndex);
+            }, 5000);
+        });
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                document.querySelector('header').style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.3)';
+                document.querySelector('header').style.background = 'rgba(10, 15, 17, 0.95)';
+            } else {
+                document.querySelector('header').style.boxShadow = 'var(--shadow)';
+                document.querySelector('header').style.background = 'rgba(10, 15, 17, 0.9)';
+            }
+        });
+
+        // 下载按钮点击事件
+        document.querySelector('.download-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('感谢您的兴趣！词典下载链接即将提供。');
+            // 实际应用中这里可以替换为真实的下载链接
+            // window.location.href = 'path/to/dictionary.docx';
+        });
+    </script>
+</body>
+</html>
