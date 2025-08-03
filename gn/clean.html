@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>于桐电脑科技 - 专业电脑清理服务</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        /* 像素风格容器 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 4px solid #2e7d32;
+            background-color: #f1f8e9;
+            box-shadow: 8px 8px 0 #81c784;
+        }
+        
+        /* 像素风格标题 */
+        h1, h2, h3 {
+            color: #1b5e20;
+            text-shadow: 2px 2px 0 #a5d6a7;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            border-bottom: 4px dotted #66bb6a;
+            padding-bottom: 10px;
+        }
+        
+        /* 导航菜单 */
+        nav {
+            background-color: #66bb6a;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        nav li {
+            display: inline;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+        }
+        
+        nav a:hover {
+            background-color: #43a047;
+        }
+        
+        /* 服务项目 */
+        .service {
+            background-color: #c8e6c9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #2e7d32;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            box-shadow: 4px 4px 0 #2e7d32;
+        }
+        
+        .btn:hover {
+            background-color: #388e3c;
+            box-shadow: 2px 2px 0 #2e7d32;
+            transform: translate(2px, 2px);
+        }
+        
+        /* 页脚 */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #a5d6a7;
+            border-top: 3px dotted #2e7d32;
+        }
+        
+        /* 像素风格图标 */
+        .pixel-icon {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav li {
+                margin: 5px 0;
+            }
+            
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #f1f8e9;
+            margin: 15% auto;
+            padding: 20px;
+            border: 4px solid #2e7d32;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 8px 8px 0 #81c784;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .wechat-id {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1b5e20;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #c8e6c9;
+            border: 2px dashed #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>于桐电脑科技</h1>
+            <p>专业电脑清理服务 - 让您的电脑焕然一新</p >
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href=" ">服务项目</a ></li>
+                <li><a href="#advantages">我们的优势</a ></li>
+                <li><a href="#pricing">价格方案</a ></li>
+                <li><a href="#contact">联系我们</a ></li>
+            </ul>
+        </nav>
+        
+        <section id="services">
+            <h2>服务项目</h2>
+            
+            <div class="service">
+                <h3>基础清理套餐</h3>
+                <p>✔ 系统垃圾文件清理</p >
+                <p>✔ 磁盘碎片整理</p >
+                <p>✔ 启动项优化</p >
+                <p>✔ 基础病毒扫描</p >
+                <button class="btn contact-btn">立即预约</button>
+            </div>
+            
+            <div class="service">
+                <h3>深度清理套餐</h3>
+                <p>✔ 包含基础清理所有项目</p >
+                <p>✔ 注册表深度清理</p >
+                <p>✔ 恶意软件彻底清除</p >
+                <p>✔ 系统性能优化</p >
+                <p>✔ 硬件灰尘清理</p >
+                <button class="btn contact-btn">立即预约</button>
+            </div>
+            
+            <div class="service">
+                <h3>企业定制套餐</h3>
+                <p>✔ 多台电脑批量清理</p >
+                <p>✔ 定期维护服务</p >
+                <p>✔ 数据备份方案</p >
+                <p>✔ 专属技术支持</p >
+                <button class="btn contact-btn">咨询详情</button>
+            </div>
+        </section>
+        
+        <section id="advantages">
+            <h2>我们的优势</h2>
+            <div class="service">
+                <p><strong>专业团队</strong> - 拥有7年电脑维护经验的技术专家</p >
+                <p><strong>安全可靠</strong> - 操作规范，数据安全有保障</p >
+                <p><strong>快速响应</strong> - 预约后24小时内上门服务</p >
+                <p><strong>透明收费</strong> - 无隐藏费用，先服务后付款</p >
+                <p><strong>售后保障</strong> - 所有服务提供30天质保</p >
+                <button class="btn contact-btn">获取服务</button>
+            </div>
+        </section>
+        
+        <section id="pricing">
+            <h2>价格方案</h2>
+            <div class="service">
+                <p><strong>基础清理套餐</strong> - ￥79</p >
+                <p><strong>深度清理套餐</strong> - ￥159</p >
+                <p><strong>企业定制套餐</strong> - ￥299起</p >
+                <p>新客户首次体验立减20元！</p >
+                <button class="btn contact-btn">获取优惠</button>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <h2>联系我们</h2>
+            <div class="service">
+                <p>📞 电话: 18131732398</p >
+                <p>📧 邮箱: zdj20090505@outlook.com</p >
+                <p>🏠 地址: 唐山市第54中学（西校区）403教室</p >
+                <p>⏰ 营业时间: 周一至周日 9:00-18:00</p >
+                <button class="btn contact-btn">微信联系</button>
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2025 于桐电脑科技 - 专业电脑清理服务</p >
+            <p>让科技回归纯净，让速度重回巅峰</p >
+        </footer>
+    </div>
+    
+    <!-- 模态框 -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>添加微信咨询</h2>
+            <p>请添加我们的客服微信，我们将尽快为您服务</p >
+            <div class="wechat-id">zdj090505</div>
+            <p>长按复制微信号</p >
+            <button class="btn" onclick="copyWechatId()">复制微信号</button>
+        </div>
+    </div>
+    
+    <script>
+        // 获取模态框
+        var modal = document.getElementById("contactModal");
+        
+        // 获取所有联系按钮
+        var btns = document.getElementsByClassName("contact-btn");
+        
+        // 获取关闭按钮
+        var span = document.getElementsByClassName("close")[0];
+        
+        // 为所有按钮添加点击事件
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].onclick = function() {
+                modal.style.display = "block";
+            }
+        }
+        
+        // 点击关闭按钮关闭模态框
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        // 点击模态框外部关闭模态框
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
+        // 复制微信号功能
+        function copyWechatId() {
+            var wechatId = "zdj090505";
+            navigator.clipboard.writeText(wechatId).then(function() {
+                alert("微信号已复制: " + wechatId);
+            }, function() {
+                // 如果剪贴板API不可用，使用备用方法
+                var textarea = document.createElement("textarea");
+                textarea.value = wechatId;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+                alert("微信号已复制: " + wechatId);
+            });
+        }
+    </script>
+</body>
+</html>
