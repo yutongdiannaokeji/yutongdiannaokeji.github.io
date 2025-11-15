@@ -1,157 +1,927 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Chatyutong 语音助手</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatYuTong</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* 背景设置 */
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #A1C4FD, #C2E9FB);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
         }
-
-        /* 毛玻璃容器 */
-        .container {
-            width: 320px;
-            padding: 20px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            text-align: center;
-            outline: none;
-        }
-
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* 按钮容器 */
-        .button-container {
+        
+        body {
+            background: #f5f5f5;
+            color: #202124;
+            height: 100vh;
             display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        /* 按钮样式 */
-        button {
-            flex: 1;
-            max-width: 120px;
-            padding: 10px;
+            color: white;
+            font-weight: bold;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-
-            /* 兼容 iPad Safari */
-            -webkit-appearance: none;
-            appearance: none;
-            -webkit-text-size-adjust: 100%;
-            touch-action: manipulation;
+            flex-shrink: 0;
         }
-
-        button:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(1.05);
-        }
-
-        #output {
+        
+        .title {
             font-size: 18px;
-            margin-top: 20px;
-            min-height: 40px;
+            font-weight: 500;
+            color: #202124;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .thinking-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 16px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .thinking-toggle:hover {
+            background: #e8f0fe;
+            border-color: #4285f4;
+        }
+        
+        .thinking-toggle.active {
+            background: #e8f0fe;
+            border-color: #4285f4;
+            color: #4285f4;
+        }
+        
+        .toggle-switch {
+            width: 28px;
+            height: 16px;
+            background: #ccc;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+        
+        .thinking-toggle.active .toggle-switch {
+            background: #4285f4;
+        }
+        
+        .thinking-toggle.active .toggle-switch::after {
+            left: 14px;
+        }
+        
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #5f6368;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #34a853;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            flex-direction: row-reverse;
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .user-avatar {
+            background: #4285f4;
             color: white;
+        }
+        
+        .assistant-avatar {
+            background: #34a853;
+            color: white;
+        }
+        
+        .avatar .material-icons {
+            font-size: 16px;
+        }
+        
+        .message-content {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        
+        .user-message .message-content {
+            background: #4285f4;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .assistant-message .message-content {
+            background: #f1f3f4;
+            color: #202124;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .input-container {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+        
+        .input-wrapper {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            resize: none;
+            max-height: 100px;
+            min-height: 44px;
+            line-height: 1.4;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .message-input:focus {
+            border-color: #4285f4;
+            background: white;
+            box-shadow: 0 2px 6px rgba(66, 133, 244, 0.2);
+        }
+        
+        .send-button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .send-button:hover {
+            background: #3367d6;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(66, 133, 244, 0.3);
+        }
+        
+        .send-button:active {
+            transform: translateY(0);
+        }
+        
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .send-button .material-icons {
+            font-size: 18px;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 0;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+            padding: 12px 16px;
+            background: #f1f3f4;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #5f6368;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-3px); opacity: 1; }
+        }
+        
+        .welcome-container {
+            text-align: center;
+            padding: 40px 16px;
+            color: #5f6368;
+        }
+        
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 12px;
+            color: #202124;
+        }
+        
+        .welcome-subtitle {
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        
+        .examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .example-card {
+            background: white;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 13px;
+        }
+        
+        .example-card:hover {
+            background: #f8f9fa;
+            border-color: #4285f4;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 12px;
+            color: #5f6368;
+            font-size: 12px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 6px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .suggestions {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 12px 0;
+            margin-bottom: 6px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .suggestion-chip {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 14px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .suggestion-chip:hover {
+            background: #f8f9fa;
+            border-color: #4285f4;
+        }
+        
+        .thinking-badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #4285f4;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 10px;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+        
+        /* 超小屏幕适配 (手机竖屏) */
+        @media (max-width: 480px) {
+            .header {
+                padding: 8px 12px;
+            }
+            
+            .logo {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .title {
+                font-size: 16px;
+            }
+            
+            .thinking-toggle {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+            
+            .toggle-switch {
+                width: 24px;
+                height: 14px;
+            }
+            
+            .toggle-switch::after {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .thinking-toggle.active .toggle-switch::after {
+                left: 12px;
+            }
+            
+            .chat-messages {
+                padding: 12px;
+                gap: 12px;
+            }
+            
+            .message {
+                gap: 8px;
+            }
+            
+            .avatar {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .avatar .material-icons {
+                font-size: 14px;
+            }
+            
+            .message-content {
+                max-width: 90%;
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .input-container {
+                padding: 12px;
+            }
+            
+            .message-input {
+                padding: 10px 12px;
+                font-size: 13px;
+                min-height: 40px;
+            }
+            
+            .send-button {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .send-button .material-icons {
+                font-size: 16px;
+            }
+            
+            .welcome-title {
+                font-size: 20px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 13px;
+            }
+            
+            .examples {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .example-card {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+        
+        /* 平板适配 */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .chat-container {
+                max-width: 90%;
+            }
+            
+            .message-content {
+                max-width: 75%;
+            }
+        }
+        
+        /* 大屏幕适配 */
+        @media (min-width: 1025px) {
+            .chat-container {
+                max-width: 1000px;
+            }
+            
+            .message-content {
+                max-width: 70%;
+            }
+        }
+        
+        /* 超大屏幕适配 */
+        @media (min-width: 1440px) {
+            .chat-container {
+                max-width: 1200px;
+            }
+            
+            .message-content {
+                max-width: 65%;
+            }
+        }
+        
+        /* 横屏适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 6px 12px;
+            }
+            
+            .chat-messages {
+                padding: 8px 12px;
+                gap: 8px;
+            }
+            
+            .input-container {
+                padding: 8px 12px;
+            }
+            
+            .welcome-container {
+                padding: 20px 12px;
+            }
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>Chatyutong 语音助手</h1>
-        <input type="text" id="textInput" placeholder="输入文字..." />
-        <br>
-        <div class="button-container">
-            <button onclick="startListening()">🎤 语音</button>
-            <button onclick="handleTextInput()">📝 文字</button>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">Y</div>
+            <div class="title">ChatYuTong</div>
         </div>
-        <p id="output">等待输入...</p >
+        <div class="header-controls">
+            <div class="thinking-toggle" id="thinking-toggle">
+                <span>深度思考</span>
+                <div class="toggle-switch"></div>
+            </div>
+            <div class="api-status">
+                <div class="status-dot"></div>
+                <span>GLM-4-Flash</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="welcome-container" id="welcome-container">
+                <div class="welcome-title">欢迎使用 ChatYuTong</div>
+                <div class="welcome-subtitle">基于智谱GLM-4-Flash模型 · 深度思考能力 · 完全免费</div>
+                <div class="examples">
+                    <div class="example-card" onclick="insertExample('用Python实现一个机器学习模型')">
+                        <div>🤖 用Python实现一个机器学习模型</div>
+                    </div>
+                    <div class="example-card" onclick="insertExample('详细分析当前AI发展趋势')">
+                        <div>📈 详细分析当前AI发展趋势</div>
+                    </div>
+                    <div class="example-card" onclick="insertExample('帮我写一个完整的网页应用')">
+                        <div>💻 帮我写一个完整的网页应用</div>
+                    </div>
+                    <div class="example-card" onclick="insertExample('深入讨论哲学中的存在主义')">
+                        <div>🧠 深入讨论哲学中的存在主义</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="avatar assistant-avatar">
+                <span class="material-icons">smart_toy</span>
+            </div>
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea class="message-input" id="message-input" placeholder="输入消息..." rows="1"></textarea>
+                <button class="send-button" id="send-button">
+                    <span class="material-icons">send</span>
+                </button>
+            </div>
+            <div class="suggestions">
+                <div class="suggestion-chip" onclick="insertExample('详细解释深度学习原理')">详细解释深度学习原理</div>
+                <div class="suggestion-chip" onclick="insertExample('写一个复杂的算法实现')">写一个复杂的算法实现</div>
+                <div class="suggestion-chip" onclick="insertExample('分析当前经济形势')">分析当前经济形势</div>
+                <div class="suggestion-chip" onclick="insertExample('帮我debug这段代码')">帮我debug这段代码</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        ChatYuTong · 基于智谱GLM-4-Flash模型 · 深度思考 · 完全免费
     </div>
 
     <script>
-        // 语音识别 API（仅支持 Chrome）
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = 'zh-CN';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        function startListening() {
-            document.getElementById("output").textContent = "听你说话中...";
-            recognition.start();
-        }
-
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            document.getElementById("textInput").value = transcript;
-            respond(transcript);
-        };
-
-        recognition.onerror = function(event) {
-            document.getElementById("output").textContent = "语音识别错误：" + event.error;
-        };
-
-        function handleTextInput() {
-            const text = document.getElementById("textInput").value.trim();
-            respond(text);
-        }
-
-        function respond(text) {
-            let response = "服务器繁忙，请稍后再试。";
-
-            if (text.includes("你好")) {
-                response = "你好！我是 Chatyutong，很高兴见到你。";
-            } else if (text.includes("时间")) {
-                response = "现在的时间是：" + new Date().toLocaleTimeString();
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+            const welcomeContainer = document.getElementById('welcome-container');
+            const thinkingToggle = document.getElementById('thinking-toggle');
+            
+            // 智谱API配置 - 完全免费
+            const API_KEY = '99c5e273cb974dc996a80edf391f8875.e3S2GXvxkrHWbPUl';
+            const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+            
+            let isDeepThinking = false;
+            
+            // 深度思考开关
+            thinkingToggle.addEventListener('click', function() {
+                isDeepThinking = !isDeepThinking;
+                thinkingToggle.classList.toggle('active', isDeepThinking);
+                
+                // 显示状态提示
+                if (isDeepThinking) {
+                    showTempMessage('深度思考模式已开启', 'assistant');
+                } else {
+                    showTempMessage('深度思考模式已关闭', 'assistant');
+                }
+            });
+            
+            // 自动调整输入框高度
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+            
+            // 发送消息
+            async function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                // 隐藏欢迎界面
+                if (welcomeContainer.style.display !== 'none') {
+                    welcomeContainer.style.display = 'none';
+                }
+                
+                // 添加用户消息
+                addMessage(message, 'user');
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                
+                // 显示输入指示器
+                typingIndicator.style.display = 'flex';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                try {
+                    // 调用真实的GLM-4.5 API
+                    const response = await callGLM4API(message, isDeepThinking);
+                    
+                    // 隐藏输入指示器
+                    typingIndicator.style.display = 'none';
+                    
+                    // 添加助手回复
+                    addMessage(response, 'assistant', isDeepThinking);
+                } catch (error) {
+                    // 隐藏输入指示器
+                    typingIndicator.style.display = 'none';
+                    
+                    // 显示错误信息
+                    let errorMsg = '抱歉，服务暂时不可用，请稍后重试。';
+                    if (error.message.includes('401')) {
+                        errorMsg = 'API密钥无效，请联系管理员。';
+                    } else if (error.message.includes('429')) {
+                        errorMsg = '请求过于频繁，请稍后再试。';
+                    } else if (error.message.includes('quota')) {
+                        errorMsg = '免费额度已用完，请联系管理员。';
+                    }
+                    addMessage(errorMsg, 'assistant');
+                    console.error('API调用错误:', error);
+                }
             }
+            
+            // 调用真实的GLM-4.5 API
+            async function callGLM4API(userMessage, deepThinking) {
+                // 根据深度思考模式调整系统提示词
+                let systemPrompt;
+                if (deepThinking) {
+                    systemPrompt = `你是ChatYuTong，一个具有深度思考能力的AI助手。请开启深度思考模式：
 
-            document.getElementById("output").textContent = response;
+深度思考要求：
+1. 多角度分析：从技术、商业、社会、伦理等多个维度分析问题
+2. 批判性思维：质疑假设，考虑反例和局限性
+3. 系统性思考：理解问题的各个组成部分及其相互关系
+4. 创造性解决方案：提出创新且实用的解决方案
+5. 详细论证：提供充分的理由和证据支持观点
+6. 前瞻性思考：考虑长期影响和未来发展趋势
 
-            // 语音回复
-            const synth = window.speechSynthesis;
-            const utterance = new SpeechSynthesisUtterance(response);
-            utterance.lang = 'zh-CN';
-            synth.speak(utterance);
-        }
+请提供深入、全面、专业的分析，避免表面化的回答。`;
+                } else {
+                    systemPrompt = `你是ChatYuTong，一个专业的AI助手。请提供准确、有用的回答，直接解决问题核心。`;
+                }
+                
+                const requestBody = {
+                    model: "glm-4-flash",
+                    messages: [
+                        {
+                            role: "system",
+                            content: systemPrompt
+                        },
+                        {
+                            role: "user", 
+                            content: userMessage
+                        }
+                    ],
+                    temperature: deepThinking ? 0.9 : 0.7,
+                    top_p: 0.9,
+                    max_tokens: deepThinking ? 4000 : 2000,
+                    stream: false
+                };
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+                
+                return data.choices[0].message.content;
+            }
+            
+            // 添加消息到聊天界面
+            function addMessage(text, sender, isDeepThinkingResponse = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = `avatar ${sender === 'user' ? 'user-avatar' : 'assistant-avatar'}`;
+                
+                const icon = document.createElement('span');
+                icon.className = 'material-icons';
+                icon.textContent = sender === 'user' ? 'person' : 'smart_toy';
+                avatarDiv.appendChild(icon);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                
+                // 如果是深度思考回复，添加标识
+                if (isDeepThinkingResponse) {
+                    const thinkingBadge = document.createElement('span');
+                    thinkingBadge.className = 'thinking-badge';
+                    thinkingBadge.textContent = '深度思考';
+                    contentDiv.appendChild(thinkingBadge);
+                    contentDiv.appendChild(document.createElement('br'));
+                }
+                
+                // 处理代码块和格式
+                formatMessageContent(text, contentDiv);
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
+                
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 显示临时状态消息
+            function showTempMessage(text, sender) {
+                const tempMsg = document.createElement('div');
+                tempMsg.className = `message ${sender}-message`;
+                tempMsg.style.opacity = '0.7';
+                tempMsg.style.fontSize = '12px';
+                tempMsg.style.fontStyle = 'italic';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = text;
+                
+                tempMsg.appendChild(contentDiv);
+                chatMessages.appendChild(tempMsg);
+                
+                // 3秒后淡出移除
+                setTimeout(() => {
+                    tempMsg.style.transition = 'opacity 0.5s';
+                    tempMsg.style.opacity = '0';
+                    setTimeout(() => {
+                        if (tempMsg.parentNode) {
+                            tempMsg.parentNode.removeChild(tempMsg);
+                        }
+                    }, 500);
+                }, 2000);
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 格式化消息内容
+            function formatMessageContent(text, container) {
+                // 处理代码块
+                const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+                let lastIndex = 0;
+                let match;
+                
+                while ((match = codeBlockRegex.exec(text)) !== null) {
+                    if (match.index > lastIndex) {
+                        const textContent = text.substring(lastIndex, match.index);
+                        addFormattedText(textContent, container);
+                    }
+                    
+                    const codeBlock = document.createElement('div');
+                    codeBlock.className = 'code-block';
+                    codeBlock.textContent = match[2];
+                    container.appendChild(codeBlock);
+                    
+                    lastIndex = match.index + match[0].length;
+                }
+                
+                if (lastIndex < text.length) {
+                    addFormattedText(text.substring(lastIndex), container);
+                }
+            }
+            
+            function addFormattedText(text, container) {
+                const lines = text.split('\n');
+                lines.forEach((line, index) => {
+                    if (line.trim()) {
+                        const p = document.createElement('div');
+                        p.style.marginBottom = '6px';
+                        p.textContent = line;
+                        container.appendChild(p);
+                    } else if (index < lines.length - 1) {
+                        container.appendChild(document.createElement('br'));
+                    }
+                });
+            }
+            
+            // 插入示例问题
+            window.insertExample = function(question) {
+                messageInput.value = question;
+                messageInput.focus();
+                messageInput.dispatchEvent(new Event('input'));
+            };
+            
+            // 事件监听
+            sendButton.addEventListener('click', sendMessage);
+            
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // 初始聚焦输入框
+            messageInput.focus();
+        });
     </script>
-
 </body>
 </html>
