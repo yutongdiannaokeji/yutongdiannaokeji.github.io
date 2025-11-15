@@ -208,6 +208,7 @@
             line-height: 1.5;
             word-wrap: break-word;
             font-size: 14px;
+            min-height: 20px;
         }
         
         .user-message .message-content {
@@ -220,6 +221,25 @@
             background: #f1f3f4;
             color: #202124;
             border-bottom-left-radius: 4px;
+        }
+        
+        .streaming-content {
+            display: inline;
+        }
+        
+        .streaming-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #4285f4;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
         
         .input-container {
@@ -292,6 +312,32 @@
         
         .send-button .material-icons {
             font-size: 18px;
+        }
+        
+        .stop-button {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            display: none; /* 初始隐藏 */
+        }
+        
+        .stop-button:hover {
+            background: #d32f2f;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(244, 67, 54, 0.3);
+        }
+        
+        .stop-button:active {
+            transform: translateY(0);
         }
         
         .typing-indicator {
@@ -395,6 +441,7 @@
             overflow-x: auto;
             font-family: 'Courier New', monospace;
             font-size: 12px;
+            display: none; /* 初始隐藏，流式显示时再显示 */
         }
         
         .suggestions {
@@ -434,154 +481,16 @@
             font-weight: 500;
         }
         
-        /* 超小屏幕适配 (手机竖屏) */
+        /* 响应式设计 */
         @media (max-width: 480px) {
-            .header {
-                padding: 8px 12px;
-            }
-            
-            .logo {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-            
-            .title {
-                font-size: 16px;
-            }
-            
-            .thinking-toggle {
-                padding: 4px 8px;
-                font-size: 11px;
-            }
-            
-            .toggle-switch {
-                width: 24px;
-                height: 14px;
-            }
-            
-            .toggle-switch::after {
-                width: 10px;
-                height: 10px;
-            }
-            
-            .thinking-toggle.active .toggle-switch::after {
-                left: 12px;
-            }
-            
-            .chat-messages {
-                padding: 12px;
-                gap: 12px;
-            }
-            
-            .message {
-                gap: 8px;
-            }
-            
-            .avatar {
-                width: 28px;
-                height: 28px;
-            }
-            
-            .avatar .material-icons {
-                font-size: 14px;
-            }
-            
-            .message-content {
-                max-width: 90%;
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-            
-            .input-container {
-                padding: 12px;
-            }
-            
-            .message-input {
-                padding: 10px 12px;
-                font-size: 13px;
-                min-height: 40px;
-            }
-            
-            .send-button {
-                width: 36px;
-                height: 36px;
-            }
-            
-            .send-button .material-icons {
-                font-size: 16px;
-            }
-            
-            .welcome-title {
-                font-size: 20px;
-            }
-            
-            .welcome-subtitle {
-                font-size: 13px;
-            }
-            
-            .examples {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            
-            .example-card {
-                padding: 10px;
-                font-size: 12px;
-            }
-        }
-        
-        /* 平板适配 */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .chat-container {
-                max-width: 90%;
-            }
-            
-            .message-content {
-                max-width: 75%;
-            }
-        }
-        
-        /* 大屏幕适配 */
-        @media (min-width: 1025px) {
-            .chat-container {
-                max-width: 1000px;
-            }
-            
-            .message-content {
-                max-width: 70%;
-            }
-        }
-        
-        /* 超大屏幕适配 */
-        @media (min-width: 1440px) {
-            .chat-container {
-                max-width: 1200px;
-            }
-            
-            .message-content {
-                max-width: 65%;
-            }
-        }
-        
-        /* 横屏适配 */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .header {
-                padding: 6px 12px;
-            }
-            
-            .chat-messages {
-                padding: 8px 12px;
-                gap: 8px;
-            }
-            
-            .input-container {
-                padding: 8px 12px;
-            }
-            
-            .welcome-container {
-                padding: 20px 12px;
-            }
+            .header { padding: 8px 12px; }
+            .logo { width: 32px; height: 32px; font-size: 14px; }
+            .title { font-size: 16px; }
+            .thinking-toggle { padding: 4px 8px; font-size: 11px; }
+            .chat-messages { padding: 12px; gap: 12px; }
+            .message { gap: 8px; }
+            .avatar { width: 28px; height: 28px; }
+            .message-content { max-width: 90%; padding: 10px 12px; font-size: 13px; }
         }
     </style>
 </head>
@@ -607,7 +516,7 @@
         <div class="chat-messages" id="chat-messages">
             <div class="welcome-container" id="welcome-container">
                 <div class="welcome-title">欢迎使用 ChatYuTong</div>
-                <div class="welcome-subtitle">基于智谱GLM-4-Flash模型 · 深度思考能力 · 完全免费</div>
+                <div class="welcome-subtitle">基于智谱GLM-4-Flash模型 · 实时流式输出 · 完全免费</div>
                 <div class="examples">
                     <div class="example-card" onclick="insertExample('用Python实现一个机器学习模型')">
                         <div>🤖 用Python实现一个机器学习模型</div>
@@ -639,6 +548,9 @@
         <div class="input-container">
             <div class="input-wrapper">
                 <textarea class="message-input" id="message-input" placeholder="输入消息..." rows="1"></textarea>
+                <button class="stop-button" id="stop-button">
+                    <span class="material-icons">stop</span>
+                </button>
                 <button class="send-button" id="send-button">
                     <span class="material-icons">send</span>
                 </button>
@@ -653,7 +565,7 @@
     </div>
     
     <div class="footer">
-        ChatYuTong · 基于智谱GLM-4-Flash模型 · 深度思考 · 完全免费
+        ChatYuTong · 基于智谱GLM-4-Flash模型 · 实时流式输出 · 完全免费
     </div>
 
     <script>
@@ -661,160 +573,84 @@
             const chatMessages = document.getElementById('chat-messages');
             const messageInput = document.getElementById('message-input');
             const sendButton = document.getElementById('send-button');
+            const stopButton = document.getElementById('stop-button');
             const typingIndicator = document.getElementById('typing-indicator');
             const welcomeContainer = document.getElementById('welcome-container');
             const thinkingToggle = document.getElementById('thinking-toggle');
             
-            // 智谱API配置 - 完全免费
+            // 智谱API配置
             const API_KEY = '99c5e273cb974dc996a80edf391f8875.e3S2GXvxkrHWbPUl';
             const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
             
             let isDeepThinking = false;
-            
+            let currentStreamController = null;
+            let isStreaming = false;
+
             // 深度思考开关
             thinkingToggle.addEventListener('click', function() {
                 isDeepThinking = !isDeepThinking;
                 thinkingToggle.classList.toggle('active', isDeepThinking);
-                
-                // 显示状态提示
-                if (isDeepThinking) {
-                    showTempMessage('深度思考模式已开启', 'assistant');
-                } else {
-                    showTempMessage('深度思考模式已关闭', 'assistant');
-                }
+                showTempMessage(isDeepThinking ? '深度思考模式已开启' : '深度思考模式已关闭', 'assistant');
             });
-            
+
             // 自动调整输入框高度
             messageInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 100) + 'px';
             });
-            
+
             // 发送消息
             async function sendMessage() {
                 const message = messageInput.value.trim();
-                if (!message) return;
-                
+                if (!message || isStreaming) return;
+
                 // 隐藏欢迎界面
                 if (welcomeContainer.style.display !== 'none') {
                     welcomeContainer.style.display = 'none';
                 }
-                
+
                 // 添加用户消息
                 addMessage(message, 'user');
                 messageInput.value = '';
                 messageInput.style.height = 'auto';
-                
-                // 显示输入指示器
-                typingIndicator.style.display = 'flex';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                
+
+                // 禁用输入并显示停止按钮
+                setInputDisabled(true);
+                stopButton.style.display = 'flex';
+
                 try {
-                    // 调用真实的GLM-4.5 API
-                    const response = await callGLM4API(message, isDeepThinking);
+                    // 创建流式消息容器
+                    const messageContainer = createStreamingMessage();
                     
-                    // 隐藏输入指示器
-                    typingIndicator.style.display = 'none';
+                    // 调用流式API
+                    await callStreamingAPI(message, messageContainer);
                     
-                    // 添加助手回复
-                    addMessage(response, 'assistant', isDeepThinking);
                 } catch (error) {
-                    // 隐藏输入指示器
-                    typingIndicator.style.display = 'none';
-                    
-                    // 显示错误信息
-                    let errorMsg = '抱歉，服务暂时不可用，请稍后重试。';
-                    if (error.message.includes('401')) {
-                        errorMsg = 'API密钥无效，请联系管理员。';
-                    } else if (error.message.includes('429')) {
-                        errorMsg = '请求过于频繁，请稍后再试。';
-                    } else if (error.message.includes('quota')) {
-                        errorMsg = '免费额度已用完，请联系管理员。';
-                    }
-                    addMessage(errorMsg, 'assistant');
                     console.error('API调用错误:', error);
+                    addMessage('抱歉，服务暂时不可用，请稍后重试。', 'assistant');
+                } finally {
+                    setInputDisabled(false);
+                    stopButton.style.display = 'none';
                 }
             }
-            
-            // 调用真实的GLM-4.5 API
-            async function callGLM4API(userMessage, deepThinking) {
-                // 根据深度思考模式调整系统提示词
-                let systemPrompt;
-                if (deepThinking) {
-                    systemPrompt = `你是ChatYuTong，一个具有深度思考能力的AI助手。请开启深度思考模式：
 
-深度思考要求：
-1. 多角度分析：从技术、商业、社会、伦理等多个维度分析问题
-2. 批判性思维：质疑假设，考虑反例和局限性
-3. 系统性思考：理解问题的各个组成部分及其相互关系
-4. 创造性解决方案：提出创新且实用的解决方案
-5. 详细论证：提供充分的理由和证据支持观点
-6. 前瞻性思考：考虑长期影响和未来发展趋势
-
-请提供深入、全面、专业的分析，避免表面化的回答。`;
-                } else {
-                    systemPrompt = `你是ChatYuTong，一个专业的AI助手。请提供准确、有用的回答，直接解决问题核心。`;
-                }
-                
-                const requestBody = {
-                    model: "glm-4-flash",
-                    messages: [
-                        {
-                            role: "system",
-                            content: systemPrompt
-                        },
-                        {
-                            role: "user", 
-                            content: userMessage
-                        }
-                    ],
-                    temperature: deepThinking ? 0.9 : 0.7,
-                    top_p: 0.9,
-                    max_tokens: deepThinking ? 4000 : 2000,
-                    stream: false
-                };
-                
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-                
-                return data.choices[0].message.content;
-            }
-            
-            // 添加消息到聊天界面
-            function addMessage(text, sender, isDeepThinkingResponse = false) {
+            // 创建流式消息容器
+            function createStreamingMessage() {
                 const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${sender}-message`;
+                messageDiv.className = `message assistant-message`;
                 
                 const avatarDiv = document.createElement('div');
-                avatarDiv.className = `avatar ${sender === 'user' ? 'user-avatar' : 'assistant-avatar'}`;
-                
+                avatarDiv.className = 'avatar assistant-avatar';
                 const icon = document.createElement('span');
                 icon.className = 'material-icons';
-                icon.textContent = sender === 'user' ? 'person' : 'smart_toy';
+                icon.textContent = 'smart_toy';
                 avatarDiv.appendChild(icon);
                 
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'message-content';
                 
-                // 如果是深度思考回复，添加标识
-                if (isDeepThinkingResponse) {
+                // 添加深度思考标识
+                if (isDeepThinking) {
                     const thinkingBadge = document.createElement('span');
                     thinkingBadge.className = 'thinking-badge';
                     thinkingBadge.textContent = '深度思考';
@@ -822,8 +658,15 @@
                     contentDiv.appendChild(document.createElement('br'));
                 }
                 
-                // 处理代码块和格式
-                formatMessageContent(text, contentDiv);
+                // 创建流式内容容器
+                const streamingContent = document.createElement('div');
+                streamingContent.className = 'streaming-content';
+                contentDiv.appendChild(streamingContent);
+                
+                // 添加光标
+                const cursor = document.createElement('span');
+                cursor.className = 'streaming-cursor';
+                contentDiv.appendChild(cursor);
                 
                 messageDiv.appendChild(avatarDiv);
                 messageDiv.appendChild(contentDiv);
@@ -831,94 +674,208 @@
                 
                 // 滚动到底部
                 chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                return { contentDiv, streamingContent, cursor };
             }
-            
-            // 显示临时状态消息
+
+            // 调用流式API
+            async function callStreamingAPI(userMessage, messageContainer) {
+                isStreaming = true;
+                const { streamingContent, cursor } = messageContainer;
+                
+                let fullContent = '';
+                let buffer = '';
+                let isFirstChunk = true;
+
+                try {
+                    const systemPrompt = isDeepThinking ? 
+                        `你是ChatYuTong，开启深度思考模式。请进行多角度分析、批判性思考，提供深入专业的回答。` :
+                        `你是ChatYuTong，提供准确有用的回答。`;
+
+                    const requestBody = {
+                        model: "glm-4-flash",
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: userMessage }
+                        ],
+                        temperature: isDeepThinking ? 0.9 : 0.7,
+                        top_p: 0.9,
+                        max_tokens: isDeepThinking ? 4000 : 2000,
+                        stream: true  // 开启流式输出
+                    };
+
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}`
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    currentStreamController = { reader, stop: () => reader.cancel() };
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        const chunk = decoder.decode(value);
+                        const lines = chunk.split('\n');
+
+                        for (const line of lines) {
+                            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                                try {
+                                    const data = JSON.parse(line.slice(6));
+                                    if (data.choices[0].delta.content) {
+                                        const content = data.choices[0].delta.content;
+                                        fullContent += content;
+                                        buffer += content;
+
+                                        // 累积一定字符或遇到标点符号时显示
+                                        if (buffer.length >= 3 || /[。.!?？,，;；]/.test(content)) {
+                                            await streamText(buffer, streamingContent);
+                                            buffer = '';
+                                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                                        }
+                                    }
+                                } catch (e) {
+                                    // 忽略解析错误
+                                }
+                            }
+                        }
+                    }
+
+                    // 显示剩余内容
+                    if (buffer) {
+                        await streamText(buffer, streamingContent);
+                    }
+
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        streamingContent.innerHTML += '<br><span style="color: #f44336;">[流式输出中断]</span>';
+                    }
+                } finally {
+                    // 移除光标
+                    cursor.remove();
+                    isStreaming = false;
+                    currentStreamController = null;
+                    
+                    // 最终格式化内容
+                    formatFinalContent(fullContent, streamingContent);
+                }
+            }
+
+            // 流式显示文本
+            async function streamText(text, container) {
+                for (let i = 0; i < text.length; i++) {
+                    if (!isStreaming) break;
+                    
+                    container.innerHTML += text[i];
+                    
+                    // 随机延迟，模拟打字效果
+                    const delay = Math.random() * 20 + 10;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+
+            // 停止流式输出
+            function stopStreaming() {
+                if (currentStreamController) {
+                    currentStreamController.stop();
+                    isStreaming = false;
+                    currentStreamController = null;
+                    stopButton.style.display = 'none';
+                    setInputDisabled(false);
+                }
+            }
+
+            // 最终格式化内容
+            function formatFinalContent(content, container) {
+                // 这里可以添加代码高亮等最终格式化逻辑
+                // 暂时保持原样
+            }
+
+            // 设置输入禁用状态
+            function setInputDisabled(disabled) {
+                messageInput.disabled = disabled;
+                sendButton.disabled = disabled;
+                if (disabled) {
+                    sendButton.innerHTML = '<span class="material-icons">hourglass_empty</span>';
+                } else {
+                    sendButton.innerHTML = '<span class="material-icons">send</span>';
+                }
+            }
+
+            // 显示临时消息
             function showTempMessage(text, sender) {
                 const tempMsg = document.createElement('div');
                 tempMsg.className = `message ${sender}-message`;
                 tempMsg.style.opacity = '0.7';
                 tempMsg.style.fontSize = '12px';
-                tempMsg.style.fontStyle = 'italic';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = text;
+                tempMsg.appendChild(contentDiv);
+                chatMessages.appendChild(tempMsg);
+                
+                setTimeout(() => {
+                    tempMsg.style.transition = 'opacity 0.5s';
+                    tempMsg.style.opacity = '0';
+                    setTimeout(() => tempMsg.remove(), 500);
+                }, 2000);
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // 添加普通消息（用于错误消息等）
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = `avatar ${sender === 'user' ? 'user-avatar' : 'assistant-avatar'}`;
+                const icon = document.createElement('span');
+                icon.className = 'material-icons';
+                icon.textContent = sender === 'user' ? 'person' : 'smart_toy';
+                avatarDiv.appendChild(icon);
                 
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'message-content';
                 contentDiv.textContent = text;
                 
-                tempMsg.appendChild(contentDiv);
-                chatMessages.appendChild(tempMsg);
-                
-                // 3秒后淡出移除
-                setTimeout(() => {
-                    tempMsg.style.transition = 'opacity 0.5s';
-                    tempMsg.style.opacity = '0';
-                    setTimeout(() => {
-                        if (tempMsg.parentNode) {
-                            tempMsg.parentNode.removeChild(tempMsg);
-                        }
-                    }, 500);
-                }, 2000);
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
                 
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
-            
-            // 格式化消息内容
-            function formatMessageContent(text, container) {
-                // 处理代码块
-                const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-                let lastIndex = 0;
-                let match;
-                
-                while ((match = codeBlockRegex.exec(text)) !== null) {
-                    if (match.index > lastIndex) {
-                        const textContent = text.substring(lastIndex, match.index);
-                        addFormattedText(textContent, container);
-                    }
-                    
-                    const codeBlock = document.createElement('div');
-                    codeBlock.className = 'code-block';
-                    codeBlock.textContent = match[2];
-                    container.appendChild(codeBlock);
-                    
-                    lastIndex = match.index + match[0].length;
-                }
-                
-                if (lastIndex < text.length) {
-                    addFormattedText(text.substring(lastIndex), container);
-                }
-            }
-            
-            function addFormattedText(text, container) {
-                const lines = text.split('\n');
-                lines.forEach((line, index) => {
-                    if (line.trim()) {
-                        const p = document.createElement('div');
-                        p.style.marginBottom = '6px';
-                        p.textContent = line;
-                        container.appendChild(p);
-                    } else if (index < lines.length - 1) {
-                        container.appendChild(document.createElement('br'));
-                    }
-                });
-            }
-            
+
             // 插入示例问题
             window.insertExample = function(question) {
-                messageInput.value = question;
-                messageInput.focus();
-                messageInput.dispatchEvent(new Event('input'));
+                if (!isStreaming) {
+                    messageInput.value = question;
+                    messageInput.focus();
+                    messageInput.dispatchEvent(new Event('input'));
+                }
             };
-            
+
             // 事件监听
             sendButton.addEventListener('click', sendMessage);
-            
+            stopButton.addEventListener('click', stopStreaming);
             messageInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === 'Enter' && !e.shiftKey && !isStreaming) {
                     e.preventDefault();
                     sendMessage();
                 }
             });
-            
+
             // 初始聚焦输入框
             messageInput.focus();
         });
