@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatYuTong</title>
+    <title>ChatYuTong - 智能对话助手</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -327,7 +328,7 @@
             cursor: pointer;
             transition: all 0.3s;
             flex-shrink: 0;
-            display: none; /* 初始隐藏 */
+            display: none;
         }
         
         .stop-button:hover {
@@ -441,7 +442,33 @@
             overflow-x: auto;
             font-family: 'Courier New', monospace;
             font-size: 12px;
-            display: none; /* 初始隐藏，流式显示时再显示 */
+            position: relative;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 11px;
+        }
+
+        
+        .copy-button {
+            background: #333;
+            color: #ccc;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+        
+        .copy-button:hover {
+            background: #444;
+            color: white;
         }
         
         .suggestions {
@@ -481,6 +508,36 @@
             font-weight: 500;
         }
         
+        .message-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        
+        .action-button {
+            background: transparent;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: #5f6368;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .action-button:hover {
+            background: #f8f9fa;
+            border-color: #4285f4;
+            color: #4285f4;
+        }
+        
+        .action-button .material-icons {
+            font-size: 14px;
+        }
+        
         /* 响应式设计 */
         @media (max-width: 480px) {
             .header { padding: 8px 12px; }
@@ -507,7 +564,7 @@
             </div>
             <div class="api-status">
                 <div class="status-dot"></div>
-                <span>GLM-4-Flash</span>
+                <span>GLM-4-Flash · 128K上下文</span>
             </div>
         </div>
     </div>
@@ -516,7 +573,7 @@
         <div class="chat-messages" id="chat-messages">
             <div class="welcome-container" id="welcome-container">
                 <div class="welcome-title">欢迎使用 ChatYuTong</div>
-                <div class="welcome-subtitle">基于智谱GLM-4-Flash模型 · 实时流式输出 · 完全免费</div>
+                <div class="welcome-subtitle">基于智谱GLM-4-Flash模型 · 128K上下文 · 实时流式输出 · 完全免费</div>
                 <div class="examples">
                     <div class="example-card" onclick="insertExample('用Python实现一个机器学习模型')">
                         <div>🤖 用Python实现一个机器学习模型</div>
@@ -565,7 +622,7 @@
     </div>
     
     <div class="footer">
-        ChatYuTong · 基于智谱GLM-4-Flash模型 · 实时流式输出 · 完全免费
+        ChatYuTong · 基于智谱GLM-4-Flash模型 · 128K上下文 · 实时流式输出 · 完全免费
     </div>
 
     <script>
@@ -585,6 +642,7 @@
             let isDeepThinking = false;
             let currentStreamController = null;
             let isStreaming = false;
+            let conversationHistory = [];
 
             // 深度思考开关
             thinkingToggle.addEventListener('click', function() {
@@ -613,6 +671,9 @@
                 addMessage(message, 'user');
                 messageInput.value = '';
                 messageInput.style.height = 'auto';
+
+                // 添加到对话历史
+                conversationHistory.push({ role: 'user', content: message });
 
                 // 禁用输入并显示停止按钮
                 setInputDisabled(true);
@@ -685,19 +746,22 @@
                 
                 let fullContent = '';
                 let buffer = '';
-                let isFirstChunk = true;
 
                 try {
                     const systemPrompt = isDeepThinking ? 
                         `你是ChatYuTong，开启深度思考模式。请进行多角度分析、批判性思考，提供深入专业的回答。` :
                         `你是ChatYuTong，提供准确有用的回答。`;
 
+                    // 构建消息历史，支持128K上下文
+                    const messages = [
+                        { role: "system", content: systemPrompt },
+                        ...conversationHistory,
+                        { role: "user", content: userMessage }
+                    ];
+
                     const requestBody = {
                         model: "glm-4-flash",
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: userMessage }
-                        ],
+                        messages: messages,
                         temperature: isDeepThinking ? 0.9 : 0.7,
                         top_p: 0.9,
                         max_tokens: isDeepThinking ? 4000 : 2000,
@@ -756,6 +820,9 @@
                         await streamText(buffer, streamingContent);
                     }
 
+                    // 添加到对话历史
+                    conversationHistory.push({ role: 'assistant', content: fullContent });
+
                 } catch (error) {
                     if (error.name !== 'AbortError') {
                         streamingContent.innerHTML += '<br><span style="color: #f44336;">[流式输出中断]</span>';
@@ -797,8 +864,59 @@
 
             // 最终格式化内容
             function formatFinalContent(content, container) {
-                // 这里可以添加代码高亮等最终格式化逻辑
-                // 暂时保持原样
+                // 格式化代码块
+                content = content.replace(/```(\w+)?\n([\s\S]*?)```/g, function(match, lang, code) {
+                    const language = lang || 'text';
+                    return `<div class="code-block">
+                        <div class="code-header">
+                            <span>${language}</span>
+                            <button class="copy-button" onclick="copyCode(this)">复制</button>
+                        </div>
+                        <pre>${escapeHtml(code.trim())}</pre>
+                    </div>`;
+                });
+                
+                // 格式化行内代码
+                content = content.replace(/`([^`]+)`/g, '<code style="background: #e8eaed; padding: 2px 4px; border-radius: 4px; font-family: monospace;">$1</code>');
+                
+                // 格式化列表
+                content = content.replace(/^\s*[-*]\s+(.+)$/gm, '<li>$1</li>');
+                content = content.replace(/(<li>.*<\/li>)/s, '<ul style="margin: 8px 0; padding-left: 20px;">$1</ul>');
+                
+                // 格式化加粗文本
+                content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // 格式化斜体文本
+                content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // 设置最终内容
+                container.innerHTML = content;
+                
+                // 添加操作按钮
+                const messageDiv = container.parentElement;
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                actionsDiv.innerHTML = `
+                    <button class="action-button" onclick="copyMessage(this)">
+                        <span class="material-icons">content_copy</span>
+                        <span>复制</span>
+                    </button>
+                    <button class="action-button" onclick="regenerateMessage(this)">
+                        <span class="material-icons">refresh</span>
+                        <span>重新生成</span>
+                    </button>
+                `;
+                messageDiv.appendChild(actionsDiv);
+                
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // HTML转义
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
 
             // 设置输入禁用状态
@@ -863,6 +981,48 @@
                     messageInput.value = question;
                     messageInput.focus();
                     messageInput.dispatchEvent(new Event('input'));
+                }
+            };
+
+            // 复制消息
+            window.copyMessage = function(button) {
+                const messageContent = button.closest('.message').querySelector('.message-content');
+                const textToCopy = messageContent.textContent;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = button.querySelector('span:last-child').textContent;
+                    button.querySelector('span:last-child').textContent = '已复制';
+                    setTimeout(() => {
+                        button.querySelector('span:last-child').textContent = originalText;
+                    }, 2000);
+                });
+            };
+
+            // 复制代码
+            window.copyCode = function(button) {
+                const codeBlock = button.closest('.code-block');
+                const codeText = codeBlock.querySelector('pre').textContent;
+                navigator.clipboard.writeText(codeText).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = '已复制';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                });
+            };
+
+            // 重新生成消息
+            window.regenerateMessage = function(button) {
+                const messageDiv = button.closest('.message');
+                const messageIndex = Array.from(chatMessages.children).indexOf(messageDiv) - 1;
+                
+                if (messageIndex >= 0 && conversationHistory[messageIndex]) {
+                    const userMessage = conversationHistory[messageIndex].content;
+                    messageDiv.remove();
+                    conversationHistory.splice(messageIndex + 1, 1);
+                    
+                    // 重新发送消息
+                    messageInput.value = userMessage;
+                    sendMessage();
                 }
             };
 
