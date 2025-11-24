@@ -551,6 +551,18 @@
             transition: color var(--transition-duration) var(--transition-timing);
         }
         
+        .location-indicator {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
         /* 动画定义 */
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -643,7 +655,6 @@
                         <input type="text" id="search-input" placeholder="搜索全球城市 (如: 北京、New York)" autocomplete="off">
                     </div>
                     <div class="search-results" id="search-results"></div>
-                  
                 </div>
                 <button class="theme-toggle" id="theme-toggle">
                     <i class="material-icons" id="theme-icon">brightness_4</i>
@@ -701,8 +712,15 @@
         // 定位城市
         let locatedCity = null;
         
-        // 是否是首次加载
-        let isFirstLoad = true;
+        // 位置跟踪状态
+        let locationTracking = {
+            enabled: false,
+            lastPosition: null,
+            lastUpdate: 0,
+            watchId: null,
+            distanceThreshold: 10, // 最小移动距离(公里)才触发更新
+            timeThreshold: 30 * 60 * 1000 // 最小更新时间间隔(30分钟)
+        };
         
         // DOM元素
         const searchInput = document.getElementById('search-input');
@@ -744,15 +762,124 @@
                 fetchWeatherData(currentCity.id);
             } else {
                 // 如果没有保存的城市信息，尝试获取当前位置
-                if (isFirstLoad) {
-                    tryGetLocation();
-                    isFirstLoad = false;
-                } else {
-                    // 不是首次加载且没有保存的城市，使用默认城市
-                    fetchWeatherData(currentCity.id);
+                tryGetLocation();
+            }
+            
+            // 初始化位置跟踪
+            initLocationTracking();
+        });
+        
+        // 初始化位置跟踪
+        function initLocationTracking() {
+            // 检查用户是否已经授权位置访问
+            if (navigator.permissions && navigator.permissions.query) {
+                navigator.permissions.query({name: 'geolocation'}).then((result) => {
+                    if (result.state === 'granted') {
+                        // 用户已经授权位置访问
+                        locationTracking.enabled = true;
+                        startLocationWatching();
+                    } else if (result.state === 'prompt') {
+                        // 用户尚未决定，等待用户交互后再询问
+                        console.log("位置权限尚未决定");
+                    }
+                    // 监听权限状态变化
+                    result.addEventListener('change', () => {
+                        if (result.state === 'granted') {
+                            locationTracking.enabled = true;
+                            startLocationWatching();
+                        } else {
+                            locationTracking.enabled = false;
+                            stopLocationWatching();
+                        }
+                    });
+                });
+            } else {
+                // 浏览器不支持Permissions API，使用传统方法
+                if (navigator.geolocation) {
+                    locationTracking.enabled = true;
+                    startLocationWatching();
                 }
             }
-        });
+        }
+        
+        // 开始位置监视
+        function startLocationWatching() {
+            if (!navigator.geolocation) return;
+            
+            // 停止之前的监视
+            stopLocationWatching();
+            
+            // 开始新的位置监视
+            locationTracking.watchId = navigator.geolocation.watchPosition(
+                position => {
+                    const { latitude, longitude } = position.coords;
+                    const now = Date.now();
+                    
+                    // 检查是否满足更新条件
+                    if (shouldUpdateLocation(latitude, longitude, now)) {
+                        getCityByCoordinates(latitude, longitude, true);
+                    }
+                },
+                error => {
+                    console.error("位置跟踪失败:", error);
+                    // 不显示错误，避免打扰用户
+                },
+                {
+                    enableHighAccuracy: false, // 使用低精度减少电池消耗
+                    maximumAge: 5 * 60 * 1000, // 缓存位置5分钟
+                    timeout: 10000
+                }
+            );
+        }
+        
+        // 停止位置监视
+        function stopLocationWatching() {
+            if (locationTracking.watchId !== null) {
+                navigator.geolocation.clearWatch(locationTracking.watchId);
+                locationTracking.watchId = null;
+            }
+        }
+        
+        // 检查是否应该更新位置
+        function shouldUpdateLocation(lat, lon, timestamp) {
+            // 检查时间间隔
+            if (timestamp - locationTracking.lastUpdate < locationTracking.timeThreshold) {
+                return false;
+            }
+            
+            // 检查距离变化
+            if (locationTracking.lastPosition) {
+                const distance = calculateDistance(
+                    locationTracking.lastPosition.lat, 
+                    locationTracking.lastPosition.lon,
+                    lat, 
+                    lon
+                );
+                
+                if (distance < locationTracking.distanceThreshold) {
+                    return false;
+                }
+            }
+            
+            // 更新最后位置和时间
+            locationTracking.lastPosition = { lat, lon };
+            locationTracking.lastUpdate = timestamp;
+            
+            return true;
+        }
+        
+        // 计算两个坐标点之间的距离（公里）
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // 地球半径(公里)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
         
         // 尝试获取位置
         function tryGetLocation() {
@@ -779,7 +906,7 @@
                     },
                     {
                         enableHighAccuracy: true,
-                        timeout: 5000,
+                        timeout: 10000,
                         maximumAge: 0
                     }
                 );
@@ -794,7 +921,7 @@
         }
         
         // 根据经纬度获取城市信息
-        async function getCityByCoordinates(lat, lon) {
+        async function getCityByCoordinates(lat, lon, isAutoUpdate = false) {
             try {
                 const url = `${GEO_API_URL}/city/lookup?key=${API_KEY}&location=${lon},${lat}`;
                 const response = await fetch(url);
@@ -802,7 +929,7 @@
                 
                 if (data.code === "200" && data.location && data.location.length > 0) {
                     const location = data.location[0];
-                    locatedCity = {
+                    const newLocatedCity = {
                         id: location.id,
                         name: location.name,
                         adm2: location.adm2,
@@ -810,28 +937,69 @@
                         country: location.country
                     };
                     
+                    // 如果是自动更新且城市没有变化，则不更新
+                    if (isAutoUpdate && locatedCity && locatedCity.id === newLocatedCity.id) {
+                        return;
+                    }
+                    
+                    locatedCity = newLocatedCity;
+                    
                     // 保存定位城市
                     localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
                     
-                    // 设置当前城市为定位城市
-                    currentCity = {...locatedCity};
-                    localStorage.setItem('currentCity', JSON.stringify(currentCity));
-                    
-                    // 更新搜索框显示
-                    searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
-                    
-                    // 获取天气数据
-                    fetchWeatherData(currentCity.id);
+                    // 如果是自动更新，显示提示
+                    if (isAutoUpdate) {
+                        showAutoLocationUpdate(locatedCity.name);
+                    } else {
+                        // 设置当前城市为定位城市
+                        currentCity = {...locatedCity};
+                        localStorage.setItem('currentCity', JSON.stringify(currentCity));
+                        
+                        // 更新搜索框显示
+                        searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
+                        
+                        // 获取天气数据
+                        fetchWeatherData(currentCity.id);
+                    }
                 } else {
                     throw new Error("未找到匹配的城市");
                 }
             } catch (error) {
                 console.error("根据坐标获取城市失败:", error);
-                showError("无法获取当前位置的城市信息，已显示默认城市天气");
-                locatedCity = {...currentCity};
-                localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
-                fetchWeatherData(currentCity.id);
+                if (!isAutoUpdate) {
+                    showError("无法获取当前位置的城市信息，已显示默认城市天气");
+                    locatedCity = {...currentCity};
+                    localStorage.setItem('locatedCity', JSON.stringify(locatedCity));
+                    fetchWeatherData(currentCity.id);
+                }
             }
+        }
+        
+        // 显示自动位置更新提示
+        function showAutoLocationUpdate(cityName) {
+            // 创建提示元素
+            const updateIndicator = document.createElement('div');
+            updateIndicator.className = 'search-hint';
+            updateIndicator.innerHTML = `
+                <span>检测到您已移动到 <strong>${cityName}</strong>，</span>
+                <a href="javascript:void(0)" id="update-location-link">点击更新天气信息</a>
+            `;
+            
+            // 插入到当前天气区域
+            const currentWeather = document.getElementById('current-weather');
+            if (currentWeather.querySelector('.search-hint')) {
+                currentWeather.querySelector('.search-hint').remove();
+            }
+            currentWeather.appendChild(updateIndicator);
+            
+            // 添加点击事件
+            document.getElementById('update-location-link').addEventListener('click', () => {
+                currentCity = {...locatedCity};
+                localStorage.setItem('currentCity', JSON.stringify(currentCity));
+                searchInput.value = `${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}`;
+                updateIndicator.remove();
+                fetchWeatherData(currentCity.id);
+            });
         }
         
         // 设置搜索功能
@@ -1054,9 +1222,13 @@
             };
             const dateTimeStr = updateTime.toLocaleDateString('zh-CN', options);
             
+            // 检查是否是定位城市
+            const isLocatedCity = locatedCity && currentCity.id === locatedCity.id;
+            
             currentWeatherSection.innerHTML = `
                 <h2 class="location">
                     ${currentCity.name}, ${currentCity.adm1 || currentCity.adm2 || currentCity.country}
+                    ${isLocatedCity ? '<span class="location-indicator"><i class="material-icons" style="font-size:14px;margin-right:4px;">my_location</i>当前位置</span>' : ''}
                     <i class="material-icons" title="刷新天气" onclick="refreshWeather()">refresh</i>
                 </h2>
                 <p class="date-time">${dateTimeStr}</p>

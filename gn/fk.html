@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>发卡器</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:18px;background:#f7f8fb;color:#111}
+  h1{font-size:18px;margin-bottom:6px}
+  .box{background:#fff;border:1px solid #e3e6ef;padding:12px;border-radius:8px;box-shadow:0 1px 4px rgba(30,40,60,0.03);margin-bottom:12px}
+  label{display:block;margin-bottom:6px;font-weight:600}
+  input[type="text"], textarea, input[type="number"]{width:100%;padding:8px;border:1px solid #dfe6f3;border-radius:6px}
+  .row{display:flex;gap:8px}
+  .col{flex:1}
+  button{padding:8px 12px;border-radius:6px;border:none;background:#2b7cff;color:#fff;cursor:pointer}
+  button.secondary{background:#6c757d}
+  small{color:#666}
+  .info{font-family:monospace;background:#f0f4ff;padding:8px;border-radius:6px;margin-top:8px}
+  .warn{color:#b35a00}
+</style>
+</head>
+<body>
+  <h1>水卡发卡器</h1>
+  <div class="box">
+    <label>说明</label>
+    <div>
+      <small>
+        • 此页面已将你的模板 <code>200.dump</code> 内置为 base64（不依赖任何外部文件）。<br>
+        • 程序在偏移 <strong>264</strong> 写入 float32（小端）表示的金额，并生成对应的 .dump 文件。<br>
+        • 打开页面后直接输入金额并点击“生成并下载”即可。文件名默认为 <code>金额.dump</code>（小数点替换为下划线）。<br>
+        • 文件全部在本地浏览器完成，不会上传到任何服务器。
+      </small>
+    </div>
+  </div>
+
+  <div class="box">
+    <label>输入金额（例如 100 或 9.1）</label>
+    <div class="row">
+      <div class="col"><input id="amount" type="text" placeholder="输入金额（支持小数）" value="100"></div>
+      <div style="width:220px"><button id="genBtn">生成并下载 .dump</button></div>
+    </div>
+    <div style="margin-top:8px">
+      <button id="previewBtn" class="secondary">预览内置模板偏移 264 的金额</button>
+      <button id="showHex" class="secondary">显示偏移 256-279 十六进制（仅查看）</button>
+    </div>
+    <div id="status" class="info" style="display:none;margin-top:8px"></div>
+  </div>
+
+<script>
+(function(){
+  const OFFSET = 264;
+  // embedded base64 template (your 200.dump)
+  const template_b64 = "RpzyZEwIBAABBM+HOtnNHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAABIQwAAAACBPlhIcrGgVNgYKpHYqPyYAAAAAAAAAAAAAAAAAAAAAI7l8tqGm/8PAGmBPlhIcrFTVFUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACO5fLahpv/DwBpgT5YSHKxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////w==";
+  // decode base64 to Uint8Array
+  function b64ToUint8Array(b64){
+    const bin = atob(b64);
+    const len = bin.length;
+    const arr = new Uint8Array(len);
+    for(let i=0;i<len;i++) arr[i]=bin.charCodeAt(i);
+    return arr;
+  }
+  const templateBytes = b64ToUint8Array(template_b64);
+
+  const amountInput = document.getElementById('amount');
+  const genBtn = document.getElementById('genBtn');
+  const previewBtn = document.getElementById('previewBtn');
+  const status = document.getElementById('status');
+  const showHex = document.getElementById('showHex');
+
+  function showStatus(msg, ok=true){
+    status.style.display = 'block';
+    status.textContent = msg;
+    status.style.color = ok ? '#111' : '#b35a00';
+  }
+
+  function readFloatFromTemplate(){
+    if(templateBytes.length < OFFSET+4) throw new Error('模板太短，无法读取');
+    const dv = new DataView(templateBytes.buffer, templateBytes.byteOffset, templateBytes.byteLength);
+    return dv.getFloat32(OFFSET, true);
+  }
+
+  previewBtn.addEventListener('click', ()=>{
+    try{
+      const v = readFloatFromTemplate();
+      alert('内置模板偏移 ' + OFFSET + ' 处的 float32 值：' + v);
+      showStatus('预览成功：偏移 ' + OFFSET + ' -> ' + v);
+    }catch(e){
+      alert('预览失败：' + e.message);
+      showStatus('预览失败：' + e.message, false);
+    }
+  });
+
+  function makeDumpBytes(amount){
+    if(templateBytes.length < OFFSET+4) throw new Error('模板太短，无法写入');
+    const out = new Uint8Array(templateBytes.length);
+    out.set(templateBytes);
+    const dv = new DataView(out.buffer);
+    dv.setFloat32(OFFSET, amount, true);
+    return out;
+  }
+
+  function downloadUint8Array(arr, filename){
+    const blob = new Blob([arr], {type:'application/octet-stream'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  genBtn.addEventListener('click', ()=>{
+    const s = amountInput.value.trim();
+    if(!s){ alert('请输入金额'); return; }
+    const amt = Number(s);
+    if(Number.isNaN(amt)){ alert('无法解析金额，请输入数字，例如 100 或 9.1'); return; }
+    try{
+      const out = makeDumpBytes(amt);
+      const fname = Number.isInteger(amt) ? `${amt}.dump` : `${String(amt).replace('.', '_')}.dump`;
+      downloadUint8Array(out, fname);
+      showStatus(`已生成并触发下载：${fname}`);
+    }catch(e){
+      alert('生成失败：' + e.message);
+      showStatus('生成失败：' + e.message, false);
+    }
+  });
+
+  showHex.addEventListener('click', ()=>{
+    try{
+      const start = 256, len=24;
+      if(templateBytes.length < start+len) throw new Error('模板太短，无法显示该范围');
+      const slice = templateBytes.slice(start, start+len);
+      const hex = Array.from(slice).map(b=>b.toString(16).padStart(2,'0')).join(' ');
+      alert('偏移 256-279 十六进制:\n' + hex);
+    }catch(e){
+      alert('显示失败：' + e.message);
+    }
+  });
+
+  showStatus('就绪：页面已内置模板，直接输入金额并生成。');
+})();
+</script>
+</body>
+</html>
