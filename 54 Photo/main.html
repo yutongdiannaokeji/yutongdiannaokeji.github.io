@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>54中照片 - 主页面</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      height: 100vh;
+      background: url('back.JPG') no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .box {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      padding: 30px;
+      transition: transform 0.3s ease, background 0.3s ease;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .box:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+    .year-title {
+      grid-column: span 3;
+      font-size: 28px;
+      font-weight: bold;
+      color: #f0f8ff;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container fade-in">
+    <div class="year-title">54中照片</div>
+    <a href="collect.html" class="box">2021 年</a>
+	  <a href="collect.html" class="box">2022 年</a>
+	  <a href="collect.html" class="box">2023 年</a>
+    <a href="2024.html" class="box">2024 年</a>
+   
+  </div>
+</body>
+</html>

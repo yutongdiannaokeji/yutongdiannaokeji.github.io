@@ -1,0 +1,1559 @@
+<!DOCTYPE html><html lang="zh"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秦吏</title>
+    <style>
+        /* 基礎樣式與秦代色彩系統 */
+        @font-face {
+            font-family: 'LiShu';
+            src: url('https://cdn.jsdelivr.net/npm/@justfont/open-huninn-font@1.1/font.css');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --qin-black: #231815; /* 基於秦代漆器的黑色 */
+            --qin-dark: #342b25; /* 秦代竹簡煙熏後的暗褐色 */
+            --qin-tan: #d2bc8e; /* 秦代竹簡顏色 */
+            --qin-red: #9e2b2b; /* 秦代朱砂紅 */
+            --qin-yellow: #b8860b; /* 秦代金色/黃銅色 */
+            --qin-gray: #64595a; /* 秦代陶俑灰色 */
+            --qin-green: #2b4726; /* 秦代青銅銹綠色 */
+            --qin-light-tan: #e8d8b0; /* 淺色竹簡底色 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "宋體", SimSun, serif;
+        }
+
+        body {
+            background-color: var(--qin-tan);
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239e8765' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: var(--qin-black);
+            overflow-x: hidden;
+        }
+
+        /* 豎直排版容器 */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            text-align: left;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            letter-spacing: 0.1em;
+        }
+
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background-color: var(--qin-black);
+            color: var(--qin-tan);
+            padding: 0.5rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 隸書風格的秦吏標題 */
+        .app-title {
+            font-family: "楷體", "標楷體", KaiTi, STKaiti, serif;
+            font-size: 3.5rem;
+            margin: 0.5rem;
+            padding: 0.5rem;
+            display: inline-block;
+            position: relative;
+            letter-spacing: 0.2em;
+        }
+
+        .motto {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            font-weight: normal;
+            letter-spacing: 0.1em;
+        }
+
+        /* 竹簡樣式 */
+        .bamboo-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+            position: relative;
+            touch-action: pan-x;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .paili-title {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 1.8rem;
+            color: var(--qin-red);
+            font-weight: bold;
+            font-family: "楷體", "標楷體", KaiTi, STKaiti, serif;
+            z-index: 10;
+        }
+
+        .bamboo-scroll {
+            display: flex;
+            flex-direction: row-reverse; /* 從右到左顯示竹簡 */
+            padding: 1rem;
+            min-width: 100%;
+            width: max-content;
+        }
+
+        .bamboo-slip {
+            position: relative;
+            min-width: 40px;
+            height: 250px;
+            background: linear-gradient(to right, var(--qin-tan), var(--qin-light-tan), var(--qin-tan));
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            margin: 0 2px;
+            padding: 10px 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transform-origin: left center;
+            opacity: 0;
+            transform: translateX(-30px) rotateY(90deg);
+            animation: unfoldBamboo 1.5s ease forwards;
+        }
+
+        @keyframes unfoldBamboo {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px) rotateY(90deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0);
+            }
+        }
+
+        .bamboo-slip:nth-child(n) {
+            animation-delay: calc(0.1s * var(--i, 0));
+        }
+
+        .bamboo-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 1.3rem;
+            color: var(--qin-black);
+            height: 100%;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        /* 案件卡片樣式 */
+        .case-card {
+            background-color: rgba(210, 188, 142, 0.8);
+            border: 1px solid var(--qin-dark);
+            border-radius: 4px;
+            margin: 1rem 0;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .case-card h3 {
+            color: var(--qin-red);
+            border-bottom: 1px solid var(--qin-gray);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .case-details {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .case-column {
+            flex: 1;
+            min-width: 300px;
+            padding: 0.5rem;
+        }
+
+        .evidence-item, .testimony-item {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            font-size: 1.1rem;
+        }
+
+        .law-reference {
+            background-color: var(--qin-dark);
+            color: var(--qin-tan);
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+            font-size: 1.1rem;
+        }
+
+        .decision-form {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        .decision-form h4 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--qin-red);
+        }
+
+        #verdict-text {
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            background-color: var(--qin-dark);
+            color: var(--qin-tan);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            margin: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--qin-red);
+        }
+
+        .bottom-nav {
+            background-color: var(--qin-dark);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem;
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--qin-tan);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .nav-icon {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 0.25rem;
+            display: inline-block;
+        }
+
+        /* 專門的處理案件頁面的樣式 */
+        .case-processing {
+            padding: 1rem;
+        }
+
+        .verdict-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .verdict-section h4 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--qin-red);
+        }
+
+        .yuanshu {
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239e8765' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E"), var(--qin-tan);
+            padding: 1rem;
+            border: 1px solid var(--qin-dark);
+            border-radius: 4px;
+            margin: 1rem 0;
+            line-height: 1.6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+        }
+
+        .yuanshu h4 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--qin-red);
+        }
+
+        .yuanshu-scroll {
+            display: flex;
+            width: max-content;
+            padding: 0.5rem;
+        }
+
+        /* 移文頁面樣式 */
+        .transfer-page {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .transfer-text {
+            writing-mode: vertical-rl;
+            font-size: 1.3rem;
+            line-height: 2;
+            margin: 1rem auto;
+            height: auto;
+            max-height: 300px;
+            overflow: hidden;
+        }
+
+        .transfer-select {
+            width: 100%; 
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background-color: var(--qin-tan);
+            border: 1px solid var(--qin-dark);
+            border-radius: 4px;
+            font-size: 1.2rem;
+        }
+
+        .transfer-reason {
+            width: 100%;
+            height: 150px;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background-color: var(--qin-tan);
+            border: 1px solid var(--qin-dark);
+            font-size: 1.2rem;
+        }
+
+        /* 統計頁面樣式 */
+        .stats-container {
+            padding: 1rem;
+        }
+
+        .stats-card {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-header {
+            color: var(--qin-red);
+            border-bottom: 1px solid var(--qin-gray);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stats-item {
+            background-color: var(--qin-dark);
+            color: var(--qin-tan);
+            padding: 0.8rem;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .stats-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        /* 懸浮通知 */
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--qin-dark);
+            color: var(--qin-tan);
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            font-size: 1.2rem;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        /* 刑罰多選樣式 */
+        .punishment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .punishment-option {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .punishment-option input {
+            margin-right: 0.5rem;
+        }
+
+        /* 主頁下方統計樣式 */
+        .home-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-top: 2rem;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 1rem;
+            border-radius: 4px;
+        }
+
+        .home-stat-item {
+            text-align: center;
+            padding: 0.5rem;
+            background-color: var(--qin-dark);
+            color: var(--qin-tan);
+            border-radius: 4px;
+        }
+
+        .home-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 0.3rem;
+        }
+
+        /* 設置頁面樣式 */
+        .settings-page {
+            padding: 1rem;
+        }
+
+        .about-section {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .about-title {
+            color: var(--qin-red);
+            border-bottom: 1px solid var(--qin-gray);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .about-content {
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .seal {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            background: linear-gradient(135deg, #b8860b, #cd7f32);
+            color: var(--qin-black);
+            border: 1px solid #8b4513;
+            border-radius: 2px;
+            font-family: "楷體", "標楷體", KaiTi, STKaiti, serif;
+            margin-left: 0.5rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 滑動提示 */
+        .scroll-hint {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            animation: fadeInOut 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .case-column {
+                min-width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .app-title {
+                font-size: 2.5rem;
+            }
+
+            .bamboo-slip {
+                min-width: 35px;
+                height: 220px;
+            }
+
+            .bamboo-text {
+                font-size: 1.1rem;
+            }
+
+            .home-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app-container">
+        <header class="header">
+            <div class="bg-gradient">
+                <h1 class="app-title">秦吏</h1>
+                <h2 class="motto">法者，天下之程式。吏者，民之懸命也。</h2>
+            </div>
+        </header>
+
+        <div class="bamboo-scroll-container" id="paili-container">
+            <h3 class="paili-title">為吏之道</h3>
+            <div class="bamboo-scroll" id="paili-scroll">
+                <!-- 竹簡會由JavaScript動態生成 -->
+            </div>
+            <div class="scroll-hint">← 左右滑動</div>
+        </div>
+
+        <main class="main-content" id="main-content">
+            <!-- 內容將通過JavaScript動態加載 -->
+        </main>
+
+        <div class="notification" id="notification"></div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item" data-page="home">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>主頁</span>
+            </div>
+            <div class="nav-item" data-page="cases">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 12h-6l-2 3h-4l-2-3H2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>案牘</span>
+            </div>
+            <div class="nav-item" data-page="transfer">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>移文</span>
+            </div>
+            <div class="nav-item" data-page="stats">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 20V10M12 20V4M6 20v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>統計</span>
+            </div>
+            <div class="nav-item" data-page="settings">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"></circle>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle>
+                    <path d="M12 4v2M12 18v2M4 12H6M18 12h2M6.34 6.34l1.42 1.42M16.24 16.24l1.42 1.42M6.34 17.66l1.42-1.42M16.24 7.76l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+                <span>設置</span>
+            </div>
+        </nav>
+    </div>
+
+    <script>
+        // 應用程序數據
+        const appData = {
+            currentPage: 'home',
+            cases: [
+                {
+                    id: '一',
+                    title: "盜窃分贓案",
+                    description: "甲盜窃千錢，乙知情後分得贓款一錢。里典查獲贓款及分贓記錄。",
+                    status: "pending", // pending, processing, judged, transferred
+                    process: {
+                        date: "秦王政廿五年七月丙戌",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "贓款銅錢（鑄造批次與失窃記錄一致）",
+                        "乙家中分贓竹簡（記錄「受一錢」）"
+                    ],
+                    testimony: [
+                        {
+                            person: "甲",
+                            content: "吾盜千錢，分乙一錢。"
+                        },
+                        {
+                            person: "乙",
+                            content: "僅受一錢，未預謀。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《法律答問》",
+                            content: "甲盜,贓值千錢,乙知其盜,受分贓不盈一錢,問乙何論? 同論。"
+                        },
+                        {
+                            name: "《盜律》",
+                            content: "五人盜，贓一錢以上，斬左止，黥為城旦"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政廿五年七月丙戌，南郡安陸縣安陸令史喜爰書：\n里典告甲盜千錢，乙分贓一錢。驗贓錢鑄造批次與失主簿冊符，乙宅得受錢竹簡一。\n甲言：「盜千錢，分乙一錢。」乙言：「僅受一錢，未預謀。」\n按律：《法律答問》「知盜受分贓不盈一錢，同論」；《盜律》「五人盜，贓一錢以上，斬左止，黥為城旦」。\n鞠審：甲乙俱坐盜，甲黥為城旦，乙同論。"
+                },
+                {
+                    id: '二',
+                    title: "見義不勇為案",
+                    description: "市集鬥毆致死，目擊者丙在百步內未施救。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政廿六年三月庚申",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "市集地圖（標記丙與案發地距離為八十步）",
+                        "屍檢爰書（致命傷為頭部鈍器傷）"
+                    ],
+                    testimony: [
+                        {
+                            person: "丙",
+                            content: "懼受牽連，故未救。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《秦律雜抄》",
+                            content: "賊入甲室，賊傷甲，甲號寇，其四鄰、典、老皆出不存，不聞號寇，問當論不當？審不存，不當論；典、老雖不存，當論"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政廿六年三月庚申，南郡安陸縣安陸令史喜爰書：\n市集鬥毆致死，丙於八十步內未救。驗市集圖距八十步，屍檢爰書載「顱骨碎裂」。\n丙言：「懼罪，故未前。」眾證言丙確在步內。\n按律：《秦律雜抄》「四鄰不存者當論」，比照罰二甲。\n鞠審：丙赀二甲，令吏督繳。"
+                },
+                {
+                    id: '三',
+                    title: "環境違法案",
+                    description: "農夫丁於早春二月伐木，被田吏查獲。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政廿七年二月甲子",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "伐木斧（殘留新鮮樹皮）",
+                        "樹木年輪（顯示砍伐時間為二月）"
+                    ],
+                    testimony: [
+                        {
+                            person: "丁",
+                            content: "備耕薪，不知春禁。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《田律》",
+                            content: "春二月，毋敢伐材木山林及壅堤水"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政廿七年二月甲子，南郡安陸縣安陸令史喜爰書：\n丁伐山林三株，斧存新木屑，年輪驗為二月伐。丁言：「備耕薪，不知禁。」\n按律：《田律》「春二月毋敢伐材木山林，違者赀一甲」。\n鞠審：丁赀一甲，伐木充公。"
+                },
+                {
+                    id: '四',
+                    title: "鬥毆致死案",
+                    description: "戊與己爭牛鬥毆，戊以木棍擊斃己。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政廿八年五月壬辰",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "木棍（血跡與己傷口吻合）",
+                        "牛齒記錄（牛齡六歲，與戊所述一致）"
+                    ],
+                    testimony: [
+                        {
+                            person: "戊",
+                            content: "己奪吾牛！"
+                        },
+                        {
+                            person: "證人",
+                            content: "己退讓後，戊仍擊之。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《法律答問》",
+                            content: "鬥以針、鉥、錐相擊，斬左止為城旦；殺人者棄市"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政廿八年五月壬辰，南郡安陸縣安陸令史喜爰書：\n戊以棍擊斃己，驗凶器血跡與創口合，牛契載戊言屬實。證人言：「己退讓後戊復擊。」\n按律：《法律答問》「鬥殺人，完為城旦」。\n鞠審：戊完為城旦，牛歸原主。"
+                },
+                {
+                    id: '五',
+                    title: "未成年人盜窃案",
+                    description: "身高六尺（約一點三八米）的庚盜牛被捕。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政廿九年十月辛卯",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "庚身高測量竹簡（標注「六尺」）",
+                        "牛齒檢驗爰書（牛齡四歲，非失主所有）"
+                    ],
+                    testimony: [
+                        {
+                            person: "庚",
+                            content: "吾身六尺，未滿六尺五寸。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《法律答問》",
+                            content: "甲小未盈六尺，有馬一匹自牧之，今馬為人敗，食人稼一石，問當論不當？不當論"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政廿九年十月辛卯，南郡安陸縣安陸令史喜爰書：\n庚盜牛，身高六尺（未滿刑責）。驗牛齒非失主所有，庚言：「身未六尺五寸。」\n按律：《法律答問》「男六尺五寸始負刑責」，比照免責。\n鞠審：庚免刑，牛還失主，責里典督教。"
+                },
+                {
+                    id: '六',
+                    title: "隸臣逃亡案",
+                    description: "隸臣辛逃亡三日後自首。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政卅年十二月癸亥",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "辛的刑徒籍冊（標注「城旦舂」）",
+                        "逃亡路線圖（記錄藏匿地點）"
+                    ],
+                    testimony: [
+                        {
+                            person: "辛",
+                            content: "不堪役苦。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《法律答問》",
+                            content: "隸臣妾系城旦舂，去亡已奔，未論而自出，當笞五十，備系日"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政卅年十二月癸亥，南郡安陸縣安陸令史喜爰書：\n隸臣辛逃亡三日自首，驗刑徒籍冊載「城旦舂」，逃亡圖記藏匿處。辛言：「不堪役苦。」\n按律：《法律答問》「隸臣逃亡自首，笞五十，續服刑」。\n鞠審：辛笞五十，復為城旦，督吏減其役量。"
+                },
+                {
+                    id: '七',
+                    title: "群盜案",
+                    description: "五人結夥盜官倉粟米一石。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政卅一年四月己未",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "官倉盜洞（尺寸與工具吻合）",
+                        "分贓竹簡（記錄五人各得二斗）"
+                    ],
+                    testimony: [
+                        {
+                            person: "盜賊甲",
+                            content: "吾等五人共鑿倉壁，取粟一石。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《盜律》",
+                            content: "五人盜，贓一錢以上，斬左趾，黥為城旦"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政卅一年四月己未，南郡安陸縣安陸令史喜爰書：\n五人盜官粟一石，分贓竹簡載各得二斗，驗倉牆盜洞與工具合。\n按律：《盜律》「五人盜，贓一錢以上，斬左趾，黥為城旦」。\n鞠審：五人皆斬左趾，黥為城旦，粟追還。"
+                },
+                {
+                    id: '八',
+                    title: "誣告案",
+                    description: "壬誣告癸盜馬，經查無實據。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政卅二年八月丁亥",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "癸馬廄記錄（馬匹數量無誤）",
+                        "誣告竹簡（筆跡鑒定為壬所書）"
+                    ],
+                    testimony: [
+                        {
+                            person: "壬",
+                            content: "癸竊吾馬！"
+                        },
+                        {
+                            person: "癸",
+                            content: "馬有官印，非盜。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《法律答問》",
+                            content: "當耐司寇而以耐隸臣誣人，何論？當耐為隸臣"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政卅二年八月丁亥，南郡安陸縣安陸令史喜爰書：\n壬誣癸盜馬，驗馬廄數符，筆跡鑒為壬書。癸言：「馬有官印，非盜。」\n按律：《法律答問》「誣告反坐」，壬坐盜罪。\n鞠審：壬赀二甲，枷三日示眾。"
+                },
+                {
+                    id: '九',
+                    title: "倉庫失職案",
+                    description: "糧倉門縫漏谷，倉吏未修繕。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政卅三年十一月戊寅",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "門縫勘驗圖（寬一寸）",
+                        "倉吏值班記錄（連續三日未巡檢）"
+                    ],
+                    testimony: [
+                        {
+                            person: "倉吏",
+                            content: "工匠未報。"
+                        },
+                        {
+                            person: "工匠",
+                            content: "上月已報。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《效律》",
+                            content: "倉廪不密，禾粟漏倉，主者赀一甲"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政卅三年十一月戊寅，南郡安陸縣安陸令史喜爰書：\n倉門縫漏谷一寸，吏三日未修，驗值班錄空缺。倉吏言：「工匠未報。」工匠言：「上月已報。」\n按律：《效律》簡七十三「倉廪不密致漏，主吏赀一甲」。\n鞠審：倉吏赀一甲，工匠笞二十。"
+                },
+                {
+                    id: '十',
+                    title: "市販欺詐案",
+                    description: "商賈未懸價牌，高價售布匹。",
+                    status: "pending",
+                    process: {
+                        date: "秦王政卅四年正月丙午",
+                        location: "南郡安陸縣",
+                        officialTitle: "安陸令史喜"
+                    },
+                    evidence: [
+                        "未標價布匹（市價百錢，索價二百）",
+                        "市場管理竹簡（規定「懸價牌」）"
+                    ],
+                    testimony: [
+                        {
+                            person: "商賈",
+                            content: "忘懸牌耳，非故意抬價。"
+                        }
+                    ],
+                    laws: [
+                        {
+                            name: "《金布律》",
+                            content: "有買及賣也，各嬰其價；小物不能各一錢者，勿嬰"
+                        }
+                    ],
+                    verdict: "",
+                    yuanshu: "秦王政卅四年正月丙午，南郡安陸縣安陸令史喜爰書：\n商賈未懸價牌，布索二百錢（市價百錢）。驗市律竹簡載「懸價牌」。\n按律：《金布律》「市販需懸價牌，小物一錢以下免標」。\n鞠審：商賈赀一盾，布沒官。"
+                }
+            ],
+            punishments: [
+                { name: "赀", count: 0, description: "罰款刑，按甲、盾、錢等級別罰款" },
+                { name: "鬼薪", count: 0, description: "服勞役的刑徒，負責砍柴" },
+                { name: "白粲", count: 0, description: "服勞役的刑徒，負責舂米" },
+                { name: "黥", count: 0, description: "在臉上刺字的刑罰" },
+                { name: "完為城旦舂", count: 0, description: "勞役刑。男犯，城旦，築城。女犯，舂米。" },
+                { name: "宮刑", count: 0, description: "男子閹割刑" },
+                { name: "耐", count: 0, description: "勞役刑，輕於城旦" },
+                { name: "司寇", count: 0, description: "負責看守城門的勞役刑" },
+                { name: "刖", count: 0, description: "砍掉腳的刑罰" },
+                { name: "斬左趾", count: 0, description: "砍掉左腳趾的刑罰" },
+                { name: "斬右趾", count: 0, description: "砍掉右腳趾的刑罰" },
+                { name: "髡", count: 0, description: "剃去頭髮的刑罰" },
+                { name: "笞", count: 0, description: "鞭打刑" },
+                { name: "弃市", count: 0, description: "死刑，屍體示眾" },
+                { name: "充軍", count: 0, description: "發配到軍隊服役" },
+                { name: "流放", count: 0, description: "發配到邊疆" }
+            ],
+            caseStats: {
+                total: '十',
+                pending: '十',
+                judged: '零',
+                transferred: '零',
+                qiju: '零'
+            },
+            lawReferences: {
+                "《法律答問》": [
+                    "甲盜,贓值千錢,乙知其盜,受分贓不盈一錢,問乙何論? 同論。",
+                    "斗以針、鉥、錐相擊，斬左止為城旦；殺人者弃市",
+                    "甲小未盈六尺，有馬一匹自牧之，今馬為人敗，食人稼一石，問當論不當？不當論",
+                    "隸臣妾系城旦舂，去亡已奔，未論而自出，當笞五十，備系日",
+                    "當耐司寇而以耐隸臣誣人，何論？當耐為隸臣"
+                ],
+                "《盜律》": [
+                    "五人盜，贓一錢以上，斬左止，黥為城旦"
+                ],
+                "《秦律雜抄》": [
+                    "賊入甲室，賊傷甲，甲號寇，其四鄰、典、老皆出不存，不聞號寇，問當論不當？審不存，不當論；典、老雖不存，當論"
+                ],
+                "《田律》": [
+                    "春二月，毋敢伐材木山林及壅堤水"
+                ],
+                "《效律》": [
+                    "倉廪不密，禾粟漏倉，主者赀一甲"
+                ],
+                "《金布律》": [
+                    "有買及賣也，各嬰其價；小物不能各一錢者，勿嬰"
+                ]
+            },
+            settings: {
+                version: "壹.零"
+            }
+        };
+
+        // 竹簡文本數據 - 去除標點符號
+        const pailiText = [
+            "吏有五善",
+            "一曰忠信敬上",
+            "二曰清廉毋謗",
+            "三曰舉事審當",
+            "四曰喜為善行",
+            "五曰恭敬多讓",
+            "五者畢至",
+            "必有大賞",
+            "吏有五失",
+            "一曰夸以迣",
+            "二曰貴以泰",
+            "三曰擅裚割",
+            "四曰犯上弗知害",
+            "五曰賤士貴貨"
+        ];
+
+        const homeText = [
+            "南郡安陸縣令史喜",
+            "大秦今王二十六年",
+            "歲在庚辰天下皆秦",
+            "吾為南郡",
+            "安陸縣令史",
+            "奉秦律以斷獄",
+            "明善惡別是非",
+            "行秦法以法為繩",
+            "無私曲之徑",
+            "為吏之道",
+            "戒貪求拒賄賂",
+            "清白守身",
+            "民有訟速斷之",
+            "獄有冤平反之",
+            "今有諸案請君裁斷"
+        ];
+
+        // 生成竹簡
+        function generateBambooSlips(container, textArray) {
+            let html = '';
+            textArray.forEach((text, index) => {
+                html += `
+                    <div class="bamboo-slip" style="--i: ${index}">
+                        <div class="bamboo-text">${text}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // 渲染主頁
+        function renderHomePage() {
+            const mainContent = document.getElementById('main-content');
+            
+            // 生成主頁竹簡
+            const homeScrollContainer = document.createElement('div');
+            homeScrollContainer.className = 'bamboo-scroll-container';
+            homeScrollContainer.id = 'home-scroll-container';
+            
+            const homeScroll = document.createElement('div');
+            homeScroll.className = 'bamboo-scroll';
+            homeScroll.id = 'home-scroll';
+            
+            const scrollHint = document.createElement('div');
+            scrollHint.className = 'scroll-hint';
+            scrollHint.textContent = '← 左右滑動';
+            
+            homeScrollContainer.appendChild(homeScroll);
+            homeScrollContainer.appendChild(scrollHint);
+            mainContent.innerHTML = '';
+            mainContent.appendChild(homeScrollContainer);
+            
+            // 生成竹簡
+            generateBambooSlips(homeScroll, homeText);
+            
+            // 添加統計信息
+            const statsContainer = document.createElement('div');
+            statsContainer.className = 'home-stats';
+            
+            statsContainer.innerHTML = `
+                <div class="home-stat-item">
+                    <div>總案件</div>
+                    <div class="home-stat-value">${appData.caseStats.total}</div>
+                </div>
+                <div class="home-stat-item">
+                    <div>待斷案件</div>
+                    <div class="home-stat-value">${appData.caseStats.pending}</div>
+                </div>
+                <div class="home-stat-item">
+                    <div>已結案件</div>
+                    <div class="home-stat-value">${appData.caseStats.judged}</div>
+                </div>
+                <div class="home-stat-item">
+                    <div>已移文案件</div>
+                    <div class="home-stat-value">${appData.caseStats.transferred}</div>
+                </div>
+                <div class="home-stat-item">
+                    <div>已乞鞠案件</div>
+                    <div class="home-stat-value">${appData.caseStats.qiju}</div>
+                </div>
+            `;
+            
+            mainContent.appendChild(statsContainer);
+        }
+
+        // 渲染案牘列表頁面
+        function renderCasesPage() {
+            const mainContent = document.getElementById('main-content');
+            let casesHTML = `<h2 style="margin-bottom: 1rem; text-align: center; color: var(--qin-red); font-size: 1.6rem;">案牘列表</h2>`;
+            
+            appData.cases.forEach(caseItem => {
+                let statusText = caseItem.status === 'pending' ? '待審' : 
+                                 caseItem.status === 'processing' ? '審理中' : 
+                                 caseItem.status === 'judged' ? '已結' : 
+                                 caseItem.status === 'transferred' ? '已移文' : '已乞鞠';
+                let statusColor = caseItem.status === 'pending' ? 'var(--qin-red)' : 
+                                  caseItem.status === 'processing' ? 'var(--qin-yellow)' : 
+                                  caseItem.status === 'judged' ? 'var(--qin-green)' : 
+                                  'var(--qin-gray)';
+                
+                casesHTML += `
+                    <div class="case-card">
+                        <h3>${caseItem.title}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <span>${caseItem.process.date}</span>
+                            <span style="color: ${statusColor};">${statusText}</span>
+                        </div>
+                        <p style="font-size: 1.1rem;">${caseItem.description}</p>
+                        <button class="btn" onclick="viewCase('${caseItem.id}')">查看案件</button>
+                    </div>
+                `;
+            });
+            
+            mainContent.innerHTML = casesHTML;
+        }
+
+        // 渲染移文頁面
+        function renderTransferPage() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div class="transfer-page">
+                    <h2 style="margin-bottom: 1rem; text-align: center; color: var(--qin-red); font-size: 1.6rem;">移文南郡法曹</h2>
+                    
+                    <div class="transfer-text">
+                        移文者，下級官吏將案件移送上級法曹處理之公文也。案有難斷，證不足信，律無明條，皆可移文上請。南郡法曹位於江陵，主理南郡二十餘縣司法事宜。移文須述案情，呈證物，列爭議，問適用律條。
+                    </div>
+                    
+                    <div style="margin-top: 1rem; width: 100%;">
+                        <h4 style="color: var(--qin-dark); margin-bottom: 0.5rem; font-size: 1.4rem;">選擇待移文案件：</h4>
+                        <select id="transfer-case-select" class="transfer-select">
+                            <option value="">請選擇案件</option>
+                            ${appData.cases.filter(c => c.status === 'pending').map(c => `<option value="${c.id}">${c.title}</option>`).join('')}
+                        </select>
+                        <textarea id="transfer-reason" placeholder="移文理由（疑難處、待決問題）" class="transfer-reason"></textarea>
+                        <button class="btn" onclick="transferCase()" style="width: 100%;">上呈南郡法曹</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染統計頁面
+        function renderStatsPage() {
+            const mainContent = document.getElementById('main-content');
+            
+            let punishmentsHTML = '';
+            appData.punishments.forEach(punishment => {
+                const chineseCount = convertToChineseNumber(punishment.count);
+                punishmentsHTML += `
+                    <div class="stats-item">
+                        <div>${punishment.name}</div>
+                        <div class="stats-value">${chineseCount}</div>
+                    </div>
+                `;
+            });
+            
+            mainContent.innerHTML = `
+                <div class="stats-container">
+                    <div class="stats-card">
+                        <h3 class="stats-header">案件統計</h3>
+                        <div class="stats-grid">
+                            <div class="stats-item">
+                                <div>總案件</div>
+                                <div class="stats-value">${appData.caseStats.total}</div>
+                            </div>
+                            <div class="stats-item">
+                                <div>待審案件</div>
+                                <div class="stats-value">${appData.caseStats.pending}</div>
+                            </div>
+                            <div class="stats-item">
+                                <div>已結案件</div>
+                                <div class="stats-value">${appData.caseStats.judged}</div>
+                            </div>
+                            <div class="stats-item">
+                                <div>已移文案件</div>
+                                <div class="stats-value">${appData.caseStats.transferred}</div>
+                            </div>
+                            <div class="stats-item">
+                                <div>已乞鞠案件</div>
+                                <div class="stats-value">${appData.caseStats.qiju}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <h3 class="stats-header">刑罰統計</h3>
+                        <div class="stats-grid">
+                            ${punishmentsHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染設置頁面
+        function renderSettingsPage() {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div class="settings-page">
+                    <div class="about-section">
+                        <h3 class="about-title">應用簡介</h3>
+                        <div class="about-content">
+                            <p style="line-height: 2; margin-bottom: 1rem;">
+                                「秦吏」者，理獄之利器也。自秦並天下，律令施行，獄訟日繁。郡縣理獄，法吏少而獄案多，故制此具以助吏事。秦律嚴明而繁密，讀簡用律，非一日之功。此具可助吏速書斷語，按律定罪，斷獄明晰。縣中用之，可省時日，不失秦法，增獄之決三倍。大良造葛公以為善。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3 class="about-title">版本信息</h3>
+                        <div class="about-content">
+                            <p>當前版本：${appData.settings.version}</p>
+                            <p>更新日誌：</p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>增加竹簡動畫效果</li>
+                                <li>修復統計數據顯示問題</li>
+                                <li>優化爰書顯示方式</li>
+                                <li>增加移文功能</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3 class="about-title">開發團隊</h3>
+                        <div class="about-content">
+                            <p>大秦 延尉左平 葛新 <span class="seal">大良造</span></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染案件詳情頁面
+        function renderCaseDetails(caseId) {
+            const caseItem = appData.cases.find(c => c.id === caseId);
+            if (!caseItem) return;
+            
+            const mainContent = document.getElementById('main-content');
+            
+            let evidenceHTML = '';
+            caseItem.evidence.forEach(evidence => {
+                evidenceHTML += `<div class="evidence-item">${evidence}</div>`;
+            });
+            
+            let testimonyHTML = '';
+            caseItem.testimony.forEach(testimony => {
+                testimonyHTML += `
+                    <div class="testimony-item">
+                        <strong>${testimony.person}：</strong> "${testimony.content}"
+                    </div>
+                `;
+            });
+            
+            let lawsHTML = '';
+            caseItem.laws.forEach(law => {
+                lawsHTML += `
+                    <div class="law-reference">
+                        <strong>${law.name}：</strong> "${law.content}"
+                    </div>
+                `;
+            });
+            
+            let verdictSection = '';
+            if (caseItem.status === 'judged' || caseItem.status === 'transferred') {
+                verdictSection = `
+                    <div class="verdict-section">
+                        <h4>判決</h4>
+                        <p style="font-size: 1.1rem;">${caseItem.verdict || (caseItem.status === 'transferred' ? '已移文至南郡法曹' : '')}</p>
+                    </div>
+                    <div class="yuanshu">
+                        <h4>爰書</h4>
+                        <div class="yuanshu-scroll">
+                            <div class="vertical-text" style="height: 300px; padding: 1rem; font-size: 1.1rem;">${caseItem.yuanshu.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // 多選刑罰
+                let punishmentOptionsHTML = '';
+                appData.punishments.forEach(punishment => {
+                    punishmentOptionsHTML += `
+                        <label class="punishment-option">
+                            <input type="checkbox" name="punishment" value="${punishment.name}"> 
+                            ${punishment.name} - ${punishment.description}
+                        </label>
+                    `;
+                });
+                
+                verdictSection = `
+                    <div class="decision-form">
+                        <h4>判案</h4>
+                        <textarea id="verdict-text" placeholder="輸入判決內容..." style="width: 100%; height: 100px; padding: 0.8rem; margin-bottom: 1rem; background-color: var(--qin-tan); border: 1px solid var(--qin-dark); font-size: 1.2rem;"></textarea>
+                        <div class="punishment-options">
+                            ${punishmentOptionsHTML}
+                        </div>
+                        <button class="btn" onclick="judgeCase('${caseId}')">判決</button>
+                    </div>
+                `;
+            }
+            
+            mainContent.innerHTML = `
+                <div class="case-processing">
+                    <button class="btn" onclick="navigateTo('cases')" style="margin-bottom: 1rem;">← 返回案牘列表</button>
+                    <h2 style="color: var(--qin-red); margin-bottom: 1rem; font-size: 1.6rem;">${caseItem.title}</h2>
+                    <div style="margin-bottom: 1rem; font-size: 1.1rem;">
+                        <strong>時間：</strong> ${caseItem.process.date}
+                        <br>
+                        <strong>地點：</strong> ${caseItem.process.location}
+                        <br>
+                        <strong>主理吏：</strong> ${caseItem.process.officialTitle}
+                    </div>
+                    <p style="margin-bottom: 1rem; font-size: 1.1rem;">${caseItem.description}</p>
+                    
+                    <div class="case-details">
+                        <div class="case-column">
+                            <h4 style="margin-bottom: 0.5rem; font-size: 1.3rem;">證物</h4>
+                            ${evidenceHTML}
+                        </div>
+                        <div class="case-column">
+                            <h4 style="margin-bottom: 0.5rem; font-size: 1.3rem;">證詞</h4>
+                            ${testimonyHTML}
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin: 1rem 0 0.5rem 0; font-size: 1.3rem;">適用律條</h4>
+                    ${lawsHTML}
+                    
+                    ${verdictSection}
+                </div>
+            `;
+        }
+
+        // 显示通知
+        function showNotification(message, duration = 3000) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, duration);
+        }
+
+        // 阿拉伯數字轉漢字數字
+        function convertToChineseNumber(num) {
+            if (num === 0) return '零';
+            
+            const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+            const positions = ['', '十', '百', '千', '萬', '十萬', '百萬', '千萬', '億'];
+            
+            if (num < 0 || num >= 100) {
+                return num.toString(); // 如果是负数或太大的数，直接返回
+            }
+            
+            if (num < 11) {
+                return digits[num];
+            } else if (num < 20) {
+                return '十' + (num > 10 ? digits[num - 10] : '');
+            } else if (num < 100) {
+                let tens = Math.floor(num / 10);
+                let ones = num % 10;
+                return digits[tens] + '十' + (ones > 0 ? digits[ones] : '');
+            }
+            
+            return num.toString();
+        }
+
+        // 計算案件數量
+        function updateCaseStats() {
+            const pendingCount = appData.cases.filter(c => c.status === 'pending').length;
+            const judgedCount = appData.cases.filter(c => c.status === 'judged').length;
+            const transferredCount = appData.cases.filter(c => c.status === 'transferred').length;
+            const qijuCount = appData.cases.filter(c => c.status === 'qiju').length;
+            
+            appData.caseStats.pending = convertToChineseNumber(pendingCount);
+            appData.caseStats.judged = convertToChineseNumber(judgedCount);
+            appData.caseStats.transferred = convertToChineseNumber(transferredCount);
+            appData.caseStats.qiju = convertToChineseNumber(qijuCount);
+        }
+
+        // 添加滑動手勢支持
+        function enableTouchScrolling() {
+            const scrollContainers = document.querySelectorAll('.bamboo-scroll-container');
+            
+            scrollContainers.forEach(container => {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+                
+                container.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    container.style.cursor = 'grabbing';
+                    startX = e.pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                });
+                
+                container.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    container.style.cursor = 'grab';
+                });
+                
+                container.addEventListener('mouseup', () => {
+                    isDown = false;
+                    container.style.cursor = 'grab';
+                });
+                
+                container.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - container.offsetLeft;
+                    const walk = (x - startX) * 2; // 滾動速度
+                    container.scrollLeft = scrollLeft - walk;
+                });
+                
+                // 觸摸事件支持
+                container.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].pageX - container.offsetLeft;
+                    scrollLeft = container.scrollLeft;
+                });
+                
+                container.addEventListener('touchmove', (e) => {
+                    if (e.touches.length !== 1) return;
+                    const x = e.touches[0].pageX - container.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    container.scrollLeft = scrollLeft - walk;
+                });
+            });
+        }
+
+        // 全局函數：查看案件详情
+        window.viewCase = function(caseId) {
+            renderCaseDetails(caseId);
+        };
+
+        // 全局函數：判決案件
+        window.judgeCase = function(caseId) {
+            const caseItem = appData.cases.find(c => c.id === caseId);
+            if (!caseItem) return;
+            
+            const verdictText = document.getElementById('verdict-text').value;
+            const selectedPunishments = Array.from(document.querySelectorAll('input[name="punishment"]:checked')).map(el => el.value);
+            
+            if (!verdictText || selectedPunishments.length === 0) {
+                showNotification('請輸入判決內容並選擇至少一項刑罰！');
+                return;
+            }
+            
+            // 更新案件狀態
+            caseItem.status = 'judged';
+            caseItem.verdict = `${verdictText}，判處：${selectedPunishments.join('、')}`;
+            
+            // 更新統計數據
+            updateCaseStats();
+            
+            // 更新刑罰統計
+            selectedPunishments.forEach(punishmentName => {
+                const punishment = appData.punishments.find(p => p.name === punishmentName);
+                if (punishment) {
+                    punishment.count++;
+                }
+            });
+            
+            // 顯示通知
+            showNotification(`${caseItem.title}已判決。如有不服，犯人及家屬可申請乞鞠。`);
+            
+            // 重新渲染案件詳情
+            setTimeout(() => {
+                renderCaseDetails(caseId);
+            }, 1500);
+        };
+
+        // 全局函數：移文案件
+        window.transferCase = function() {
+            const caseSelect = document.getElementById('transfer-case-select');
+            const transferReason = document.getElementById('transfer-reason');
+            
+            if (caseSelect.value === '') {
+                showNotification('請選擇要移文的案件！');
+                return;
+            }
+            
+            if (transferReason.value.trim() === '') {
+                showNotification('請輸入移文理由！');
+                return;
+            }
+            
+            const caseItem = appData.cases.find(c => c.id === caseSelect.value);
+            if (!caseItem) return;
+            
+            // 更新案件狀態
+            caseItem.status = 'transferred';
+            caseItem.verdict = `已移文至南郡法曹，理由：${transferReason.value}`;
+            
+            // 更新統計數據
+            updateCaseStats();
+            
+            // 顯示通知
+            showNotification(`${caseItem.title}已移文至南郡法曹。`);
+            
+            // 重新渲染移文頁面
+            setTimeout(() => {
+                renderTransferPage();
+            }, 1500);
+        };
+
+        // 導航到特定頁面
+        function navigateTo(page) {
+            appData.currentPage = page;
+            
+            switch (page) {
+                case 'home':
+                    renderHomePage();
+                    break;
+                case 'cases':
+                    renderCasesPage();
+                    break;
+                case 'transfer':
+                    renderTransferPage();
+                    break;
+                case 'stats':
+                    renderStatsPage();
+                    break;
+                case 'settings':
+                    renderSettingsPage();
+                    break;
+                default:
+                    renderHomePage();
+            }
+            
+            // 為新載入的頁面啟用滑動手勢
+            setTimeout(() => {
+                enableTouchScrolling();
+            }, 100);
+        }
+
+        // 初始化頁面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 生成竹簡
+            generateBambooSlips(document.getElementById('paili-scroll'), pailiText);
+            
+            // 設置導航點擊事件
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    navigateTo(page);
+                });
+            });
+            
+            // 默認顯示主頁
+            renderHomePage();
+            
+            // 啟用滑動手勢
+            enableTouchScrolling();
+        });
+
+        // 全局函數：導航
+        window.navigateTo = navigateTo;
+    </script>
+
+
+</body></html>
