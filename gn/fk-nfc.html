@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>水卡发卡器</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;margin:18px;background:#f7f8fb;color:#111}
+  h1{font-size:18px;margin-bottom:6px}
+  .box{background:#fff;border:1px solid #e3e6ef;padding:12px;border-radius:8px;box-shadow:0 1px 4px rgba(30,40,60,0.03);margin-bottom:12px}
+  label{display:block;margin-bottom:6px;font-weight:600}
+  input[type="text"], textarea, input[type="number"]{width:100%;padding:8px;border:1px solid #dfe6f3;border-radius:6px}
+  .row{display:flex;gap:8px}
+  .col{flex:1}
+  button{padding:8px 12px;border-radius:6px;border:none;background:#2b7cff;color:#fff;cursor:pointer}
+  button.secondary{background:#6c757d}
+  small{color:#666}
+  .info{font-family:monospace;background:#f0f4ff;padding:8px;border-radius:6px;margin-top:8px}
+</style>
+</head>
+<body>
+<h1>水卡发卡器（NFC 版）</h1>
+
+<div class="box">
+<small>
+• 页面内置你的 200.dump 模板<br>
+• 偏移 264 写入 float32 金额<br>
+• 支持下载 .dump 或直接写入 NFC 水卡
+</small>
+</div>
+
+<div class="box">
+<label>输入金额</label>
+<div class="row">
+<div class="col">
+<input id="amount" type="text" placeholder="例如 14 或 9.1 或 999.99" value="100">
+</div>
+</div>
+
+<div style="margin-top:10px">
+<button id="genBtn">生成并下载 .dump</button>
+<button id="nfcBtn" style="margin-left:6px">生成并写入 NFC 水卡</button>
+</div>
+
+<div id="status" class="info"></div>
+</div>
+
+<script>
+const OFFSET = 264;
+
+// 你内置的 200.dump
+const template_b64 = "RpzyZEwIBAABBM+HOtnNHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAABIQwAAAACBPlhIcrGgVNgYKpHYqPyYAAAAAAAAAAAAAAAAAAAAAI7l8tqGm/8PAGmBPlhIcrFTVFUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACO5fLahpv/DwBpgT5YSHKxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP////////8HgGn///////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////B4Bp////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////////weAaf///////w==";
+
+function b64ToUint8Array(b64){
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+  return arr;
+}
+
+const template = b64ToUint8Array(template_b64);
+const status = document.getElementById("status");
+
+function log(t){
+  status.textContent = t;
+}
+
+function makeDump(amount){
+  const out = new Uint8Array(template.length);
+  out.set(template);
+  const dv = new DataView(out.buffer);
+  dv.setFloat32(OFFSET, amount, true);
+  return out;
+}
+
+function download(arr, name){
+  const blob = new Blob([arr], {type:'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("genBtn").onclick = ()=>{
+  const amt = Number(amount.value);
+  if(isNaN(amt)){ alert("金额错误"); return; }
+  const dump = makeDump(amt);
+  const fname = String(amt).replace(".","_") + ".dump";
+  download(dump, fname);
+  log("已生成 " + fname);
+};
+
+document.getElementById("nfcBtn").onclick = async ()=>{
+  const amt = Number(amount.value);
+  if(isNaN(amt)){ alert("金额错误"); return; }
+
+  if(!("NDEFReader" in window)){
+    alert("此浏览器不支持 NFC，请用 Android Chrome");
+    return;
+  }
+
+  try{
+    const dump = makeDump(amt);
+    const ndef = new NDEFReader();
+    log("请将手机靠近水卡...");
+    await ndef.write({
+      records:[{
+        recordType:"mime",
+        mediaType:"application/octet-stream",
+        data: dump
+      }]
+    });
+    log("✅ 写卡完成，金额：" + amt);
+  }catch(e){
+    log("❌ NFC 写入失败：" + e);
+  }
+};
+</script>
+</body>
+</html>
