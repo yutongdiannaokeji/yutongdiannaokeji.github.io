@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>于桐电脑科技 | 非凡历程</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -11,22 +11,24 @@
         :root {
             --text-main: #2d3436;
             --text-light: #636e72;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --ai-cyan: #00f260; /* AI时代的青绿色 */
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --ai-cyan: #00f260;
+            --yt-logo-color: #18ccda; /* 新的 Logo 颜色 */
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
 
         body {
             font-family: 'Noto Sans SC', sans-serif;
             color: var(--text-main);
             overflow-x: hidden;
-            /* 初始背景，后续通过JS动态控制 */
             background-color: #fff;
+            -webkit-font-smoothing: antialiased; /*字体平滑 */
         }
 
         /* --- 动态背景层 --- */
@@ -38,7 +40,8 @@
             height: 100vh;
             z-index: -1;
             background: linear-gradient(180deg, #84fab0 0%, #8fd3f4 100%);
-            transition: background 1.5s ease;
+            transition: background 1.2s ease;
+            will-change: background; /* 性能优化 */
         }
 
         .floating-shape {
@@ -48,6 +51,7 @@
             opacity: 0.6;
             z-index: -1;
             animation: float 20s infinite ease-in-out;
+            will-change: transform;
         }
 
         @keyframes float {
@@ -57,40 +61,39 @@
 
         /* --- 头部 --- */
         header {
-            height: 100vh;
+            height: 100vh; /* 只有桌面端保持全屏 */
+            min-height: 600px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
             overflow: hidden;
+            padding: 20px;
         }
 
         .logo-container {
             width: 180px;
             height: 180px;
-            /* 修改为圆形 */
             border-radius: 50%;
             background: #fff;
-            /* 添加青绿色光晕 */
-            box-shadow: 0 0 40px var(--ai-cyan), 0 0 10px var(--ai-cyan) inset;
+            box-shadow: 0 0 40px rgba(24, 204, 218, 0.4), 0 0 10px rgba(24, 204, 218, 0.2) inset;
             border: 3px solid #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 40px;
-            transform: scale(0); /* 初始隐藏 */
+            transform: scale(0);
             overflow: hidden;
             position: relative;
         }
         
-        /* 增加一个旋转的青绿色光环 */
         .logo-container::before {
             content: '';
             position: absolute;
             top: -5px; left: -5px; right: -5px; bottom: -5px;
             border-radius: 50%;
-            background: linear-gradient(45deg, transparent, var(--ai-cyan), transparent);
+            background: linear-gradient(45deg, transparent, var(--yt-logo-color), transparent);
             z-index: -1;
             animation: spinLogo 3s linear infinite;
         }
@@ -104,13 +107,13 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 50%; /* 图片也变成圆形 */
+            border-radius: 50%;
             z-index: 2;
             background: #fff;
         }
 
         h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
+            font-size: clamp(2.5rem, 6vw, 6rem); /* 响应式字体 */
             font-weight: 900;
             line-height: 1.1;
             text-align: center;
@@ -119,25 +122,29 @@
             -webkit-text-fill-color: transparent;
             opacity: 0;
             transform: translateY(50px);
+            margin-bottom: 10px;
         }
 
         .header-sub {
-            font-size: 1.2rem;
-            margin-top: 20px;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            margin-top: 10px;
             color: var(--text-light);
             opacity: 0;
             letter-spacing: 4px;
+            text-align: center;
+            line-height: 1.5;
         }
 
         /* --- 时间轴主体 --- */
         .timeline-section {
             position: relative;
             padding: 100px 20px;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
+            overflow: hidden; /* 防止卡片旋转导致横向滚动条 */
         }
 
-        /* 中央进度线 */
+        /* 中央进度线 (默认桌面端) */
         .progress-line-container {
             position: absolute;
             left: 50%;
@@ -148,6 +155,7 @@
             transform: translateX(-50%);
             z-index: 0;
             border-radius: 4px;
+            transition: left 0.5s ease; /* 适配响应式切换动画 */
         }
 
         .progress-line-fill {
@@ -165,47 +173,59 @@
         .year-block {
             display: flex;
             justify-content: center;
-            margin-bottom: 150px; /* 间距拉大，呼吸感 */
+            margin-bottom: 150px;
             position: relative;
             perspective: 1000px;
+            width: 100%;
         }
 
         .card {
-            width: 45%;
+            width: 45%; /* 桌面端宽度 */
             background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.6);
             position: relative;
-            /* 初始状态供GSAP控制 */
             opacity: 0;
             transform: translateY(100px) rotateX(10deg);
-            transition: box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
-        .card:hover {
-            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        /* 触摸反馈 */
+        .card:active {
+            transform: scale(0.98) !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* 左右布局 */
-        .year-block:nth-child(odd) .card {
-            margin-right: auto; /* 靠左 */
-            transform-origin: right center;
-        }
-
-        .year-block:nth-child(even) .card {
-            margin-left: auto; /* 靠右 */
-            transform-origin: left center;
+        /* 桌面端：左右交替布局 */
+        @media (min-width: 769px) {
+            .card:hover {
+                box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+                transform: translateY(-5px);
+            }
+            .year-block:nth-child(odd) .card {
+                margin-right: auto;
+                transform-origin: right center;
+                text-align: right; /* 奇数卡片右对齐文本，更美观 */
+            }
+            .year-block:nth-child(odd) .card .highlight-tag {
+                float: right; /* 标签也跟随 */
+            }
+            .year-block:nth-child(even) .card {
+                margin-left: auto;
+                transform-origin: left center;
+                text-align: left;
+            }
         }
 
         /* 连接点 */
         .connector {
             position: absolute;
             top: 50px;
-            left: 50%; /* 相对父级 */
+            left: 50%;
             width: 20px;
             height: 20px;
             background: #fff;
@@ -213,22 +233,32 @@
             transform: translateX(-50%) scale(0);
             z-index: 2;
             box-shadow: 0 0 0 4px rgba(255,255,255,0.3);
+            transition: left 0.5s ease;
         }
 
         /* 文本样式 */
         .card-date {
             font-size: 3rem;
             font-weight: 900;
-            color: rgba(0,0,0,0.08);
+            color: rgba(0,0,0,0.06);
             position: absolute;
             top: 10px;
             right: 30px;
             line-height: 1;
             z-index: 0;
+            pointer-events: none; /* 防止遮挡文字选区 */
+        }
+        
+        /* 桌面端奇数卡片日期放左边 */
+        @media (min-width: 769px) {
+            .year-block:nth-child(odd) .card-date {
+                right: auto;
+                left: 30px;
+            }
         }
 
         .card-title {
-            font-size: 1.8rem;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
             font-weight: 700;
             margin-bottom: 15px;
             position: relative;
@@ -239,47 +269,97 @@
         }
 
         .card-content {
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 1.05rem;
+            line-height: 1.6;
             color: var(--text-light);
             position: relative;
             z-index: 1;
+            margin-bottom: 10px;
+            word-break: break-all; /* 防止长单词撑破布局 */
+            text-align: justify; /* 两端对齐更整洁 */
         }
 
         .highlight-tag {
             display: inline-block;
-            margin-top: 15px;
-            padding: 6px 16px;
+            margin-top: 10px;
+            padding: 6px 14px;
             background: #000;
             color: #fff;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             letter-spacing: 1px;
         }
 
-        /* 移动端适配 */
+        /* --- 移动端深度优化 (Tablet & Mobile) --- */
         @media (max-width: 768px) {
-            .progress-line-container { left: 20px; }
-            .year-block { margin-bottom: 80px; }
-            .card { width: 85%; margin-left: 50px !important; margin-right: 0 !important; }
-            .connector { left: 20px; }
-            h1 { font-size: 3rem; }
-            .card-date { font-size: 2rem; top: 20px; }
+            header {
+                height: 80vh; /* 移动端不需要完全占满，留出滑动提示 */
+            }
+
+            .logo-container {
+                width: 140px;
+                height: 140px;
+            }
+
+            .timeline-section {
+                padding: 60px 15px;
+            }
+
+            /* 线条移到左侧 */
+            .progress-line-container {
+                left: 30px; 
+                transform: translateX(0);
+            }
+
+            /* 连接点移到左侧 */
+            .connector {
+                left: 30px;
+                transform: translateX(-50%) scale(0); /* 保持 scale 动画逻辑 */
+            }
+
+            /* 卡片布局重置 */
+            .year-block {
+                margin-bottom: 60px;
+                justify-content: flex-end; /* 内容全部靠右 */
+            }
+
+            .card {
+                width: calc(100% - 60px); /* 留出左侧线条空间 */
+                margin: 0 !important; /* 清除所有 auto margin */
+                margin-left: auto !important; /* 强制靠右 */
+                padding: 25px;
+                text-align: left !important; /* 强制左对齐 */
+                transform-origin: left center !important;
+            }
+            
+            /* 修正移动端日期位置 */
+            .card-date {
+                font-size: 2.2rem;
+                top: 15px;
+                right: 20px !important;
+                left: auto !important;
+            }
+            
+            /* 移动端标签位置 */
+            .highlight-tag {
+                float: none !important;
+            }
         }
-        
-        /* 装饰性渐变圆球 */
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            z-index: -1;
+
+        /* --- 超小屏幕优化 (Small Phones) --- */
+        @media (max-width: 380px) {
+            h1 { font-size: 2.2rem; }
+            .logo-container { width: 120px; height: 120px; }
+            .progress-line-container { left: 20px; }
+            .connector { left: 20px; }
+            .card { width: calc(100% - 40px); padding: 20px; }
         }
 
     </style>
 </head>
 <body>
 
-    <!-- 动态背景 -->
     <div class="bg-canvas" id="bgCanvas">
         <div class="floating-shape" style="width: 500px; height: 500px; background: #ff9a9e; top: 10%; left: -10%;"></div>
         <div class="floating-shape" style="width: 400px; height: 400px; background: #a18cd1; bottom: 20%; right: -5%;"></div>
@@ -287,8 +367,8 @@
 
     <header>
         <div class="logo-container" id="logoBox">
-            <!-- Logo 图片 -->
-            <img src="assets/images/logo/logo.jpg" alt="Logo" class="logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:3rem;font-weight:900;background:linear-gradient(45deg,#00f260,#0575e6);-webkit-background-clip:text;-webkit-text-fill-color:transparent\'>YT</span>'">
+            <img src="assets/images/logo/logo.jpg" alt="Logo" class="logo-img" 
+                 onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:3.5rem;font-weight:900;color:#18ccda;\'>YT</span>'">
         </div>
         <h1 id="mainTitle">于桐电脑科技</h1>
         <p class="header-sub" id="subTitle">不断向上 · 探索未知 · 智启未来</p>
@@ -299,130 +379,107 @@
             <div class="progress-line-fill" id="progressLine"></div>
         </div>
 
-        <!-- 2023 起源 -->
-        <div class="year-block" data-color="#84fab0"> <!-- Spring Green -->
+        <div class="year-block" data-color="#84fab0"> 
             <div class="connector"></div>
             <div class="card">
                 <div class="card-date">2023</div>
-                <h3 class="card-title">梦开始的地方&nbsp;</h3>
-              <p class="card-content">3月2日，于桐锭恼科寄在唐山五四教育集团主校区105教室成立，官网同步上线。<br>
-              3月4日到10月13日，于桐锭恼科寄不断更新，从beta1到RC再到v1.5.0，我们一直在路上。</p>
+                <h3 class="card-title">梦开始的地方</h3>
+                <p class="card-content">3月2日，于桐锭恼科寄在唐山五四教育集团主校区105教室成立，官网同步上线。</p>
+                <p class="card-content">3月4日到10月13日，不断更新，从beta1到RC再到v1.5.0，我们一直在路上。</p>
                 <span class="highlight-tag">FOUNDATION</span>
             </div>
         </div>
 
-        <!-- 2023 变革 -->
-        <div class="year-block" data-color="#4facfe"> <!-- Sky Blue -->
+        <div class="year-block" data-color="#4facfe">
             <div class="connector"></div>
             <div class="card">
                 <div class="card-date">2023</div>
-                <h3 class="card-title">第一次股权变更&nbsp;</h3>
-                <p class="card-content">10月13日 于桐锭恼科寄GitHub官网因尝试启用自主搭建服务器停止更新<br>
-              10月24日 于桐正式接管于桐锭恼科寄，新的网址为https://ytdnkj114514.github.io/ytdnkj（现已停止服务） 同时于桐锭恼科寄更新为v2.0.0版本 </p>
-                <p class="card-content">&nbsp;
-                </p>
-<span class="highlight-tag">REVOLUTION</span>
+                <h3 class="card-title">第一次股权变更</h3>
+                <p class="card-content">10月13日，GitHub官网因尝试启用自主搭建服务器停止更新。</p>
+                <p class="card-content">10月24日，于桐正式接管，启用新网址并更新为v2.0.0版本。</p>
+                <span class="highlight-tag">REVOLUTION</span>
             </div>
         </div>
 
-        <!-- 2023 探索 -->
-        <div class="year-block" data-color="#43e97b"> <!-- Fresh Teal -->
+        <div class="year-block" data-color="#43e97b">
             <div class="connector"></div>
             <div class="card">
-              <div class="card-date">2023</div>
-              <h3 class="card-title">电子信息业务拓展</h3>
-              <p class="card-content">10月20日 于桐锭恼科寄作出重大业务调整，取消于桐客车板块， 新增于桐锭恼科寄开源项目和扫描隧道显微镜两大重要科研项目板块&nbsp;</p>
-              <p class="card-content">11月23日 因自主搭建的服务器硬盘故障于桐锭恼科寄重新启用GitHub官方网站域名为“yutongdiannaokeji.github.io"</p>
-<p class="card-content">11月24日 于桐锭恼科寄启动扫描隧道显微镜项目</p>
-              <p class="card-content">&nbsp;12月1日 于桐锭恼科寄更新为2.5.0版本&nbsp;</p>
-              <p class="card-content">12月8日 于桐锭恼科寄更新为2.5.1版本，修复了大量错误&nbsp;</p>
-              <p class="card-content">&nbsp;12月20日 于桐锭恼科寄更新为3.0.1版本，停止了对STM项目的开发 12月21日 于桐锭恼科寄开始了对单片机的研究</p>
-<p class="card-content">&nbsp;
-              </p>
-<span class="highlight-tag">EXPLORE</span>
+                <div class="card-date">2023</div>
+                <h3 class="card-title">电子信息业务拓展</h3>
+                <p class="card-content">10月20日，业务重大调整，取消客车板块，新增开源项目和扫描隧道显微镜（STM）两大科研板块。</p>
+                <p class="card-content">11月-12月，经历多次版本迭代至3.0.1，暂停STM开发，转向单片机研究。</p>
+                <span class="highlight-tag">EXPLORE</span>
             </div>
         </div>
 
-        <!-- 2024 文化 -->
-        <div class="year-block" data-color="#fa709a"> <!-- Vibrant Pink -->
+        <div class="year-block" data-color="#fa709a">
             <div class="connector"></div>
             <div class="card">
                 <div class="card-date">2024</div>
                 <h3 class="card-title">第二次股权重组</h3>
-                <p class="card-content">1月9日 于桐锭恼科寄更新为11.0.1版本，开启了2024年度特别节目-东福的食谱 （东福eating）</p>
-              <p class="card-content">1月13日 于桐锭恼科寄更新为11.0.9版本&nbsp;</p>
-              <p class="card-content">2月1日 于桐集团作出股权结构调整，辐左村成为公司第一大股东； 于桐退出集团管理层，主管于桐客车股份；史东福成为集团实际负责人；增加张迪坤技术持股
-                <p class="card-content">&nbsp;</p>
-<span class="highlight-tag">CULTURE</span>
+                <p class="card-content">1月，版本更新至11.0.9，开启年度特别节目。</p>
+                <p class="card-content">2月1日，股权结构调整：辐左村成为第一大股东；史东福任实际负责人；新增技术持股。</p>
+                <span class="highlight-tag">CULTURE</span>
             </div>
         </div>
 
-        <!-- 2024 正名 -->
-        <div class="year-block" data-color="#a18cd1"> <!-- Soft Purple -->
+        <div class="year-block" data-color="#a18cd1">
             <div class="connector"></div>
             <div class="card">
-              <div class="card-date">2024</div>
-              <h3 class="card-title">成立一周年和业务调整</h3>
-                <p class="card-content">3月2日，于桐锭恼科寄迎来成立一周年纪念日，并进行成立纪念聚餐&nbsp;</p>
-              <p class="card-content">3月3日，于桐锭恼科寄官网取消版本号正式更名为“于桐锭恼科寄（中国大陆）-官方网站” 同时“https://ytdnkj114514.github.io/ytdnkj”停止运营</p>
-                <p class="card-content">&nbsp;6月24日 于桐集团作出重大业务调整：于桐客车业务重开；于锭公司收缩战线，停止扫描隧道显微镜等硬件研发，专注于电脑、鸭梨牌手机、INMD显卡等业务，并代集团宣传部负责官网运营</p>
-<span class="highlight-tag">MILESTONE</span>
+                <div class="card-date">2024</div>
+                <h3 class="card-title">成立一周年</h3>
+                <p class="card-content">3月3日，官网取消版本号，正式更名为“于桐锭恼科寄（中国大陆）-官方网站”。</p>
+                <p class="card-content">6月24日，客车业务重开；专注于电脑、鸭梨牌手机、INMD显卡等核心业务。</p>
+                <span class="highlight-tag">MILESTONE</span>
             </div>
         </div>
 
-        <!-- 2025 升级 -->
-        <div class="year-block" data-color="#30cfd0"> <!-- Cyan Teal -->
+        <div class="year-block" data-color="#30cfd0">
             <div class="connector"></div>
             <div class="card">
                 <div class="card-date">2025</div>
                 <h3 class="card-title">商标更名</h3>
-                <p class="card-content">1月28日，于桐集团董事会作出重大决定：为推动于桐电脑科技正规化、现代化、国际化，将原有“于桐锭恼科寄”商标更改为“于桐电脑科技”。</p>
+                <p class="card-content">1月28日，为推动正规化与国际化，商标正式更改为“于桐电脑科技”。</p>
                 <span class="highlight-tag">UPGRADE</span>
             </div>
         </div>
 
-        <!-- 2025 突破 -->
-        <div class="year-block" data-color="#fddb92"> <!-- Golden Morning -->
+        <div class="year-block" data-color="#fddb92">
             <div class="connector"></div>
             <div class="card">
                 <div class="card-date">2025</div>
-                <h3 class="card-title">成立两周年和业务拓展</h3>
-                <p class="card-content">2月7日，于桐电脑科技重新测试“开源项目”，并成功进行了对铂炭催化氢氧燃料电池的测试&nbsp;</p>
-              <p class="card-content">2月8日，于桐客车正式发布第一条企业标准&nbsp;</p>
-              <p class="card-content">2月28日，于桐电脑科技正式推出安卓硬件刷机服务&nbsp;</p>
-                <p class="card-content">3月2日，于桐集团迎来成立两周年纪念日，并进行成立纪念聚餐&nbsp;</p>
-<span class="highlight-tag">BREAKTHROUGH</span>
+                <h3 class="card-title">成立两周年</h3>
+                <p class="card-content">2月，重启“开源项目”测试，发布企业标准，并推出安卓硬件刷机服务。</p>
+                <p class="card-content">3月2日，集团迎来成立两周年纪念日。</p>
+                <span class="highlight-tag">BREAKTHROUGH</span>
             </div>
         </div>
 
-        <!-- 2025 未来 -->
-        <div class="year-block" data-color="#667eea"> <!-- Deep Future Blue -->
+        <div class="year-block" data-color="#667eea">
             <div class="connector"></div>
             <div class="card">
                 <div class="card-date">2025</div>
                 <h3 class="card-title">可日商飞成立</h3>
-                <p class="card-content">7月26日，于桐集团航空业务重开，新成立可日商飞，隶属于桐重工股份&nbsp;</p>
-                <p class="card-content">8月5日，于桐集团召开2025年度第一次全体股东大会（线下）并进行聚餐，宣布大飞机项目正式启动</p>
-<span class="highlight-tag">SKY HIGH</span>
+                <p class="card-content">7月26日，航空业务重开，成立可日商飞。</p>
+                <p class="card-content">8月5日，召开股东大会，宣布大飞机项目正式启动。</p>
+                <span class="highlight-tag">SKY HIGH</span>
             </div>
         </div>
         
-        <!-- 2025 AI时代 (NEW) -->
-        <div class="year-block" data-color="#00f260"> <!-- AI Cyan Green -->
+        <div class="year-block" data-color="#00f260">
             <div class="connector"></div>
-            <div class="card">
+            <div class="card" style="border: 1px solid var(--ai-cyan);">
                 <div class="card-date" style="color: rgba(0, 242, 96, 0.1);">2025</div>
                 <h3 class="card-title" style="background: linear-gradient(90deg, #0575e6, #00f260); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AI纪元</h3>
-                <p class="card-content">11月19日，公司网站主页大改版，正式进入<strong>AI时代</strong>。<br>从现在起，以人工智能技术驱动未来发展，开启全新篇章。</p>
+                <p class="card-content">11月19日，公司网站主页大改版，正式进入<strong>AI时代</strong>。</p>
+                <p class="card-content">以人工智能技术驱动未来发展，开启全新篇章。</p>
                 <span class="highlight-tag" style="background: linear-gradient(45deg, #00f260, #0575e6);">AI ERA</span>
             </div>
         </div>
         
-        <div style="height: 200px;"></div> <!-- 底部留白 -->
-    </div>
+        <div style="height: 150px;"></div> </div>
 
     <script>
-        // 注册 GSAP 插件
         gsap.registerPlugin(ScrollTrigger);
 
         // --- 1. 头部入场动画 ---
@@ -445,45 +502,40 @@
         }, "-=0.3");
 
         // --- 2. 背景色随滚动渐变 ---
-        // 选取所有区块，根据滚动位置改变背景
         const bgCanvas = document.querySelector('.bg-canvas');
         const blocks = document.querySelectorAll('.year-block');
 
         blocks.forEach((block) => {
             ScrollTrigger.create({
                 trigger: block,
-                start: "top center",
-                end: "bottom center",
-                onEnter: () => {
-                    const color = block.getAttribute('data-color');
-                    // 混合渐变
-                    gsap.to(bgCanvas, {
-                        background: `linear-gradient(180deg, #fff 0%, ${color} 100%)`,
-                        duration: 1.5
-                    });
-                },
-                onEnterBack: () => {
-                    const color = block.getAttribute('data-color');
-                    gsap.to(bgCanvas, {
-                        background: `linear-gradient(180deg, #fff 0%, ${color} 100%)`,
-                        duration: 1.5
-                    });
-                }
+                start: "top 60%", // 触发位置微调，更符合视觉
+                end: "bottom 60%",
+                onEnter: () => changeBg(block.getAttribute('data-color')),
+                onEnterBack: () => changeBg(block.getAttribute('data-color'))
             });
         });
+
+        function changeBg(color) {
+            gsap.to(bgCanvas, {
+                background: `linear-gradient(180deg, #fff 0%, ${color} 100%)`,
+                duration: 1.2,
+                overwrite: "auto"
+            });
+        }
 
         // --- 3. 进度条填充 ---
         gsap.to("#progressLine", {
             height: "100%",
+            ease: "none", // 线性填充
             scrollTrigger: {
                 trigger: ".timeline-section",
                 start: "top center",
                 end: "bottom bottom",
-                scrub: 1 // 绑定滚动条
+                scrub: 0.5 // 增加一点延迟，使跟手更自然
             }
         });
 
-        // --- 4. 卡片浮现动画 (震撼点) ---
+        // --- 4. 卡片浮现动画 ---
         blocks.forEach((block) => {
             const card = block.querySelector('.card');
             const connector = block.querySelector('.connector');
@@ -493,27 +545,30 @@
                 scale: 1,
                 scrollTrigger: {
                     trigger: block,
-                    start: "top 80%",
+                    start: "top 85%",
                     toggleActions: "play none none reverse"
                 },
                 ease: "back.out(1.7)",
                 duration: 0.5
             });
 
-            // 卡片飞入 (带3D旋转)
+            // 卡片飞入
             gsap.to(card, {
                 opacity: 1,
                 y: 0,
                 rotationX: 0,
                 scrollTrigger: {
                     trigger: block,
-                    start: "top 75%",
+                    start: "top 80%",
                     toggleActions: "play none none reverse"
                 },
-                duration: 1,
-                ease: "power4.out"
+                duration: 0.8,
+                ease: "power3.out"
             });
         });
+        
+        // 刷新 ScrollTrigger 以确保加载后位置正确
+        window.addEventListener('load', () => ScrollTrigger.refresh());
 
     </script>
 </body>
