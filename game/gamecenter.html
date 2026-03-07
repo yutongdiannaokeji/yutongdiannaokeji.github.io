@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>于桐小游戏中心 - Yutong Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Noto+Sans+SC:wght@500;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --accent-sl: #10b981;
+            --accent-wzq: #6366f1;
+            --soft-bg: #fdfdfd;
+        }
+
+        body {
+            background-color: var(--soft-bg);
+            color: var(--primary);
+            font-family: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* 动态渐变背景 */
+        .gradient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.03) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* 优化后的网格 */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, #e2e8f0 1.2px, transparent 1.2px);
+            background-size: 40px 40px;
+            z-index: -2;
+            opacity: 0.6;
+        }
+
+        .hero-title {
+            font-size: clamp(3.5rem, 14vw, 10rem);
+            line-height: 0.85;
+            letter-spacing: -0.06em;
+            font-weight: 900;
+        }
+
+        /* 高级感卡片实现 */
+        .game-card {
+            border-radius: 48px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.02);
+            transition: border-color 0.3s ease;
+            cursor: pointer;
+            will-change: transform, box-shadow;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 10;
+        }
+
+        .game-card:hover {
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 磁性内发光效果 */
+        .card-inner-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 48px;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(0,0,0,0.03) 0%, transparent 50%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .game-card:hover .card-inner-glow {
+            opacity: 1;
+        }
+
+        /* 极速跳转遮罩 */
+        #page-loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            transform: translateY(100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 2px;
+            background: white;
+            margin-top: 20px;
+        }
+
+        /* 适配所有尺寸的卡片高度 */
+        @media (max-width: 768px) {
+            .game-card { height: 380px; border-radius: 40px; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="gradient-bg"></div>
+    <div class="bg-grid"></div>
+
+    <nav class="p-8 md:p-12 flex justify-between items-center relative z-50">
+        <div class="flex items-center space-x-3 group cursor-pointer">
+            <div class="w-12 h-12 bg-black rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-12">
+                <span class="text-white font-black text-xl">Y</span>
+            </div>
+            <span class="font-extrabold tracking-tighter text-2xl">YUTONG</span>
+        </div>
+        <div class="font-bold text-xs tracking-[0.3em] uppercase opacity-40">GameCenter&nbsp; v2.0</div>
+    </nav>
+
+    <main class="px-8 md:px-16 max-w-[1600px] mx-auto">
+        <header class="py-16 md:py-24 relative">
+            <div class="flex items-center space-x-2 mb-8 overflow-hidden">
+                <span class="h-[1px] w-12 bg-black opacity-20"></span>
+                <span class="text-[10px] font-black tracking-widest uppercase opacity-40">Ready to play</span>
+            </div>
+            <h1 class="hero-title italic">
+                PURE<br><span class="text-slate-200">ENERGY.</span>
+            </h1>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 pb-32">
+            
+            <!-- 扫雷卡片 -->
+            <div class="game-card p-10 md:p-14 group text-emerald-500 h-[520px]" 
+                 onclick="navigate('sl.html', 'MINESWEEPER')">
+                <div class="card-inner-glow"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <div class="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <span class="text-7xl font-black opacity-[0.03] italic">01</span>
+                </div>
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-[900] text-black italic mb-4 tracking-tighter">于桐扫雷</h2>
+                    <p class="text-slate-400 font-bold tracking-wide uppercase text-sm">极致逻辑推理</p>
+                </div>
+                <div class="relative z-10 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </div>
+                    <span class="text-xs font-black tracking-widest text-black uppercase opacity-0 group-hover:opacity-100 transition-opacity">Launch Experience</span>
+                </div>
+            </div>
+
+            <!-- 五子棋卡片 -->
+            <div class="game-card p-10 md:p-14 group text-indigo-500 h-[520px]" 
+                 onclick="navigate('wzq.html', 'GOMOKU')">
+                <div class="card-inner-glow"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <div class="w-20 h-20 bg-indigo-50 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <span class="text-7xl font-black opacity-[0.03] italic">02</span>
+                </div>
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-[900] text-black italic mb-4 tracking-tighter">于桐五子棋</h2>
+                    <p class="text-slate-400 font-bold tracking-wide uppercase text-sm">大师级博弈对抗</p>
+                </div>
+                <div class="relative z-10 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </div>
+                    <span class="text-xs font-black tracking-widest text-black uppercase opacity-0 group-hover:opacity-100 transition-opacity">Launch Experience</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="p-12 text-center border-t border-black/5 mx-8">
+        <p class="text-[10px] font-black opacity-20 tracking-[0.8em] uppercase">Built for the future of web gaming</p>
+    </footer>
+
+    <!-- 跳转遮罩 -->
+    <div id="page-loader">
+        <div class="text-white font-[900] italic text-4xl tracking-tighter" id="loader-title">LOADING</div>
+        <div class="w-48 h-[1px] bg-white/10 mt-8 overflow-hidden">
+            <div class="loader-bar" id="loader-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 初始化入场动画
+        window.onload = () => {
+            const tl = gsap.timeline();
+            tl.to("body", { opacity: 1, duration: 0.1 })
+              .from("nav", { y: -20, opacity: 0, duration: 1, ease: "expo.out" })
+              .from(".hero-title", { y: 100, opacity: 0, skewY: 5, duration: 1.2, ease: "expo.out" }, "-=0.8")
+              .from(".game-card", { 
+                  y: 80, 
+                  opacity: 0, 
+                  stagger: 0.2, 
+                  duration: 1.5, 
+                  ease: "power4.out" 
+              }, "-=1");
+        };
+
+        // 2. 磁性吸附逻辑 & 动态光效
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 设置光晕坐标
+                card.style.setProperty('--x', `${x}px`);
+                card.style.setProperty('--y', `${y}px`);
+
+                // 轻微磁性偏转
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const moveX = (x - centerX) / 25;
+                const moveY = (y - centerY) / 25;
+                
+                gsap.to(card, {
+                    x: moveX,
+                    y: moveY,
+                    rotateX: -moveY / 2,
+                    rotateY: moveX / 2,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { x: 0, y: 0, rotateX: 0, rotateY: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
+            });
+        });
+
+        // 3. 丝滑跳转函数
+        function navigate(url, title) {
+            const loader = document.getElementById('page-loader');
+            const bar = document.getElementById('loader-bar');
+            document.getElementById('loader-title').innerText = title;
+
+            // 锁定操作
+            loader.style.pointerEvents = 'auto';
+
+            // 动画序列
+            const tl = gsap.timeline();
+            tl.to(loader, { 
+                y: "0%", 
+                duration: 0.8, 
+                ease: "expo.inOut" 
+            })
+            .to(bar, { 
+                width: "100%", 
+                duration: 1.2, 
+                ease: "power4.inOut",
+                onComplete: () => {
+                    window.location.href = url;
+                }
+            }, "-=0.3");
+        }
+
+        // 4. 背景视差
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 40;
+            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+            gsap.to(".bg-grid", { x, y, duration: 4, ease: "power2.out" });
+        });
+    </script>
+</body>
+</html>

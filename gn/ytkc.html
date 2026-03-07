@@ -1,57 +1,508 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>于桐客车</title>
+<title>新申沃客车 - 设计手稿</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
+    :root {
+        /* 极简现代配色 */
+        --primary-color: #008F8D; /* 品牌识别色 */
+        --bg-color: #FAFAFA;      /* 极浅的灰白色背景，护眼舒适 */
+        --card-bg: #FFFFFF;
+        --text-main: #2c3e50;
+        --text-sub: #95a5a6;
+        
+        /* 阴影系统 */
+        --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+        --shadow-hover: 0 15px 30px rgba(0,143,141,0.15); /* 悬停时带有淡淡的品牌色光晕 */
+    }
+
+    * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        background-color: #f8f8f8;
     }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+
+    /* 顶部导航 - 极简风格 */
     header {
-        background-color: #008F8D;
-        color: #fff;
-        text-align: center;
-        padding: 10px 0;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        padding: 15px 0;
+        transition: all 0.3s ease;
     }
-    .container {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 0 20px;
+
+    .header-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
-    .gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        grid-gap: 20px;
+
+    .logo {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-main);
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
-    .gallery img {
+    
+    .logo::before {
+        content: '';
+        display: block;
+        width: 4px;
+        height: 18px;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    /* 导航链接 */
+    nav {
+        display: flex;
+        gap: 30px;
+    }
+
+    nav button {
+        background: none;
+        border: none;
+        font-size: 0.95rem;
+        color: var(--text-sub);
+        cursor: pointer;
+        padding: 8px 0;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+
+    nav button::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--primary-color);
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    nav button:hover, nav button.active {
+        color: var(--text-main);
+    }
+
+    nav button.active::after {
         width: 100%;
-        height: auto;
-        transition: transform 0.3s;
     }
-    .gallery img:hover {
+
+    /* 主内容区 */
+    .container {
+        flex: 1;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px;
+        position: relative;
+    }
+
+    /* 页面切换动画容器 */
+    .page-section {
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .page-section.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* 首页：双入口设计 */
+    .hero-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        gap: 60px;
+        flex-wrap: wrap;
+    }
+
+    .choice-card {
+        background: #fff;
+        width: 320px;
+        height: 420px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 1px solid rgba(0,0,0,0.02);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .choice-card:hover {
+        transform: translateY(-15px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(0, 143, 141, 0.3);
+    }
+
+    .choice-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        opacity: 0.8;
+        transition: transform 0.4s ease;
+    }
+    
+    .choice-card:hover .choice-icon {
         transform: scale(1.1);
+    }
+
+    .choice-card h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        font-weight: 300;
+    }
+
+    .choice-card p {
+        color: var(--text-sub);
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+    }
+
+    .choice-btn {
+        padding: 12px 30px;
+        border: 1px solid var(--text-sub);
+        border-radius: 30px;
+        color: var(--text-main);
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .choice-card:hover .choice-btn {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    /* 画廊部分 */
+    .gallery-header {
+        text-align: center;
+        margin-bottom: 60px;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .gallery-header h2 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 15px;
+    }
+
+    .gallery-header .meta {
+        display: inline-block;
+        padding: 6px 16px;
+        background-color: rgba(0, 143, 141, 0.1);
+        color: var(--primary-color);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 40px;
+    }
+
+    .art-frame {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.4s ease;
+        opacity: 0; /* 初始隐藏，用于JS动画 */
+        transform: translateY(20px);
+    }
+
+    .art-frame:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .img-wrapper {
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 占位 */
+        position: relative;
+        background-color: #fff;
+        overflow: hidden;
+    }
+
+    .art-frame img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* 保持图片完整，不裁剪 */
+        padding: 20px;
+        /* 关键：保留手绘图纸的融合感 */
+        mix-blend-mode: multiply; 
+        transition: transform 0.5s ease;
+    }
+
+    .art-frame:hover img {
+        transform: scale(1.05);
+    }
+
+    .art-info {
+        padding: 20px;
+        text-align: center;
+        border-top: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .art-title {
+        font-size: 0.9rem;
+        color: var(--text-main);
+        font-family: 'Courier New', Courier, monospace; /* 仅标题保留打字机字体，增加设计感 */
+        font-weight: 600;
+    }
+
+    /* 页脚 */
+    footer {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-sub);
+        font-size: 0.8rem;
+        opacity: 0.6;
+    }
+
+    /* 动画关键帧 */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+        .header-content { padding: 0 20px; }
+        .hero-wrapper { flex-direction: column; gap: 30px; min-height: auto; padding: 40px 0; }
+        .choice-card { width: 100%; height: auto; padding: 40px 20px; }
+        .container { padding: 20px; }
     }
 </style>
 </head>
 <body>
-    <header>
-<h1>新申沃客车</h1>
-<p>&nbsp;
-    </p>
 
+    <header>
+        <div class="header-content">
+            <div class="logo">新申沃客车</div>
+            <nav>
+                <button onclick="switchTab('home')" id="btn-home" class="active">首页</button>
+                <button onclick="switchTab('sb')" id="btn-sb">SB系列</button>
+                <button onclick="switchTab('seg')" id="btn-seg">SEG系列</button>
+            </nav>
+        </div>
     </header>
+
     <div class="container">
-        <div class="gallery">
-        <a href="ytkc seg.html"><img src="kc p/SEG6127NGE8.png" width="3176" height="1780" alt=""></a> <a href="ytkc sb.html"><img src="kc p/SB6107WTM.png" width="3224" height="1277" alt=""></a>
-<p>&nbsp;</p>
-		  <p>&nbsp;</p>
-			<p>SEG系列&nbsp;</p>
-			<p>SB系列</p>
-&nbsp;</div>
+        
+        <!-- 首页 -->
+        <section id="home" class="page-section active">
+            <div class="hero-wrapper">
+                
+                <!-- 入口1：SEG系列 -->
+                <div class="choice-card" onclick="switchTab('seg')">
+                    <div class="choice-icon">🚌</div>
+                    <h2>SEG系列</h2>
+                    <p>主力设计师：史东福</p>
+                    <div class="choice-btn">浏览图纸</div>
+                </div>
+
+                <!-- 入口2：SB系列 -->
+                <div class="choice-card" onclick="switchTab('sb')">
+                    <div class="choice-icon">✏️</div>
+                    <h2>SB系列</h2>
+                    <p>金牌设计师：于桐</p>
+                    <div class="choice-btn">浏览图纸</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SB系列 画廊 -->
+        <section id="sb" class="page-section">
+            <div class="gallery-header">
+                <h2>SB Series</h2>
+                <div class="meta">Design by Yu Tong</div>
+            </div>
+            <div class="gallery-grid" id="sb-grid">
+                <!-- JS生成内容 -->
+            </div>
+        </section>
+
+        <!-- SEG系列 画廊 -->
+        <section id="seg" class="page-section">
+            <div class="gallery-header">
+                <h2>SEG Series</h2>
+                <div class="meta">Design by Shi Dongfu</div>
+            </div>
+            <div class="gallery-grid" id="seg-grid">
+                <!-- JS生成内容 -->
+            </div>
+        </section>
+
     </div>
+
+    <footer>
+        <p>© 2024 新申沃客车设计中心 | 数字化归档</p>
+    </footer>
+
+    <script>
+        // 配置数据
+        const pathPrefix = "kc p/";
+
+        const sbImages = [
+            "SB6107WTM.png", "SB6107BEVGA.png", "SB6109CHEV.png", 
+            "SB6107NGE8.png", "SB6127BEVGA.png", "SB6127NGE8.png", 
+            "SB6514CHEV.png", "SB6117EV07.png", "SB6121EV12.png", 
+            "SB6129EV47.png", "SB6121CHEVG4.png", "SB6112NP.png", 
+            "SB6127NP.png", "SB6137S22.png", "SB6858WTM.png", 
+            "SB5117UCHEV.png", "SB6107Q8.png", "SB6126EV114.png", 
+            "SB6237.png", "SB6149EV114.png", "SB6129EVGA61.png", 
+            "SB6857EV8.png", "SB5150EV.png", "SB6129EHEV1.png", 
+            "SB6197CHEV2.png", "SB6121EV70 .png", "SB6137SHEV9-NI.jpg", 
+            "SB6107SHEV5.jpg", "SB6850BEVGA.jpg", "SB6129SHEV9-N.jpg", 
+            "SB6149CHEV2.png"
+        ];
+
+        const segImages = [
+            "SEG6127NGE8.png", "SEG6128HE4.png", "SEG6107NG1E8.jpg", 
+            "SEG6109EHEVN07.jpg", "SEG6126BEVG14 .jpg", "SEG6126NGS01.jpg", 
+            "SEG6129AGBEV14.jpg", "SEG6129AGBEV15.jpg", "SEG6129CHEV1.jpg", 
+            "SEG6129EHEVN07.jpg", "SEG6129EHEVNP.jpg", "SEG6137NG67.png", 
+            "SEG6141EVCA-1.jpg", "SEG6180CR.jpg", "SEG6180WG.jpg", 
+            "SEG6141WG.jpg", "SEG6127BEVGA01.png", "SEG6131BEVG1.jpg", 
+            "SEG6141NGE8.jpg", "SEG6129CHEV1 (2).jpg"
+        ];
+
+        // 渲染函数
+        function renderImages(containerId, list) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ""; // 清空
+
+            list.forEach((imgName, index) => {
+                const title = imgName.split('.')[0];
+                const div = document.createElement('div');
+                div.className = 'art-frame';
+                // 默认样式设置opacity为0，后续通过JS控制动画
+                div.style.transitionDelay = `${index * 50}ms`; // 丝滑的阶梯延迟效果
+                
+                div.innerHTML = `
+                    <div class="img-wrapper">
+                        <img src="${pathPrefix}${imgName}" alt="${title}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Drawing+Offline'">
+                    </div>
+                    <div class="art-info">
+                        <div class="art-title">${title}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 切换页面逻辑
+        function switchTab(tabId) {
+            // 1. 更新按钮状态
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + tabId).classList.add('active');
+
+            // 2. 切换内容区域
+            const sections = document.querySelectorAll('.page-section');
+            
+            // 当前显示的渐隐
+            sections.forEach(sec => {
+                if(sec.classList.contains('active')) {
+                    sec.style.opacity = '0';
+                    sec.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        sec.classList.remove('active');
+                    }, 300); // 等待过渡结束
+                }
+            });
+
+            // 新页面渐显 (加一点延迟等待上一个消失)
+            setTimeout(() => {
+                const target = document.getElementById(tabId);
+                target.classList.add('active');
+                
+                // 强制重绘以触发 transition
+                requestAnimationFrame(() => {
+                    target.style.opacity = '1';
+                    target.style.transform = 'translateY(0)';
+                    
+                    // 如果是画廊页面，触发卡片的阶梯动画
+                    if(tabId !== 'home') {
+                        animateGallery(tabId);
+                    }
+                });
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300);
+        }
+
+        // 触发画廊内部卡片动画
+        function animateGallery(tabId) {
+            const container = document.getElementById(tabId === 'sb' ? 'sb-grid' : 'seg-grid');
+            const cards = container.querySelectorAll('.art-frame');
+            
+            // 重置状态
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+            });
+
+            // 顺序触发
+            setTimeout(() => {
+                cards.forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                });
+            }, 100);
+        }
+
+        // 初始化
+        window.onload = function() {
+            renderImages('sb-grid', sbImages);
+            renderImages('seg-grid', segImages);
+            
+            // 默认显示首页，无需额外动画
+            const home = document.getElementById('home');
+            home.style.opacity = '1';
+            home.style.transform = 'translateY(0)';
+        };
+
+    </script>
 </body>
 </html>

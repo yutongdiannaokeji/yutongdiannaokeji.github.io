@@ -1,7 +1,8 @@
 <!DOCTYPE html>
+<!-- saved from url=(0037)https://yutongdiannaokeji.github.io/# -->
 <html lang="zh-CN" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>于桐电脑科技2.0_AI</title>
     <meta name="description" content="用你的想法，配一台电脑 - 于桐电脑科技官方网站">
@@ -9,15 +10,15 @@
     <!-- Google Fonts: Space Grotesk (科技感) + Noto Sans SC -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=Space+Grotesk:wght@300;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100;300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (修复：使用官方 CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome (图标) -->
+    <!-- Font Awesome (修复：使用官方 CDN，解决图标不显示问题) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Markdown Parser for AI responses -->
+    <!-- Markdown Parser for AI responses (修复：使用 CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script>
@@ -131,7 +132,7 @@
 <body class="antialiased text-base md:text-lg">
 
     <!-- Loading Screen (简化版) -->
-    <div id="preloader" class="fixed inset-0 z-50 bg-deep-black flex items-center justify-center transition-opacity duration-500">
+    <div id="preloader" class="fixed inset-0 z-50 bg-deep-black flex items-center justify-center transition-opacity duration-500" style="opacity: 0; display: none;">
         <div class="text-center">
             <h1 class="text-acid-green text-4xl md:text-6xl font-black tracking-tighter animate-pulse">YUTONG TECH</h1>
             <p class="text-white mt-2 font-mono text-xs md:text-sm">SYSTEM INITIALIZING...</p>
@@ -175,7 +176,7 @@
                             <option value="https://www.123pan.com/s/0EVbVv-SNVGh.html">手写版配置单下载</option>
                             <option value="https://www.123pan.com/s/0EVbVv-lNVGh.html">kingdie签名</option>
                             <option value="gn/nmd.html">nmd高性能显示适配器</option>
-                            <option value="game/game 1.html">扫雷</option>
+                            <option value="game/gamecenter.html">游戏中心</option>
                             <option value="gn/weather.html">于桐天气</option>
                             <option value="https://www.123pan.com/s/0EVbVv-evjGh.html">YTOS-10(beta3)</option>
                             <option value="anzhuangjiaocheng.html">YTOS-10安装教程</option>
@@ -213,24 +214,25 @@
                     <!-- Mobile Select Restored -->
                     <select onchange="if(this.value) location = this.value;" class="w-full bg-gray-100 border border-gray-300 py-3 px-2 text-base rounded-none focus:outline-none focus:border-deep-black">
                         <option value="">点击选择...</option>
-                        <option value="gn/develop_new.html">发展历程</option>
-                        <option value="gn/ytkc.html">新申沃客车</option>
-                        <option value="gn/clean.html">电脑清理</option>
-                        <option value="gn/inmd.html">INMD</option>
-                        <option value="gn/jsq.html">于桐计算器</option>
-                        <option value="gn/ytdl.html">于桐地理</option>
-                        <option value="https://www.123pan.com/s/0EVbVv-UNVGh.html">54集团出门条</option>
-                        <option value="https://www.123pan.com/s/0EVbVv-SNVGh.html">手写版配置单下载</option>
-                        <option value="https://www.123pan.com/s/0EVbVv-lNVGh.html">kingdie签名</option>
-                        <option value="gn/nmd.html">nmd高性能显示适配器</option>
-                        <option value="game/game 1.html">扫雷</option>
-                        <option value="gn/weather.html">于桐天气</option>
-                        <option value="https://www.123pan.com/s/0EVbVv-evjGh.html">YTOS-10(beta3)</option>
-                        <option value="anzhuangjiaocheng.html">YTOS-10安装教程</option>
-                        <option value="gn/mrmy.html">冥人冥言</option>
-                        <option value="gn/df.html">东福 eating</option>
-                        <option value="54 Photo/login.html">54中照片</option>
-                        <option value="gn/秦吏1.0.html">秦吏模拟器 </option>
+                              <option value="gn/develop_new.html">发展历程</option>
+                            <option value="gn/ytkc.html">新申沃客车</option>
+							<option value="index_OLD.html">旧版主页</option>
+                            <option value="gn/clean.html">电脑清理</option>
+                            <option value="gn/inmd.html">INMD</option>
+                            <option value="gn/jsq.html">于桐计算器</option>
+                            <option value="gn/ytdl.html">于桐地理</option>
+                            <option value="https://www.123pan.com/s/0EVbVv-UNVGh.html">54集团出门条</option>
+                            <option value="https://www.123pan.com/s/0EVbVv-SNVGh.html">手写版配置单下载</option>
+                            <option value="https://www.123pan.com/s/0EVbVv-lNVGh.html">kingdie签名</option>
+                            <option value="gn/nmd.html">nmd高性能显示适配器</option>
+                            <option value="game/gamecenter.html">游戏中心</option>
+                            <option value="gn/weather.html">于桐天气</option>
+                            <option value="https://www.123pan.com/s/0EVbVv-evjGh.html">YTOS-10(beta3)</option>
+                            <option value="anzhuangjiaocheng.html">YTOS-10安装教程</option>
+                            <option value="gn/mrmy.html">冥人冥言</option>
+                            <option value="gn/df.html">东福 eating</option>
+                            <option value="54 Photo/login.html">54中照片</option>
+                            <option value="gn/秦吏1.0.html">秦吏模拟器 </option>
                     </select>
                 </div>
             </div>
@@ -242,15 +244,15 @@
         <!-- Abstract Decoration -->
         <div class="absolute top-20 right-0 -mr-20 opacity-20 pointer-events-none">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-64 h-64 md:w-96 md:h-96 animate-[spin_10s_linear_infinite]">
-                <path fill="#CCFF00" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.9C87.4,-34.7,90.1,-20.4,88.8,-6.2C87.5,8,82.2,22.1,74.2,34.3C66.2,46.5,55.5,56.8,43.4,63.4C31.3,70,17.8,72.9,4.5,72.1C-8.8,71.3,-21.9,66.8,-33.3,60.2C-44.7,53.6,-54.4,44.9,-62.9,34.3C-71.4,23.7,-78.7,11.2,-78.6,-1.3C-78.5,-13.8,-71,-26.3,-61.9,-36.8C-52.8,-47.3,-42.1,-55.8,-30.6,-64.5C-19.1,-73.2,-6.8,-82.1,4.1,-89.2C15,-96.3,30.5,-79.6,44.7,-76.4Z" transform="translate(100 100)" />
+                <path fill="#CCFF00" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.9C87.4,-34.7,90.1,-20.4,88.8,-6.2C87.5,8,82.2,22.1,74.2,34.3C66.2,46.5,55.5,56.8,43.4,63.4C31.3,70,17.8,72.9,4.5,72.1C-8.8,71.3,-21.9,66.8,-33.3,60.2C-44.7,53.6,-54.4,44.9,-62.9,34.3C-71.4,23.7,-78.7,11.2,-78.6,-1.3C-78.5,-13.8,-71,-26.3,-61.9,-36.8C-52.8,-47.3,-42.1,-55.8,-30.6,-64.5C-19.1,-73.2,-6.8,-82.1,4.1,-89.2C15,-96.3,30.5,-79.6,44.7,-76.4Z" transform="translate(100 100)"></path>
             </svg>
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-                <div class="reveal">
+                <div class="reveal active">
                     <div class="inline-block bg-acid-green px-3 py-1 mb-4 border border-deep-black shadow-brutal transform -rotate-2">
-                        <span class="font-mono font-bold text-xs md:text-sm">V2025.11.19 BUILD</span>
+                        <span class="font-mono font-bold text-xs md:text-sm">V2026.2.14 BUILD</span>
                     </div>
                     <h1 class="text-4xl sm:text-5xl md:text-7xl font-black leading-tight md:leading-none tracking-tighter mb-4 md:mb-6">
                         用你的<span class="text-transparent bg-clip-text bg-gradient-to-r from-electric-purple to-blue-500">想法</span><br>
@@ -269,7 +271,7 @@
                     </div>
                 </div>
                 
-                <div class="reveal delay-200 relative hidden md:block">
+                <div class="reveal delay-200 relative hidden md:block active">
                     <!-- 模拟显卡/主板的抽象图形 (PC端显示) -->
                     <div class="w-full aspect-square bg-white border-2 border-deep-black shadow-brutal relative overflow-hidden group">
                         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMWgydjJIMUMxem00IDBoMnYySDV6bTQgMGgydjJIOXptNCAwaDJ2MmgxM3oiIGZpbGw9IiNmM2YzZjMiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==')] opacity-50"></div>
@@ -319,7 +321,7 @@
                     </p>
                     <div class="bg-gray-100 p-4 md:p-6 border-l-4 border-electric-purple">
                         <ul class="space-y-3 md:space-y-4 font-mono text-xs md:text-sm">
-                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i> 运营于桐牌电脑® & 鸭梨牌手机®</li>
+                            <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i> 运营于桐牌电脑® &amp; 鸭梨牌手机®</li>
                             <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i> 拥有6元平价电脑技术专利</li>
                             <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i> 价值300万元的世界超一流电竞服务器托管</li>
                             <li class="flex items-center"><i class="fas fa-check text-green-500 mr-3"></i> 鸭梨爱疯全系高端手机设计能力</li>
@@ -482,10 +484,10 @@
                     </div>
                     <div class="text-2xl font-black mb-4 break-all">￥3,000,000</div>
                     <div class="bg-gray-800 p-4 text-xs font-mono mb-6 border border-gray-700 h-40 overflow-y-auto text-gray-300">
-                        <p>> CPU: 英特尔/INMD定制</p>
-                        <p>> GPU: 老黄亲签定制RTX</p>
-                        <p>> MB: ROG Prototype</p>
-                        <p>> RAM: DDR5 4800 64GB</p>
+                        <p>&gt; CPU: 英特尔/INMD定制</p>
+                        <p>&gt; GPU: 老黄亲签定制RTX</p>
+                        <p>&gt; MB: ROG Prototype</p>
+                        <p>&gt; RAM: DDR5 4800 64GB</p>
                     </div>
                     <a href="pzd/pz1.html" class="block text-center w-full py-3 border-2 border-acid-green text-acid-green font-bold hover:bg-acid-green hover:text-deep-black transition-colors">
                         膜拜配置
@@ -502,7 +504,7 @@
                 <div>
                     <div class="text-2xl font-bold mb-6 border-2 border-white inline-block p-2">YT</div>
                     <p class="text-gray-400 text-sm">
-                        ©于桐电脑科技 2022-2025<br>
+                        ©于桐电脑科技 2023-2026<br>
                         All Rights Reserved.
                     </p>
                 </div>
@@ -523,7 +525,7 @@
                 DESIGNED BY YTDNKJ. POWERED BY GITHUB
             </div>
         </div>
-    </footer>
+    </div></footer>
 
     <!-- Scroll to top -->
     <a href="#" id="scrollTop" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 bg-acid-green text-deep-black w-10 h-10 md:w-12 md:h-12 flex items-center justify-center border-2 border-deep-black shadow-brutal hover:-translate-y-1 transition-all opacity-0 pointer-events-none z-40">
@@ -531,7 +533,7 @@
     </a>
 
     <!-- AI Chat Terminal Modal (Mobile Optimized) -->
-    <div id="chat-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center pointer-events-none">
+    <div id="chat-modal" class="fixed inset-0 z-[60] flex items-center justify-center pointer-events-none hidden">
         <!-- Backdrop -->
         <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm pointer-events-auto" onclick="toggleChat()"></div>
         
@@ -571,7 +573,7 @@
             <!-- Input Area -->
             <div class="p-3 md:p-4 bg-gray-900 border-t border-gray-700 flex-shrink-0 pb-safe">
                 <div class="flex gap-2 items-center">
-                    <span class="text-acid-green font-bold text-lg">></span>
+                    <span class="text-acid-green font-bold text-lg">&gt;</span>
                     <input type="text" id="chat-input" placeholder="输入配置需求..." class="flex-1 bg-transparent border-b border-gray-600 text-white font-mono py-2 px-1 focus:outline-none focus:border-acid-green text-base" onkeydown="if(event.key === 'Enter') sendMessage()">
                     <button onclick="sendMessage()" class="px-4 py-2 bg-acid-green text-deep-black font-bold hover:bg-white transition-colors font-mono text-sm md:text-base whitespace-nowrap">
                         发送 SEND
