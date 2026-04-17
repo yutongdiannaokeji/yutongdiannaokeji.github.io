@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>炸金花牌桌</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-scene="table" data-theme="dark">
+  <div class="app-shell">
+    <section class="scene scene-lobby is-hidden" id="lobbyScene">
+      <div class="lobby-glow lobby-glow-a"></div>
+      <div class="lobby-glow lobby-glow-b"></div>
+
+      <div class="lobby-layout">
+        <header class="hero-card">
+          <div class="hero-copy">
+            <div class="hero-toolbar">
+              <p class="section-tag">单机人机对战 · 非赌博娱乐玩法</p>
+              <button class="ghost-btn theme-toggle" type="button" data-theme-toggle="">切换浅色</button>
+            </div>
+            <h1>炸金花牌桌</h1>
+            <p class="hero-text">
+              先在开局大厅里配置玩家昵称、初始积分、AI 风格和出牌节奏，点击开始后再进入更专注、更拟真的牌桌场景。
+            </p>
+
+            <div class="hero-badges">
+              <span>人机三座对抗</span>
+              <span>随机洗牌发牌</span>
+              <span>移动端适配</span>
+            </div>
+          </div>
+
+          <div class="hero-visual">
+            <div class="preview-table">
+              <div class="preview-ring"></div>
+              <div class="preview-card preview-card-a">A♠</div>
+              <div class="preview-card preview-card-b">K♥</div>
+              <div class="preview-card preview-card-c">A♦</div>
+              <div class="preview-chip-stack">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <p>进入牌桌后自动发第一轮</p>
+            </div>
+          </div>
+        </header>
+
+        <div class="lobby-grid">
+          <section class="panel panel-config">
+            <div class="panel-head">
+              <div>
+                <p class="section-tag">开局配置</p>
+                <h2>开始前设置</h2>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <label class="field">
+                <span>你的昵称</span>
+                <input id="playerNameInput" type="text" maxlength="10" value="南场玩家" placeholder="输入你的昵称">
+              </label>
+
+              <label class="field">
+                <span>初始积分</span>
+                <select id="startingScoreSelect">
+                  <option value="80">80 分</option>
+                  <option value="100" selected="">100 分</option>
+                  <option value="150">150 分</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>AI 风格</span>
+                <select id="difficultySelect">
+                  <option value="casual">悠闲</option>
+                  <option value="normal" selected="">标准</option>
+                  <option value="sharp">认真</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>出牌节奏</span>
+                <select id="speedSelect">
+                  <option value="fast">快速</option>
+                  <option value="normal" selected="">标准</option>
+                  <option value="slow">沉浸</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="config-actions">
+              <button id="startGameBtn" class="primary-btn start-btn">开始游戏</button>
+              <p class="panel-note">开始后会切入牌桌并自动发出第一轮手牌。</p>
+            </div>
+          </section>
+
+          <section class="panel panel-rules">
+            <div class="panel-head">
+              <div>
+                <p class="section-tag">规则说明</p>
+                <h2>开局前须知</h2>
+              </div>
+            </div>
+
+            <ul class="rules-list">
+              <li>每位玩家以竞技积分进行对局，没有真实货币与赌博功能。</li>
+              <li>每回合开局自动投入底分，之后可选择看牌、跟注、加注、比牌或弃牌。</li>
+              <li>看牌后你的行动消耗会提升，玩法更接近经典炸金花体验。</li>
+              <li>牌型从高到低依次为：豹子、同花顺、同花、顺子、对子、单张。</li>
+              <li>一方积分耗尽即被淘汰，最后留在牌桌上的玩家赢得整局。</li>
+            </ul>
+
+            <div class="rank-grid">
+              <span class="rank-chip rank-1">豹子</span>
+              <span class="rank-chip rank-2">同花顺</span>
+              <span class="rank-chip rank-3">同花</span>
+              <span class="rank-chip rank-4">顺子</span>
+              <span class="rank-chip rank-5">对子</span>
+              <span class="rank-chip rank-6">单张</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene scene-table" id="tableScene">
+      <header class="table-topbar">
+        <div>
+          <p class="section-tag">沉浸式牌桌</p>
+          <h1 class="table-title">炸金花竞技桌</h1>
+          <p class="table-subtitle" id="tableMetaLabel">南场玩家 · 标准 AI · 标准节奏</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="ghost-btn theme-toggle" type="button" data-theme-toggle="">切换浅色</button>
+          <button id="backToLobbyBtn" class="ghost-btn">返回大厅</button>
+          <button id="newRoundBtn" class="ghost-btn" disabled="">开始下一回合</button>
+          <button id="resetMatchBtn" class="primary-btn">重新开局</button>
+        </div>
+      </header>
+
+      <main class="table-layout">
+        <section class="table-stage">
+          <div class="table-hud">
+            <div class="hud-card">
+              <span>回合</span>
+              <strong id="roundLabel">第 1 回合</strong>
+            </div>
+            <div class="hud-card">
+              <span>注级</span>
+              <strong id="stakeLabel">2 积分</strong>
+            </div>
+            <div class="hud-card">
+              <span>奖池</span>
+              <strong id="potLabel">12</strong>
+            </div>
+            <div class="hud-card">
+              <span>轮到谁</span>
+              <strong id="turnLabel">南场玩家 行动中</strong>
+            </div>
+          </div>
+
+          <div class="felt-wrap">
+            <div class="table-felt">
+              <div class="felt-light felt-light-a"></div>
+              <div class="felt-light felt-light-b"></div>
+
+              <article class="seat seat-ai seat-left" id="player-ai1">
+                <div class="seat-head">
+                  <div>
+                    <p class="seat-role">AI 对手 · 稳健</p>
+                    <h2 id="name-ai1">北场玩家</h2>
+                  </div>
+                  <span class="dealer-badge" data-dealer-for="ai1">庄</span>
+                </div>
+                <div class="seat-meta">
+                  <span id="score-ai1">竞技积分 94</span>
+                  <span id="state-ai1">已看牌 · 对子</span>
+                </div>
+                <div class="cards" id="cards-ai1"><div class="card red " style="--rotation: -5deg; animation-delay: 0ms;">
+        <span class="card-rank">10</span>
+        <span class="card-suit">♦</span>
+        <span class="card-mini">10♦</span>
+      </div><div class="card  " style="--rotation: 0deg; animation-delay: 80ms;">
+        <span class="card-rank">4</span>
+        <span class="card-suit">♣</span>
+        <span class="card-mini">4♣</span>
+      </div><div class="card red " style="--rotation: 5deg; animation-delay: 160ms;">
+        <span class="card-rank">10</span>
+        <span class="card-suit">♥</span>
+        <span class="card-mini">10♥</span>
+      </div></div>
+                <div class="seat-action" id="action-ai1">跟注 4</div>
+              </article>
+
+              <article class="seat seat-ai seat-right" id="player-ai2">
+                <div class="seat-head">
+                  <div>
+                    <p class="seat-role">AI 对手 · 激进</p>
+                    <h2 id="name-ai2">东场玩家</h2>
+                  </div>
+                  <span class="dealer-badge" data-dealer-for="ai2">庄</span>
+                </div>
+                <div class="seat-meta">
+                  <span id="score-ai2">竞技积分 96</span>
+                  <span id="state-ai2">未看牌</span>
+                </div>
+                <div class="cards" id="cards-ai2"><div class="card red hidden" style="--rotation: -5deg; animation-delay: 0ms;"></div><div class="card  hidden" style="--rotation: 0deg; animation-delay: 80ms;"></div><div class="card red hidden" style="--rotation: 5deg; animation-delay: 160ms;"></div></div>
+                <div class="seat-action" id="action-ai2">跟注 2</div>
+              </article>
+
+              <div class="pot-area">
+                <div class="pot-badge">
+                  <span>桌面奖池</span>
+                  <strong id="centerPotValue">12</strong>
+                </div>
+                <p class="round-banner" id="roundBanner">轮到你行动，可以先看牌再做决定。</p>
+              </div>
+
+              <article class="seat seat-human active-turn" id="player-human">
+                <div class="seat-head">
+                  <div>
+                    <p class="seat-role">你</p>
+                    <h2 id="name-human">南场玩家</h2>
+                  </div>
+                  <span class="dealer-badge active" data-dealer-for="human">庄</span>
+                </div>
+                <div class="seat-meta">
+                  <span id="score-human">竞技积分 98</span>
+                  <span id="state-human">未看牌</span>
+                </div>
+                <div class="cards cards-human" id="cards-human"><div class="card  hidden" style="--rotation: -5deg; animation-delay: 0ms;"></div><div class="card red hidden" style="--rotation: 0deg; animation-delay: 80ms;"></div><div class="card red hidden" style="--rotation: 5deg; animation-delay: 160ms;"></div></div>
+                <div class="human-controls">
+                  <div class="compare-inline">
+                    <label for="compareTarget">比牌目标</label>
+                    <select id="compareTarget"><option value="ai1">北场玩家 · 已看牌</option><option value="ai2">东场玩家 · 未看牌</option></select>
+                  </div>
+
+                  <div class="player-actions">
+                    <button id="lookBtn" class="action-btn action-alt">看牌</button>
+                    <button id="callBtn" class="action-btn">跟注</button>
+                    <button id="raiseBtn" class="action-btn">加注</button>
+                    <button id="compareBtn" class="action-btn">比牌</button>
+                    <button id="foldBtn" class="action-btn action-danger">弃牌</button>
+                  </div>
+                </div>
+                <div class="seat-action" id="action-human">投入底分 2</div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <aside class="table-sidebar">
+          <section class="panel side-panel-card">
+            <div class="panel-head">
+              <div>
+                <p class="section-tag">牌桌信息</p>
+                <h2>当前状态</h2>
+              </div>
+            </div>
+
+            <div class="stat-grid">
+              <div class="stat-chip">
+                <span>跟注</span>
+                <strong id="callCostLabel">2 积分</strong>
+              </div>
+              <div class="stat-chip">
+                <span>加注</span>
+                <strong id="raiseCostLabel">5 积分</strong>
+              </div>
+              <div class="stat-chip">
+                <span>比牌</span>
+                <strong id="compareCostLabel">4 积分</strong>
+              </div>
+            </div>
+
+            <div class="focus-card">
+              <span>当前视野</span>
+              <strong id="handHint">未看牌</strong>
+              <p id="costHint">盲牌状态下你的行动消耗更低。</p>
+            </div>
+          </section>
+
+          <section class="panel side-panel-card log-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-tag">牌桌播报</p>
+                <h2>回合日志</h2>
+              </div>
+            </div>
+
+            <div class="log-list" id="logList"><article class="log-item"><time>22:52:44</time><p>东场玩家 跟注 2 点。</p></article><article class="log-item"><time>22:52:43</time><p>北场玩家 跟注 4 点。</p></article><article class="log-item"><time>22:52:43</time><p>北场玩家 看了自己的手牌。</p></article><article class="log-item"><time>22:52:42</time><p>第 1 回合开始，底分 2，牌桌开始发牌。</p></article><article class="log-item"><time>22:52:42</time><p>本局已设置为 100 起始积分，标准 AI。</p></article></div>
+          </section>
+        </aside>
+      </main>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+<script>
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('startGameBtn').click(),120));
+</script>
+
+
+
+</body></html>
