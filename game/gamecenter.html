@@ -22,6 +22,7 @@
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
             user-select: none;
+            opacity: 0;
         }
 
         /* 动态渐变背景 */
@@ -110,7 +111,6 @@
             margin-top: 20px;
         }
 
-        /* 适配所有尺寸的卡片高度 */
         @media (max-width: 768px) {
             .game-card { height: 380px; border-radius: 40px; }
         }
@@ -141,7 +141,7 @@
             </h1>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 pb-32">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 pb-32">
             
             <!-- 扫雷卡片 -->
             <div class="game-card p-10 md:p-14 group text-emerald-500 h-[520px]" 
@@ -156,7 +156,7 @@
                     <span class="text-7xl font-black opacity-[0.03] italic">01</span>
                 </div>
                 <div class="relative z-10">
-                    <h2 class="text-4xl md:text-6xl font-[900] text-black italic mb-4 tracking-tighter">于桐扫雷</h2>
+                    <h2 class="text-4xl md:text-5xl font-[900] text-black italic mb-4 tracking-tighter">于桐扫雷</h2>
                     <p class="text-slate-400 font-bold tracking-wide uppercase text-sm">极致逻辑推理</p>
                 </div>
                 <div class="relative z-10 flex items-center space-x-4">
@@ -180,8 +180,32 @@
                     <span class="text-7xl font-black opacity-[0.03] italic">02</span>
                 </div>
                 <div class="relative z-10">
-                    <h2 class="text-4xl md:text-6xl font-[900] text-black italic mb-4 tracking-tighter">于桐五子棋</h2>
+                    <h2 class="text-4xl md:text-5xl font-[900] text-black italic mb-4 tracking-tighter">于桐五子棋</h2>
                     <p class="text-slate-400 font-bold tracking-wide uppercase text-sm">大师级博弈对抗</p>
+                </div>
+                <div class="relative z-10 flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </div>
+                    <span class="text-xs font-black tracking-widest text-black uppercase opacity-0 group-hover:opacity-100 transition-opacity">Launch Experience</span>
+                </div>
+            </div>
+
+            <!-- 炸金花卡片 -->
+            <div class="game-card p-10 md:p-14 group text-rose-500 h-[520px]" 
+                 onclick="navigate('gold.html', 'GOLDEN THREE')">
+                <div class="card-inner-glow"></div>
+                <div class="flex justify-between items-start relative z-10">
+                    <div class="w-20 h-20 bg-rose-50 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.407 2.67 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.407-2.67-1M12 16V5"/>
+                        </svg>
+                    </div>
+                    <span class="text-7xl font-black opacity-[0.03] italic">03</span>
+                </div>
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-5xl font-[900] text-black italic mb-4 tracking-tighter">于桐炸金花</h2>
+                    <p class="text-slate-400 font-bold tracking-wide uppercase text-sm">心理博弈之巅</p>
                 </div>
                 <div class="relative z-10 flex items-center space-x-4">
                     <div class="w-12 h-12 rounded-full border-2 border-black flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
@@ -207,7 +231,6 @@
     </div>
 
     <script>
-        // 1. 初始化入场动画
         window.onload = () => {
             const tl = gsap.timeline();
             tl.to("body", { opacity: 1, duration: 0.1 })
@@ -222,18 +245,15 @@
               }, "-=1");
         };
 
-        // 2. 磁性吸附逻辑 & 动态光效
         document.querySelectorAll('.game-card').forEach(card => {
             card.addEventListener('mousemove', e => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
-                // 设置光晕坐标
                 card.style.setProperty('--x', `${x}px`);
                 card.style.setProperty('--y', `${y}px`);
 
-                // 轻微磁性偏转
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
                 const moveX = (x - centerX) / 25;
@@ -254,16 +274,12 @@
             });
         });
 
-        // 3. 丝滑跳转函数
         function navigate(url, title) {
             const loader = document.getElementById('page-loader');
             const bar = document.getElementById('loader-bar');
             document.getElementById('loader-title').innerText = title;
-
-            // 锁定操作
             loader.style.pointerEvents = 'auto';
 
-            // 动画序列
             const tl = gsap.timeline();
             tl.to(loader, { 
                 y: "0%", 
@@ -280,7 +296,6 @@
             }, "-=0.3");
         }
 
-        // 4. 背景视差
         document.addEventListener('mousemove', (e) => {
             const x = (e.clientX / window.innerWidth - 0.5) * 40;
             const y = (e.clientY / window.innerHeight - 0.5) * 40;
