@@ -2,19 +2,29 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>毛玻璃棋牌风 - 炸金花</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>炸金花</title>
     <style>
-        /* 高端棋牌风色彩与 CSS 变量 */
+        /* 高端棋牌风色彩与响应式 CSS 变量 */
         :root {
-            --glass-bg: rgba(10, 25, 15, 0.5); /* 暗绿毛玻璃 */
+            --glass-bg: rgba(10, 25, 15, 0.5);
             --glass-panel: rgba(20, 30, 25, 0.65);
-            --glass-border: rgba(212, 175, 55, 0.4); /* 暗金色描边 */
+            --glass-border: rgba(212, 175, 55, 0.4);
             --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6);
             --gold-text: #F3CA40;
             --gold-glow: 0 0 10px rgba(243, 202, 64, 0.5);
             --red-suit: #E74C3C;
             --black-suit: #1A1A1A;
+            
+            /* 默认桌面端尺寸 */
+            --card-w: 75px;
+            --card-h: 105px;
+            --card-overlap: 38px;
+            --card-font-top: 20px;
+            --card-font-suit: 15px;
+            --card-font-center: 42px;
+            --avatar-size: 48px;
+            --avatar-self: 54px;
         }
 
         @keyframes bgBreathing {
@@ -26,9 +36,8 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
             color: #eee;
-            /* 深邃高端的渐变背景 */
             background: linear-gradient(-45deg, #091912, #143623, #0d2133, #0a1118);
             background-size: 400% 400%;
             animation: bgBreathing 20s ease infinite;
@@ -37,10 +46,12 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            width: 100vw;
             user-select: none;
+            touch-action: none;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* 基础暗色毛玻璃类 */
         .glass-dark {
             background: var(--glass-panel);
             backdrop-filter: blur(16px);
@@ -52,7 +63,7 @@
 
         /* --- 开场设置界面 --- */
         #start-screen {
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 200;
             display: flex;
@@ -63,37 +74,40 @@
             transition: opacity 0.5s, visibility 0.5s;
         }
         .start-modal {
-            padding: 40px 60px;
+            padding: clamp(20px, 5vw, 40px) clamp(30px, 8vw, 60px);
             text-align: center;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.1);
+            max-width: 85vw;
         }
         .start-modal h1 {
-            font-size: 38px;
+            font-size: clamp(24px, 6vw, 38px);
             margin-bottom: 10px;
             color: var(--gold-text);
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            letter-spacing: 2px;
+            margin-top: 0;
         }
         .subtitle {
             color: #aaa;
-            margin-bottom: 30px;
-            font-size: 14px;
+            margin-bottom: clamp(15px, 4vw, 30px);
+            font-size: clamp(12px, 3vw, 14px);
         }
         .difficulty-select {
             display: flex;
-            gap: 15px;
-            margin-bottom: 35px;
+            gap: 10px;
+            margin-bottom: clamp(20px, 5vw, 35px);
             justify-content: center;
+            flex-wrap: wrap;
         }
         .diff-btn {
-            padding: 10px 25px;
+            padding: 10px clamp(10px, 3vw, 25px);
             border-radius: 8px;
             border: 1px solid rgba(255,255,255,0.2);
             background: rgba(0,0,0,0.3);
             color: #ccc;
             cursor: pointer;
             font-weight: bold;
+            font-size: clamp(12px, 3vw, 16px);
             transition: all 0.3s;
         }
         .diff-btn.active {
@@ -103,77 +117,93 @@
             box-shadow: var(--gold-glow);
         }
         .start-btn {
-            padding: 12px 50px;
-            font-size: 20px;
+            padding: 12px clamp(30px, 8vw, 50px);
+            font-size: clamp(16px, 4vw, 20px);
             font-weight: bold;
             background: linear-gradient(180deg, #D4AF37 0%, #AA8115 100%);
             color: #111;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.5);
-            transition: transform 0.2s, filter 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
         }
 
         /* --- 游戏主桌布 --- */
         #game-board {
-            width: 1050px;
-            height: 650px;
+            width: 92vw;
+            max-width: 1050px;
+            height: 80vh;
+            max-height: 650px;
+            min-height: 400px;
             position: relative;
-            border-radius: 325px / 210px; 
+            border-radius: 40% / 45%; 
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            border: 6px solid rgba(40, 50, 45, 0.8);
+            border: 4px solid rgba(40, 50, 45, 0.8);
             box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 100px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        /* 桌面装饰线 */
         #game-board::before {
             content: '';
             position: absolute;
             top: 20px; left: 20px; right: 20px; bottom: 20px;
-            border-radius: 300px / 190px;
+            border-radius: 38% / 43%;
             border: 1px dashed rgba(212, 175, 55, 0.3);
             pointer-events: none;
         }
 
-        /* --- 中央公共区 --- */
+        /* --- 中央公共区：重构防遮挡托盘 --- */
         #center-area {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            z-index: 1;
-            width: 300px;
+            z-index: 5; /* 确保在弃牌之上 */
+            min-width: 180px;
+            pointer-events: none;
+            /* 新增精美的毛玻璃深色底板，与底部的弃牌隔离 */
+            background: rgba(10, 15, 12, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(212, 175, 55, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         #total-pot {
-            font-size: 32px;
+            font-size: clamp(24px, 5vw, 32px);
             font-weight: bold;
             color: var(--gold-text);
             text-shadow: 0 2px 10px rgba(0,0,0,0.8);
             margin-bottom: 8px;
-            font-family: 'Arial', sans-serif;
+            line-height: 1;
         }
         #current-bet {
-            font-size: 15px;
+            font-size: clamp(12px, 2.5vw, 15px);
             color: #ccc;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.8);
             padding: 4px 16px;
             border-radius: 20px;
             border: 1px solid rgba(255,255,255,0.1);
             display: inline-block;
         }
         #game-msg {
-            margin-top: 20px;
-            font-size: 16px;
+            margin-top: 10px;
+            font-size: clamp(12px, 3vw, 16px);
             color: #fff;
-            background: rgba(212, 175, 55, 0.15);
+            background: rgba(212, 175, 55, 0.2);
             border: 1px solid rgba(212, 175, 55, 0.4);
-            padding: 8px 24px;
+            padding: 6px 18px;
             border-radius: 8px;
-            backdrop-filter: blur(4px);
             opacity: 0;
             transition: opacity 0.3s;
-            box-shadow: var(--gold-glow);
+            display: inline-block;
         }
 
         /* --- 玩家区域 --- */
@@ -182,222 +212,286 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 240px;
             z-index: 10;
         }
-        /* 核心修复：调高玩家0的底部距离，避免被操作栏遮挡 */
-        #player-0 { bottom: 100px; left: 50%; transform: translateX(-50%); } 
-        #player-1 { top: 50%; left: -30px; transform: translateY(-50%); }     
-        #player-2 { top: -20px; left: 50%; transform: translateX(-50%); }     
-        #player-3 { top: 50%; right: -30px; transform: translateY(-50%); }    
+        
+        #player-0 { bottom: 8%; left: 50%; transform: translateX(-50%); } 
+        #player-1 { top: 50%; left: 2%; transform: translateY(-50%); }     
+        #player-2 { top: 2%; left: 50%; transform: translateX(-50%); }     
+        #player-3 { top: 50%; right: 2%; transform: translateY(-50%); }    
 
         .player-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: rgba(0, 0, 0, 0.7);
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 40px;
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
             z-index: 11;
             backdrop-filter: blur(10px);
         }
-        
-        /* 玩家自己的面板高亮 */
         #player-0 .player-header {
             border-color: rgba(212, 175, 55, 0.6);
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 175, 55, 0.2);
-            padding: 10px 20px;
+            padding: 8px 16px;
         }
 
         .avatar {
-            width: 48px; height: 48px;
+            width: var(--avatar-size); height: var(--avatar-size);
             border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            font-weight: bold; font-size: 14px;
-            color: #ddd;
-            background: #111;
+            font-weight: bold; font-size: clamp(12px, 3vw, 14px);
+            color: #ddd; background: #111;
             border: 2px solid #444;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
         }
-        #player-0 .avatar { border-color: var(--gold-text); color: var(--gold-text); width: 54px; height: 54px; font-size: 16px; }
+        #player-0 .avatar { border-color: var(--gold-text); color: var(--gold-text); width: var(--avatar-self); height: var(--avatar-self); font-size: 16px; }
 
-        .player-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .p-name { font-size: 12px; color: #888; margin-bottom: 2px; }
+        .player-info { display: flex; flex-direction: column; align-items: center; }
+        .p-name { font-size: 12px; color: #888; margin-bottom: 2px; white-space: nowrap;}
         .p-score { 
-            font-size: 18px; 
+            font-size: clamp(14px, 3vw, 18px); 
             font-weight: bold; 
             color: var(--gold-text); 
-            font-family: 'Arial', sans-serif; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
+            display: flex; align-items: center; gap: 4px; 
         }
-        
-        /* 玩家自己积分大号显示 */
-        #player-0 .p-score { 
-            font-size: 26px; 
-            text-shadow: 0 0 15px rgba(243, 202, 64, 0.6); 
-        }
-        #player-0 .p-name { color: #aaa; font-size: 13px; }
+        #player-0 .p-score { font-size: clamp(18px, 4vw, 24px); text-shadow: 0 0 15px rgba(243, 202, 64, 0.6); }
 
         .action-bubble {
             position: absolute;
-            top: -35px;
+            top: -30px;
             background: linear-gradient(135deg, rgba(40,50,45,0.95), rgba(10,15,10,0.95));
             color: var(--gold-text);
-            padding: 8px 18px;
+            padding: 6px 12px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: clamp(10px, 2.5vw, 14px);
             font-weight: bold;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            opacity: 0;
-            transform: translateY(10px);
+            opacity: 0; transform: translateY(10px);
             transition: all 0.3s;
             z-index: 20;
+            white-space: nowrap;
         }
-        .action-bubble.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .action-bubble.show { opacity: 1; transform: translateY(0); }
+        #player-2 .action-bubble { top: auto; bottom: -30px; }
 
         /* --- 扑克牌 --- */
         .cards-container {
             position: relative;
-            height: 110px;
-            width: 160px; 
-            margin: 10px 0;
+            height: var(--card-h);
+            width: calc(var(--card-w) + var(--card-overlap) * 2); 
+            margin: 8px 0;
             perspective: 1200px;
         }
         .card {
-            width: 75px;
-            height: 105px;
+            width: var(--card-w);
+            height: var(--card-h);
             position: absolute;
-            left: calc(var(--i) * 38px); 
+            left: calc(var(--i) * var(--card-overlap)); 
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s, left 0.3s;
             transform-style: preserve-3d;
             transform: translate(var(--startX), var(--startY)) scale(0) rotate(180deg);
             opacity: 0;
+            will-change: transform;
         }
         
-        #player-0 .card:hover {
-            transform: translateY(-25px) scale(1.15) !important;
-            z-index: 30;
-            cursor: pointer;
-        }
-        #player-0 .cards-container:hover .card {
-            left: calc(var(--i) * 50px); 
+        @media (hover: hover) {
+            #player-0 .card:hover {
+                transform: translateY(-15px) scale(1.1) !important;
+                z-index: 30;
+                cursor: pointer;
+            }
+            #player-0 .cards-container:hover .card {
+                left: calc(var(--i) * (var(--card-overlap) * 1.3)); 
+            }
         }
 
         .card-inner {
-            position: relative;
-            width: 100%; height: 100%;
+            position: relative; width: 100%; height: 100%;
             transition: transform 0.6s;
             transform-style: preserve-3d;
         }
         .card.flipped .card-inner { transform: rotateY(180deg); }
+        
+        /* 弃牌视觉修复：极致沉底，变灰变暗，低透明度 */
         .card.folded {
-            filter: brightness(0.3);
-            opacity: 0.6 !important;
-            transform: translate(var(--discardX), var(--discardY)) scale(0.65) rotateZ(var(--rotZ)) !important;
-            pointer-events: none;
-            z-index: 0 !important;
+            filter: brightness(0.2) grayscale(0.5);
+            opacity: 0.35 !important;
+            transform: translate(var(--discardX), var(--discardY)) scale(0.6) rotateZ(var(--rotZ)) !important;
+            pointer-events: none; 
+            z-index: 1 !important; /* 确保在 center-area (z-index:5) 之下 */
         }
 
         .card-front, .card-back {
-            position: absolute;
-            width: 100%; height: 100%;
+            position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden;
-            border-radius: 8px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
-        
         .card-front {
             background: #ffffff;
             border: 1px solid #ccc;
             transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            padding: 5px;
-            box-sizing: border-box;
+            display: flex; flex-direction: column;
+            padding: 4px; box-sizing: border-box;
         }
-        .card-top-left { font-size: 20px; font-weight: bold; line-height: 1; text-align: left; }
-        .card-top-suit { font-size: 15px; line-height: 1.2; text-align: left; }
+        .card-top-left { font-size: var(--card-font-top); font-weight: bold; line-height: 1; text-align: left; }
+        .card-top-suit { font-size: var(--card-font-suit); line-height: 1.2; text-align: left; }
         .card-center-suit {
-            position: absolute;
-            top: 55%; left: 50%;
+            position: absolute; top: 55%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 42px;
+            font-size: var(--card-font-center);
         }
 
-        /* 修复背面：非全透明毛玻璃 */
         .card-back {
             background: rgba(20, 30, 25, 0.96); 
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 2px solid rgba(212, 175, 55, 0.5); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.5); 
             background-image: 
                 linear-gradient(45deg, transparent 48%, rgba(212,175,55,0.1) 48%, rgba(212,175,55,0.1) 52%, transparent 52%),
                 linear-gradient(-45deg, transparent 48%, rgba(212,175,55,0.1) 48%, rgba(212,175,55,0.1) 52%, transparent 52%);
-            background-size: 14px 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-size: 10px 10px;
+            display: flex; justify-content: center; align-items: center;
         }
-        .card-back::after {
-            content: '♠';
-            color: rgba(212, 175, 55, 0.2); 
-            font-size: 45px;
-        }
-
+        .card-back::after { content: '♠'; color: rgba(212, 175, 55, 0.2); font-size: clamp(20px, 5vw, 45px); }
         .red { color: var(--red-suit); }
         .black { color: var(--black-suit); }
 
         /* --- 底部控制台 --- */
         #controls {
-            position: absolute;
-            bottom: 20px;
+            position: fixed;
+            bottom: clamp(10px, 3vh, 20px);
             display: flex;
-            gap: 12px;
+            gap: 8px;
             z-index: 100;
-            padding: 12px 24px;
-            max-width: 90vw;
+            padding: 10px 15px;
+            max-width: 95vw;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .control-btn {
-            padding: 10px 24px;
-            font-size: 16px;
+            padding: 8px clamp(10px, 2vw, 20px);
+            font-size: clamp(12px, 3vw, 16px);
             font-weight: bold;
             color: #ccc;
             background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            flex: 1 1 auto;
+            text-align: center;
+            white-space: nowrap;
         }
         .control-btn:hover:not(:disabled) {
-            background: rgba(50, 60, 55, 0.9);
-            color: #fff;
-            border-color: var(--gold-text);
-            transform: translateY(-2px);
+            background: rgba(50, 60, 55, 0.9); color: #fff;
+            border-color: var(--gold-text); transform: translateY(-2px);
         }
-        .control-btn:disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-        }
+        .control-btn:disabled { opacity: 0.2; cursor: not-allowed; }
         #btn-raise { color: #ff6b6b; border-color: rgba(255,107,107,0.3); }
         #btn-call { color: var(--gold-text); border-color: rgba(212,175,55,0.3); }
-        #btn-next { 
-            background: linear-gradient(180deg, #D4AF37 0%, #AA8115 100%); 
-            color: #111; border: none; 
-            padding: 10px 40px;
+        #btn-next { background: linear-gradient(180deg, #D4AF37 0%, #AA8115 100%); color: #111; border: none; }
+
+
+        /* ================= 响应式断点适配 ================= */
+        
+        /* 平板和普通横屏 */
+        @media (max-width: 900px) {
+            :root {
+                --card-w: 55px; --card-h: 77px; --card-overlap: 25px;
+                --card-font-top: 16px; --card-font-suit: 12px; --card-font-center: 32px;
+                --avatar-size: 36px; --avatar-self: 42px;
+            }
+            #game-board { border-radius: 60px; width: 96vw; height: 90vh; border-width: 2px;}
+            #game-board::before { border-radius: 50px; top:10px; left:10px; right:10px; bottom:10px;}
+            #player-1 { left: 0; } #player-3 { right: 0; }
+            #player-0 { bottom: 85px; }
         }
 
+        /* 👑 专项修复：手机极端横屏 (如 iPhone 横放，高度通常小于400px) 👑 */
+        @media (max-height: 600px) and (orientation: landscape) {
+            :root {
+                /* 极限压缩卡片尺寸 */
+                --card-w: 40px; --card-h: 56px; --card-overlap: 18px;
+                --card-font-top: 14px; --card-font-suit: 10px; --card-font-center: 24px;
+                --avatar-size: 32px; --avatar-self: 36px;
+            }
+            #game-board { height: 96vh; }
+            /* 玩家与控件重新布局，防止相互遮挡 */
+            #player-0 { bottom: 60px; } /* 为下方控制条让出精准空间 */
+            #player-2 { top: 10px; }
+            #player-1 { left: 10px; }
+            #player-3 { right: 10px; }
+            /* 中心信息区整体向上微调偏移，避开下方卡片 */
+            #center-area { transform: translate(-50%, -60%); padding: 8px 20px; border-radius: 15px;}
+            #total-pot { font-size: 20px; }
+            
+            /* 控制条极限扁平化 */
+            #controls { bottom: 5px; padding: 4px 8px; gap: 6px; }
+            .control-btn { padding: 4px 10px; font-size: 12px; border-radius: 6px; }
+            .player-header { padding: 4px 8px; gap: 6px; }
+            .p-name { display: none; } /* 横屏也隐藏名字节省空间 */
+        }
+
+        /* 手机竖屏 */
+        @media (max-width: 600px) and (orientation: portrait) {
+            :root {
+                --card-w: 45px; --card-h: 63px; --card-overlap: 20px;
+                --card-font-top: 14px; --card-font-suit: 10px; --card-font-center: 24px;
+            }
+            #game-board { border-radius: 30px; }
+            #game-board::before { border-radius: 25px; }
+            .player-header { flex-direction: column !important; gap: 4px; padding: 4px 8px; }
+            .player-info { align-items: center !important; }
+            .p-name { display: none; }
+            .hide-on-mobile { display: none; }
+            #player-0 { bottom: 95px; }
+            #player-1 { left: 0; transform: translateY(-30%); }
+            #player-3 { right: 0; transform: translateY(-30%); }
+            #controls { gap: 5px; padding: 8px; bottom: 5px; }
+            .control-btn { font-size: 13px; padding: 8px 6px; }
+            #center-area { padding: 12px 20px; } /* 缩小中心托盘内边距 */
+        }
+
+        /* 🍎 极限适配: Apple Watch 等微型设备 (< 300px) 🍎 */
+        @media (max-width: 300px), (max-height: 350px) {
+            :root {
+                --card-w: 28px; --card-h: 39px; --card-overlap: 12px;
+                --card-font-top: 10px; --card-font-suit: 8px; --card-font-center: 0px; 
+            }
+            #game-board { border-radius: 15px; width: 98vw; height: 98vh; border-width: 1px;}
+            #game-board::before { display: none; } 
+            
+            .avatar, .p-name { display: none; }
+            .player-header { background: transparent; border: none; box-shadow: none !important; padding: 0 !important; }
+            .p-score { font-size: 10px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+            #player-0 .p-score { font-size: 12px; }
+            
+            .card-center-suit { display: none; }
+            .cards-container { margin: 2px 0; }
+            
+            #player-2 { top: 0; }
+            #player-1 { left: -5px; }
+            #player-3 { right: -5px; }
+            #player-0 { bottom: 50px; } 
+            
+            #center-area { padding: 5px 10px; min-width: auto; border-radius: 10px; background: rgba(10,15,12,0.85); transform: translate(-50%, -55%);}
+            #total-pot { font-size: 16px; margin-bottom: 2px; }
+            #current-bet { font-size: 10px; padding: 2px 6px; }
+            #game-msg { padding: 2px 6px; font-size: 10px; margin-top: 3px; }
+            
+            #controls { bottom: 2px; padding: 2px; gap: 2px; width: 100vw; box-sizing: border-box; background: transparent; border: none; box-shadow: none; }
+            .control-btn { padding: 6px 2px; font-size: 10px; border-radius: 4px; min-width: 40px; }
+            .hide-on-watch { display: none !important; }
+            
+            .start-modal { padding: 15px 10px; }
+            .start-modal h1 { font-size: 18px; margin-bottom: 5px; }
+            .subtitle { font-size: 10px; margin-bottom: 10px; }
+            .difficulty-select { flex-direction: column; gap: 5px; margin-bottom: 10px; }
+            .diff-btn { padding: 6px; font-size: 12px; }
+            .start-btn { padding: 8px; font-size: 14px; width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -408,27 +502,25 @@
             <div id="current-bet">单注: 10</div>
             <div id="game-msg">准备发牌...</div>
         </div>
-        
-        <div id="discard-pile"></div>
 
-        <!-- 玩家0 -->
+        <!-- 玩家0 (自身) -->
         <div class="player-area" id="player-0">
             <div class="action-bubble" id="bubble-0">思考中</div>
             <div class="cards-container" id="cards-0"></div>
             <div class="player-header">
                 <div class="avatar">我</div>
                 <div class="player-info">
-                    <div class="p-name">我的总筹码</div>
+                    <div class="p-name">我的筹码</div>
                     <div class="p-score">🪙 <span id="pts-0">1000</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- 玩家1 -->
+        <!-- 玩家1 (左) -->
         <div class="player-area" id="player-1">
             <div class="action-bubble" id="bubble-1">思考中</div>
             <div class="player-header" style="flex-direction: row-reverse;">
-                <div class="player-info" style="align-items: flex-end;">
+                <div class="player-info">
                     <div class="p-name">AI·青龙</div>
                     <div class="p-score">🪙 <span id="pts-1">1000</span></div>
                 </div>
@@ -437,7 +529,7 @@
             <div class="cards-container" id="cards-1"></div>
         </div>
 
-        <!-- 玩家2 -->
+        <!-- 玩家2 (顶) -->
         <div class="player-area" id="player-2">
             <div class="player-header">
                 <div class="avatar">虎</div>
@@ -447,10 +539,10 @@
                 </div>
             </div>
             <div class="cards-container" id="cards-2"></div>
-            <div class="action-bubble" style="top: auto; bottom: -40px;" id="bubble-2">思考中</div>
+            <div class="action-bubble" id="bubble-2">思考中</div>
         </div>
 
-        <!-- 玩家3 -->
+        <!-- 玩家3 (右) -->
         <div class="player-area" id="player-3">
             <div class="action-bubble" id="bubble-3">思考中</div>
             <div class="player-header">
@@ -467,24 +559,24 @@
     <!-- 底部控制 -->
     <div id="controls" class="glass-dark">
         <button class="control-btn" id="btn-next" style="display:none;" onclick="startRound()">下一局</button>
-        <button class="control-btn" id="btn-see" onclick="seeCards()" disabled>看牌 (x2)</button>
+        <button class="control-btn" id="btn-see" onclick="seeCards()" disabled>看牌<span class="hide-on-watch hide-on-mobile"> (x2)</span></button>
         <button class="control-btn" id="btn-call" onclick="playerAction('call')" disabled>跟注</button>
-        <button class="control-btn" id="btn-raise" onclick="playerAction('raise')" disabled>加注 (+10)</button>
+        <button class="control-btn" id="btn-raise" onclick="playerAction('raise')" disabled>加注<span class="hide-on-watch"> (+10)</span></button>
         <button class="control-btn" id="btn-compare" onclick="playerAction('compare')" disabled>比牌</button>
         <button class="control-btn" id="btn-fold" onclick="playerAction('fold')" disabled>弃牌</button>
     </div>
 
-    <!-- 设置 -->
+    <!-- 设置与开场 -->
     <div id="start-screen">
         <div class="start-modal glass-dark">
             <h1>炸金花</h1>
-            <div class="subtitle">沉浸式高端棋牌对决</div>
+            <div class="subtitle">全设备自适应引擎</div>
             <div class="difficulty-select">
                 <div class="diff-btn" onclick="setDiff('easy', this)">新手场</div>
                 <div class="diff-btn active" onclick="setDiff('normal', this)">精英场</div>
                 <div class="diff-btn" onclick="setDiff('hard', this)">大师场</div>
             </div>
-            <button class="start-btn" onclick="initGame()">入座</button>
+            <button class="start-btn" onclick="initGame()">立即入座</button>
         </div>
     </div>
 
@@ -537,12 +629,9 @@
             disablePlayerControls();
 
             players.forEach((p, idx) => {
-                p.cards = [];
-                p.isFolded = false;
-                p.hasSeen = false;
+                p.cards = []; p.isFolded = false; p.hasSeen = false;
                 if(p.pts < 10) p.pts += 500; 
-                p.pts -= 10;
-                pot += 10;
+                p.pts -= 10; pot += 10;
                 document.getElementById(`pts-${idx}`).innerText = p.pts;
                 document.getElementById(`cards-${idx}`).innerHTML = '';
                 document.querySelector(`#player-${idx} .player-header`).style.opacity = '1';
@@ -564,16 +653,10 @@
                 players[pIdx].cards.push(cardData);
                 
                 const container = document.getElementById(`cards-${pIdx}`);
-                const containerRect = container.getBoundingClientRect();
-                const startX = centerX - (containerRect.left - tableRect.left) - 37; 
-                const startY = centerY - (containerRect.top - tableRect.top) - 52;  
-
                 const cardDiv = document.createElement('div');
                 cardDiv.className = 'card';
                 cardDiv.id = `p${pIdx}-c${cardIndex}`;
                 cardDiv.style.setProperty('--i', cardIndex);
-                cardDiv.style.setProperty('--startX', `${startX}px`);
-                cardDiv.style.setProperty('--startY', `${startY}px`);
                 
                 const colorClass = (cardData.suit === '♥' || cardData.suit === '♦') ? 'red' : 'black';
                 cardDiv.innerHTML = `
@@ -589,8 +672,20 @@
                 container.appendChild(cardDiv);
                 
                 void cardDiv.offsetWidth; 
-                cardDiv.style.transform = `translate(0, 0) scale(1) rotate(0deg)`;
-                cardDiv.style.opacity = '1';
+                const containerRect = container.getBoundingClientRect();
+                const cardW = cardDiv.offsetWidth;
+                const cardH = cardDiv.offsetHeight;
+                
+                const startX = centerX - (containerRect.left - tableRect.left) - (cardW / 2);
+                const startY = centerY - (containerRect.top - tableRect.top) - (cardH / 2);
+
+                cardDiv.style.setProperty('--startX', `${startX}px`);
+                cardDiv.style.setProperty('--startY', `${startY}px`);
+                
+                requestAnimationFrame(() => {
+                    cardDiv.style.transform = `translate(0, 0) scale(1) rotate(0deg)`;
+                    cardDiv.style.opacity = '1';
+                });
 
                 dealCount++;
                 if (dealCount >= 12) {
@@ -615,6 +710,7 @@
             showMsg("看牌后消耗翻倍");
         }
 
+        /* 修复弃牌视觉：加大散布范围，避开中间托盘 */
         function playFoldAnimation(pIdx) {
             const container = document.getElementById(`cards-${pIdx}`);
             const tableRect = document.getElementById('game-board').getBoundingClientRect();
@@ -627,11 +723,16 @@
             for(let i=0; i<3; i++) {
                 let card = document.getElementById(`p${pIdx}-c${i}`);
                 if(card) {
-                    let dX = centerX - (containerRect.left - tableRect.left) - 37;
-                    let dY = centerY - (containerRect.top - tableRect.top) - 52;
-                    dX += (Math.random() * 40 - 20);
-                    dY += (Math.random() * 40 - 20);
-                    let rot = (Math.random() * 90 - 45) + "deg"; 
+                    let baseW = card.offsetWidth;
+                    let baseH = card.offsetHeight;
+                    let dX = centerX - (containerRect.left - tableRect.left) - (baseW / 2);
+                    let dY = centerY - (containerRect.top - tableRect.top) - (baseH / 2);
+                    
+                    // 加大 X 和 Y 轴的随机散布范围，避免全部堆积在正中间重叠
+                    dX += (Math.random() * 80 - 40);
+                    dY += (Math.random() * 80 - 40);
+                    let rot = (Math.random() * 120 - 60) + "deg"; 
+                    
                     card.style.setProperty('--discardX', `${dX}px`);
                     card.style.setProperty('--discardY', `${dY}px`);
                     card.style.setProperty('--rotZ', rot);
