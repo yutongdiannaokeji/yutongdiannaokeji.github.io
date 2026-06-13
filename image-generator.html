@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推理时代 AI 生图器</title>
+    <meta name="description" content="使用推理时代 / AiHubMix API 的 OpenAI 兼容 AI 生图器">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #101114;
+            --paper: #f8f7f1;
+            --panel: rgba(255, 255, 255, 0.86);
+            --panel-strong: #ffffff;
+            --line: rgba(16, 17, 20, 0.16);
+            --muted: #687079;
+            --acid: #caff46;
+            --coral: #ff6b5f;
+            --cyan: #43d5d8;
+            --violet: #7957ff;
+            --shadow: 0 22px 60px rgba(16, 17, 20, 0.14);
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--paper);
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--ink);
+            font-family: "Space Grotesk", "Noto Sans SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                linear-gradient(135deg, rgba(202, 255, 70, 0.22), transparent 28%),
+                linear-gradient(225deg, rgba(67, 213, 216, 0.22), transparent 30%),
+                linear-gradient(315deg, rgba(255, 107, 95, 0.16), transparent 26%),
+                var(--paper);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background-image:
+                linear-gradient(rgba(16, 17, 20, 0.055) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 17, 20, 0.055) 1px, transparent 1px);
+            background-size: 34px 34px;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent 88%);
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+        }
+
+        .app-shell {
+            width: min(1440px, calc(100% - 32px));
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 24px 0;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 18px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: 0 12px 38px rgba(16, 17, 20, 0.08);
+            backdrop-filter: blur(18px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius);
+            display: grid;
+            place-items: center;
+            color: var(--paper);
+            background:
+                linear-gradient(135deg, rgba(121, 87, 255, 0.92), rgba(67, 213, 216, 0.9)),
+                var(--ink);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 5px 5px 0 var(--ink);
+        }
+
+        .brand-copy {
+            min-width: 0;
+        }
+
+        .brand-copy h1 {
+            margin: 0;
+            font-size: clamp(20px, 2vw, 30px);
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .brand-copy p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.66);
+            color: var(--muted);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--coral);
+            box-shadow: 0 0 0 4px rgba(255, 107, 95, 0.16);
+        }
+
+        .status-pill.connected .status-dot {
+            background: #12b981;
+            box-shadow: 0 0 0 4px rgba(18, 185, 129, 0.16);
+        }
+
+        .icon-button,
+        .text-button,
+        .primary-button,
+        .ghost-button {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
+        }
+
+        .icon-button {
+            width: 42px;
+            border: 1px solid var(--line);
+            background: var(--panel-strong);
+            color: var(--ink);
+        }
+
+        .text-button,
+        .ghost-button {
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            background: var(--panel-strong);
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .primary-button {
+            padding: 12px 18px;
+            background: var(--ink);
+            color: #fff;
+            font-weight: 900;
+            box-shadow: 5px 5px 0 var(--acid);
+        }
+
+        .primary-button:hover,
+        .icon-button:hover,
+        .text-button:hover,
+        .ghost-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .primary-button:active,
+        .icon-button:active,
+        .text-button:active,
+        .ghost-button:active {
+            transform: translateY(1px);
+        }
+
+        .primary-button:disabled,
+        .ghost-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+            transform: none;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(280px, 370px) minmax(0, 1fr) minmax(260px, 330px);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .composer,
+        .history-panel {
+            position: sticky;
+            top: 18px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .panel-body {
+            padding: 16px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        label {
+            color: var(--ink);
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            color: var(--ink);
+            background: rgba(255, 255, 255, 0.92);
+            outline: none;
+            transition: box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+        }
+
+        textarea {
+            min-height: 190px;
+            resize: vertical;
+            padding: 14px;
+            line-height: 1.55;
+            font-family: "Noto Sans SC", sans-serif;
+        }
+
+        input,
+        select {
+            min-height: 42px;
+            padding: 0 12px;
+        }
+
+        textarea:focus,
+        input:focus,
+        select:focus {
+            border-color: var(--ink);
+            box-shadow: 0 0 0 4px rgba(202, 255, 70, 0.46);
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .chip {
+            min-height: 34px;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.78);
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+        }
+
+        .chip:hover {
+            background: var(--acid);
+            border-color: var(--ink);
+            transform: translateY(-1px);
+        }
+
+        .switch-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.66);
+        }
+
+        .switch-line input {
+            width: 18px;
+            min-height: 18px;
+            accent-color: var(--ink);
+        }
+
+        .generate-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .generate-bar .primary-button {
+            flex: 1;
+        }
+
+        .studio {
+            min-height: calc(100vh - 130px);
+            overflow: hidden;
+        }
+
+        .canvas-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .toolbar-left strong {
+            white-space: nowrap;
+        }
+
+        .toolbar-left span {
+            color: var(--muted);
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-stage {
+            min-height: 620px;
+            padding: 18px;
+            display: grid;
+            place-items: center;
+        }
+
+        .empty-state {
+            width: min(640px, 100%);
+            display: grid;
+            gap: 18px;
+            justify-items: center;
+            text-align: center;
+            padding: 48px 20px;
+        }
+
+        .sample-art {
+            width: min(420px, 86vw);
+            aspect-ratio: 4 / 3;
+            border: 1px solid rgba(16, 17, 20, 0.2);
+            border-radius: var(--radius);
+            background:
+                linear-gradient(128deg, transparent 0 14%, rgba(255, 107, 95, 0.88) 14% 28%, transparent 28% 100%),
+                linear-gradient(42deg, transparent 0 26%, rgba(67, 213, 216, 0.9) 26% 43%, transparent 43% 100%),
+                linear-gradient(164deg, rgba(202, 255, 70, 0.95) 0 20%, transparent 20% 100%),
+                linear-gradient(19deg, transparent 0 54%, rgba(121, 87, 255, 0.88) 54% 72%, transparent 72% 100%),
+                #fffaf0;
+            box-shadow: 10px 10px 0 var(--ink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sample-art::before,
+        .sample-art::after {
+            content: "";
+            position: absolute;
+            inset: 22% 18%;
+            border: 10px solid rgba(16, 17, 20, 0.74);
+            transform: rotate(-7deg);
+        }
+
+        .sample-art::after {
+            inset: 44% 31% 18% 29%;
+            border-width: 8px;
+            transform: rotate(10deg);
+            background: rgba(255, 255, 255, 0.44);
+        }
+
+        .empty-state h2 {
+            max-width: 580px;
+            margin: 0;
+            font-size: clamp(28px, 5vw, 56px);
+            line-height: 0.98;
+            letter-spacing: 0;
+        }
+
+        .empty-state p {
+            max-width: 520px;
+            margin: 0;
+            color: var(--muted);
+            font-family: "Noto Sans SC", sans-serif;
+            line-height: 1.7;
+        }
+
+        .result-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            align-self: start;
+        }
+
+        .image-card {
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.72);
+            overflow: hidden;
+            box-shadow: 0 16px 36px rgba(16, 17, 20, 0.1);
+        }
+
+        .image-frame {
+            display: grid;
+            place-items: center;
+            min-height: 240px;
+            background:
+                linear-gradient(45deg, rgba(16, 17, 20, 0.05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(16, 17, 20, 0.05) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(16, 17, 20, 0.05) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(16, 17, 20, 0.05) 75%);
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+            background-size: 20px 20px;
+        }
+
+        .image-frame img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            max-height: 720px;
+            object-fit: contain;
+        }
+
+        .image-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid var(--line);
+        }
+
+        .image-actions .text-button {
+            min-height: 38px;
+            padding: 8px 10px;
+            font-size: 13px;
+        }
+
+        .loading-board {
+            width: min(560px, 100%);
+            display: grid;
+            gap: 18px;
+            justify-items: center;
+            text-align: center;
+        }
+
+        .loader-art {
+            width: min(360px, 80vw);
+            aspect-ratio: 1;
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            overflow: hidden;
+            position: relative;
+            background:
+                linear-gradient(120deg, rgba(202, 255, 70, 0.9), rgba(67, 213, 216, 0.85), rgba(255, 107, 95, 0.86));
+            box-shadow: 8px 8px 0 var(--ink);
+        }
+
+        .loader-art::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.54), transparent);
+            transform: translateX(-100%);
+            animation: sweep 1.4s infinite;
+        }
+
+        .loader-art::after {
+            content: "";
+            position: absolute;
+            inset: 20%;
+            border: 12px solid rgba(16, 17, 20, 0.72);
+            transform: rotate(12deg);
+        }
+
+        @keyframes sweep {
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        .loading-board h2 {
+            margin: 0;
+            font-size: clamp(26px, 4vw, 44px);
+        }
+
+        .loading-board p {
+            margin: 0;
+            color: var(--muted);
+            font-family: "Noto Sans SC", sans-serif;
+            line-height: 1.7;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 10px;
+            max-height: calc(100vh - 220px);
+            overflow: auto;
+            padding-right: 4px;
+        }
+
+        .history-item {
+            display: grid;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, 0.72);
+            cursor: pointer;
+            transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+        }
+
+        .history-item:hover {
+            border-color: var(--ink);
+            background: rgba(255, 255, 255, 0.96);
+            transform: translateY(-1px);
+        }
+
+        .history-item strong {
+            display: -webkit-box;
+            overflow: hidden;
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .history-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .notice {
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 0 16px 16px;
+            padding: 12px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 107, 95, 0.42);
+            background: rgba(255, 107, 95, 0.1);
+            color: #8a281f;
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .notice.show {
+            display: flex;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            background: rgba(16, 17, 20, 0.54);
+            backdrop-filter: blur(18px);
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .api-modal {
+            width: min(560px, 100%);
+            border-radius: var(--radius);
+            background: var(--paper);
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+            overflow: hidden;
+        }
+
+        .modal-hero {
+            display: grid;
+            gap: 12px;
+            padding: 22px;
+            color: #fff;
+            background:
+                linear-gradient(135deg, rgba(16, 17, 20, 0.9), rgba(16, 17, 20, 0.72)),
+                linear-gradient(100deg, var(--violet), var(--cyan), var(--coral));
+        }
+
+        .modal-hero .brand-mark {
+            box-shadow: 5px 5px 0 var(--acid);
+        }
+
+        .modal-hero h2 {
+            margin: 0;
+            font-size: clamp(28px, 5vw, 44px);
+            line-height: 1;
+            letter-spacing: 0;
+        }
+
+        .modal-hero p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.78);
+            font-family: "Noto Sans SC", sans-serif;
+            line-height: 1.7;
+        }
+
+        .modal-body {
+            padding: 18px;
+        }
+
+        .modal-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .small-note {
+            color: var(--muted);
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .inline-link {
+            color: var(--ink);
+            font-weight: 800;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+
+        .input-with-action {
+            display: grid;
+            grid-template-columns: 1fr 42px;
+            gap: 8px;
+        }
+
+        .input-with-action input {
+            min-width: 0;
+        }
+
+        .toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 30;
+            max-width: min(420px, calc(100vw - 36px));
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            background: var(--ink);
+            color: #fff;
+            box-shadow: var(--shadow);
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .toast.show {
+            display: flex;
+            animation: slide-up 180ms ease;
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+        }
+
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            bottom: calc(100% + 8px);
+            transform: translateX(-50%);
+            z-index: 10;
+            width: max-content;
+            max-width: 220px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            background: var(--ink);
+            color: #fff;
+            font-size: 12px;
+            line-height: 1.3;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 120ms ease;
+        }
+
+        [data-tooltip]:hover::after {
+            opacity: 1;
+        }
+
+        @media (max-width: 1180px) {
+            .workspace {
+                grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+            }
+
+            .history-panel {
+                grid-column: 1 / -1;
+                position: static;
+            }
+
+            .history-list {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 820px) {
+            .app-shell {
+                width: min(100% - 20px, 760px);
+                padding: 10px 0 18px;
+            }
+
+            .topbar,
+            .canvas-toolbar,
+            .modal-actions,
+            .generate-bar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .top-actions,
+            .toolbar-left {
+                width: 100%;
+            }
+
+            .status-pill,
+            .text-button,
+            .primary-button,
+            .ghost-button {
+                width: 100%;
+            }
+
+            .icon-button {
+                width: 42px;
+            }
+
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .composer,
+            .history-panel {
+                position: static;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+
+            .result-stage {
+                min-height: 460px;
+                padding: 14px;
+            }
+
+            .empty-state {
+                padding: 28px 8px;
+            }
+
+            .image-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <div class="brand-copy">
+                    <h1>推理时代 AI 生图器</h1>
+                    <p>输入 API Key 后，用 OpenAI 兼容接口生成图片</p>
+                </div>
+            </div>
+
+            <div class="top-actions">
+                <div id="apiStatus" class="status-pill">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span>等待 API Key</span>
+                </div>
+                <button id="openApiModal" class="icon-button" type="button" aria-label="设置 API" data-tooltip="设置 API">
+                    <i data-lucide="key-round"></i>
+                </button>
+                <a class="icon-button" href="index.html" aria-label="返回首页" data-tooltip="返回首页">
+                    <i data-lucide="home"></i>
+                </a>
+            </div>
+        </header>
+
+        <main class="workspace">
+            <section class="panel composer" aria-label="生成设置">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i data-lucide="wand-sparkles"></i>
+                        <span>创作面板</span>
+                    </div>
+                    <button id="samplePrompt" class="icon-button" type="button" aria-label="填入示例提示词" data-tooltip="填入示例">
+                        <i data-lucide="dice-5"></i>
+                    </button>
+                </div>
+
+                <div class="panel-body">
+                    <div class="field">
+                        <label for="prompt">提示词</label>
+                        <textarea id="prompt" placeholder="描述你想生成的画面、风格、光线、构图、色彩和细节。">A vase of flowers on a table, with intense contrasting colors and thick, expressive brushstrokes. Render the image so it looks painted in Fauvist style.</textarea>
+                    </div>
+
+                    <div class="chips" aria-label="快速风格">
+                        <button class="chip" type="button" data-add="cinematic lighting, ultra detailed, high contrast">电影感</button>
+                        <button class="chip" type="button" data-add="Fauvist style, expressive brushstrokes, vivid color contrast">野兽派</button>
+                        <button class="chip" type="button" data-add="clean product photography, studio lighting, sharp focus">产品摄影</button>
+                        <button class="chip" type="button" data-add="Chinese ink painting mood, elegant negative space">国风水墨</button>
+                        <button class="chip" type="button" data-add="futuristic interface, glossy materials, neon cyan accents">未来科技</button>
+                    </div>
+
+                    <div class="field">
+                        <label for="model">模型</label>
+                        <input id="model" type="text" value="gpt-image-1" list="modelPresets" autocomplete="off">
+                        <datalist id="modelPresets">
+                            <option value="gpt-image-1">
+                            <option value="wan2.7-image-pro">
+                            <option value="wan2.7-image">
+                            <option value="qwen-image-2.0">
+                            <option value="qwen-image">
+                            <option value="imagen-4.0-fast-generate-001">
+                        </datalist>
+                        <p class="small-note">如果提示 Incorrect model ID，请填写你账号模型页里有权限的生图模型 ID。<a class="inline-link" href="https://aihubmix.com/models?lang=zh" target="_blank" rel="noopener noreferrer">打开模型页</a></p>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="size">尺寸</label>
+                            <select id="size">
+                                <option value="auto">auto</option>
+                                <option value="1024x1024">1024x1024</option>
+                                <option value="1024x1536">1024x1536</option>
+                                <option value="1536x1024">1536x1024</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="quality">质量</label>
+                            <select id="quality">
+                                <option value="auto">auto</option>
+                                <option value="high">high</option>
+                                <option value="medium">medium</option>
+                                <option value="low">low</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="count">数量</label>
+                            <input id="count" type="number" min="1" max="10" value="1">
+                        </div>
+                        <div class="field">
+                            <label for="background">背景</label>
+                            <select id="background">
+                                <option value="">默认</option>
+                                <option value="transparent">透明</option>
+                                <option value="opaque">不透明</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label class="switch-line" for="saveHistory">
+                        <span>
+                            <strong>保存提示词历史</strong>
+                            <br>
+                            <span class="small-note">仅保存在当前浏览器</span>
+                        </span>
+                        <input id="saveHistory" type="checkbox" checked>
+                    </label>
+
+                    <div class="generate-bar">
+                        <button id="generateButton" class="primary-button" type="button">
+                            <i data-lucide="image-plus"></i>
+                            <span>开始生成</span>
+                        </button>
+                        <button id="clearButton" class="ghost-button" type="button">
+                            <i data-lucide="eraser"></i>
+                            <span>清空</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel studio" aria-label="生成结果">
+                <div class="canvas-toolbar">
+                    <div class="toolbar-left">
+                        <i data-lucide="gallery-horizontal-end"></i>
+                        <strong>结果画布</strong>
+                        <span id="resultSummary">还没有生成图片</span>
+                    </div>
+                    <button id="downloadAll" class="text-button" type="button" disabled>
+                        <i data-lucide="download"></i>
+                        <span>下载全部</span>
+                    </button>
+                </div>
+
+                <div id="notice" class="notice">
+                    <i data-lucide="triangle-alert"></i>
+                    <span id="noticeText"></span>
+                </div>
+
+                <div id="resultStage" class="result-stage">
+                    <div class="empty-state">
+                        <div class="sample-art" aria-hidden="true"></div>
+                        <h2>把一句想象变成一张图</h2>
+                        <p>先输入推理时代 / AiHubMix API Key，再写提示词。生成后可以预览、单张下载，也可以一键下载本次全部图片。</p>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="panel history-panel" aria-label="提示词历史">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i data-lucide="history"></i>
+                        <span>提示词历史</span>
+                    </div>
+                    <button id="clearHistory" class="icon-button" type="button" aria-label="清空历史" data-tooltip="清空历史">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+                <div class="panel-body">
+                    <div id="historyList" class="history-list"></div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <div id="apiModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="apiModalTitle">
+        <section class="api-modal">
+            <div class="modal-hero">
+                <div class="brand-mark" aria-hidden="true">
+                    <i data-lucide="key-round"></i>
+                </div>
+                <h2 id="apiModalTitle">先连接你的 API</h2>
+                <p>输入推理时代 / AiHubMix API Key 后即可开始生图。Key 默认只保存在你的浏览器里，不会写进网站文件。</p>
+            </div>
+            <form id="apiForm" class="modal-body">
+                <div class="field">
+                    <label for="apiKey">API Key</label>
+                    <div class="input-with-action">
+                        <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" required>
+                        <button id="toggleApiKey" class="icon-button" type="button" aria-label="显示或隐藏 API Key" data-tooltip="显示/隐藏">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="baseUrl">接口地址</label>
+                    <input id="baseUrl" type="url" value="https://aihubmix.com/v1" autocomplete="off" required>
+                </div>
+                <label class="switch-line" for="rememberKey">
+                    <span>
+                        <strong>记住 API Key</strong>
+                        <br>
+                        <span class="small-note">适合个人电脑；公共设备请关闭</span>
+                    </span>
+                    <input id="rememberKey" type="checkbox" checked>
+                </label>
+                <p class="small-note">如果接口服务限制浏览器跨域请求，页面会显示错误；这时需要用后端代理转发请求。</p>
+                <div class="modal-actions">
+                    <button id="forgetKey" class="ghost-button" type="button">
+                        <i data-lucide="shield-x"></i>
+                        <span>忘记密钥</span>
+                    </button>
+                    <button class="primary-button" type="submit">
+                        <i data-lucide="plug-zap"></i>
+                        <span>开始使用</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+        <i data-lucide="info"></i>
+        <span id="toastText"></span>
+    </div>
+
+    <script>
+        const STORAGE_KEYS = {
+            apiKey: "yt_image_api_key",
+            baseUrl: "yt_image_base_url",
+            rememberKey: "yt_image_remember_key",
+            history: "yt_image_prompt_history"
+        };
+
+        const state = {
+            apiKey: "",
+            baseUrl: "https://aihubmix.com/v1",
+            latestImages: [],
+            isGenerating: false
+        };
+
+        const prompts = [
+            "A vase of flowers on a table, with intense contrasting colors and thick, expressive brushstrokes. Render the image so it looks painted in Fauvist style.",
+            "一辆未来感电动巴士停在雨夜城市街口，霓虹反光，电影级构图，写实摄影风格。",
+            "一个干净的桌面产品海报，透明机械键盘、柔和阴影、浅色背景、专业商业摄影。",
+            "古代山水中的小型电脑维修铺，国风水墨气质，细节丰富，雅致留白。",
+            "A compact cyberpunk computer lab, cyan highlights, coral warning lights, realistic materials, sharp focus."
+        ];
+
+        const els = {
+            apiStatus: document.getElementById("apiStatus"),
+            openApiModal: document.getElementById("openApiModal"),
+            apiModal: document.getElementById("apiModal"),
+            apiForm: document.getElementById("apiForm"),
+            apiKey: document.getElementById("apiKey"),
+            toggleApiKey: document.getElementById("toggleApiKey"),
+            baseUrl: document.getElementById("baseUrl"),
+            rememberKey: document.getElementById("rememberKey"),
+            forgetKey: document.getElementById("forgetKey"),
+            prompt: document.getElementById("prompt"),
+            model: document.getElementById("model"),
+            size: document.getElementById("size"),
+            quality: document.getElementById("quality"),
+            count: document.getElementById("count"),
+            background: document.getElementById("background"),
+            saveHistory: document.getElementById("saveHistory"),
+            generateButton: document.getElementById("generateButton"),
+            clearButton: document.getElementById("clearButton"),
+            samplePrompt: document.getElementById("samplePrompt"),
+            resultStage: document.getElementById("resultStage"),
+            resultSummary: document.getElementById("resultSummary"),
+            downloadAll: document.getElementById("downloadAll"),
+            notice: document.getElementById("notice"),
+            noticeText: document.getElementById("noticeText"),
+            historyList: document.getElementById("historyList"),
+            clearHistory: document.getElementById("clearHistory"),
+            toast: document.getElementById("toast"),
+            toastText: document.getElementById("toastText")
+        };
+
+        function boot() {
+            hydrateApiSettings();
+            bindEvents();
+            renderHistory();
+            updateApiStatus();
+            if (!state.apiKey) {
+                showApiModal();
+            }
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        function hydrateApiSettings() {
+            const remembered = localStorage.getItem(STORAGE_KEYS.rememberKey) !== "false";
+            const storedKey = localStorage.getItem(STORAGE_KEYS.apiKey) || "";
+            const sessionKey = sessionStorage.getItem(STORAGE_KEYS.apiKey) || "";
+            const storedUrl = localStorage.getItem(STORAGE_KEYS.baseUrl) || state.baseUrl;
+
+            state.apiKey = remembered ? storedKey : sessionKey;
+            state.baseUrl = storedUrl;
+            els.apiKey.value = state.apiKey;
+            els.baseUrl.value = state.baseUrl;
+            els.rememberKey.checked = remembered;
+        }
+
+        function bindEvents() {
+            els.openApiModal.addEventListener("click", showApiModal);
+            els.apiForm.addEventListener("submit", saveApiSettings);
+            els.toggleApiKey.addEventListener("click", toggleApiKeyVisibility);
+            els.forgetKey.addEventListener("click", forgetApiKey);
+            els.generateButton.addEventListener("click", generateImages);
+            els.clearButton.addEventListener("click", clearPrompt);
+            els.samplePrompt.addEventListener("click", useSamplePrompt);
+            els.downloadAll.addEventListener("click", downloadAllImages);
+            els.clearHistory.addEventListener("click", clearHistory);
+
+            document.querySelectorAll(".chip").forEach((chip) => {
+                chip.addEventListener("click", () => appendPrompt(chip.dataset.add));
+            });
+
+            els.count.addEventListener("input", () => {
+                const value = Number(els.count.value || 1);
+                if (value > 10) els.count.value = 10;
+                if (value < 1) els.count.value = 1;
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                    event.preventDefault();
+                    generateImages();
+                }
+            });
+        }
+
+        function showApiModal() {
+            els.apiModal.classList.add("show");
+            setTimeout(() => els.apiKey.focus(), 80);
+        }
+
+        function hideApiModal() {
+            els.apiModal.classList.remove("show");
+        }
+
+        function saveApiSettings(event) {
+            event.preventDefault();
+            const key = els.apiKey.value.trim();
+            const url = normalizeBaseUrl(els.baseUrl.value);
+            if (!key) {
+                showToast("请先输入 API Key");
+                return;
+            }
+
+            state.apiKey = key;
+            state.baseUrl = url;
+            localStorage.setItem(STORAGE_KEYS.baseUrl, url);
+            localStorage.setItem(STORAGE_KEYS.rememberKey, String(els.rememberKey.checked));
+
+            if (els.rememberKey.checked) {
+                localStorage.setItem(STORAGE_KEYS.apiKey, key);
+                sessionStorage.removeItem(STORAGE_KEYS.apiKey);
+            } else {
+                localStorage.removeItem(STORAGE_KEYS.apiKey);
+                sessionStorage.setItem(STORAGE_KEYS.apiKey, key);
+            }
+
+            els.baseUrl.value = url;
+            updateApiStatus();
+            hideApiModal();
+            showToast("API 已连接，可以开始生成图片");
+        }
+
+        function forgetApiKey() {
+            state.apiKey = "";
+            localStorage.removeItem(STORAGE_KEYS.apiKey);
+            sessionStorage.removeItem(STORAGE_KEYS.apiKey);
+            els.apiKey.value = "";
+            updateApiStatus();
+            showToast("已从本机忘记 API Key");
+        }
+
+        function toggleApiKeyVisibility() {
+            const shouldShow = els.apiKey.type === "password";
+            els.apiKey.type = shouldShow ? "text" : "password";
+            els.toggleApiKey.setAttribute("aria-label", shouldShow ? "隐藏 API Key" : "显示 API Key");
+            els.toggleApiKey.innerHTML = shouldShow ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+            refreshIcons();
+            els.apiKey.focus();
+        }
+
+        function normalizeBaseUrl(url) {
+            const trimmed = url.trim() || "https://aihubmix.com/v1";
+            return trimmed.replace(/\/+$/, "");
+        }
+
+        function updateApiStatus() {
+            els.apiStatus.classList.toggle("connected", Boolean(state.apiKey));
+            els.apiStatus.querySelector("span:last-child").textContent = state.apiKey ? "API 已就绪" : "等待 API Key";
+        }
+
+        function appendPrompt(text) {
+            const current = els.prompt.value.trim();
+            els.prompt.value = current ? `${current}, ${text}` : text;
+            els.prompt.focus();
+        }
+
+        function useSamplePrompt() {
+            const next = prompts[Math.floor(Math.random() * prompts.length)];
+            els.prompt.value = next;
+            showToast("已填入一个示例提示词");
+        }
+
+        function clearPrompt() {
+            els.prompt.value = "";
+            els.prompt.focus();
+        }
+
+        async function generateImages() {
+            if (state.isGenerating) return;
+            if (!state.apiKey) {
+                showApiModal();
+                showToast("请先输入 API Key");
+                return;
+            }
+
+            const prompt = els.prompt.value.trim();
+            if (!prompt) {
+                showToast("请先写提示词");
+                els.prompt.focus();
+                return;
+            }
+
+            const payload = buildPayload(prompt);
+            setGenerating(true);
+            renderLoading();
+            hideNotice();
+
+            try {
+                const response = await fetch(`${state.baseUrl}/images/generations`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${state.apiKey}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    throw new Error(readApiError(data, response.status, payload.model));
+                }
+
+                const images = parseImages(data);
+                if (!images.length) {
+                    throw new Error("接口返回成功，但没有找到 b64_json 或 url 图片数据。");
+                }
+
+                state.latestImages = images.map((item, index) => ({
+                    ...item,
+                    filename: makeFilename(index + 1, payload.model)
+                }));
+
+                if (els.saveHistory.checked) {
+                    savePromptHistory(prompt, payload);
+                }
+
+                renderResults();
+                renderHistory();
+                showToast(`完成，已生成 ${state.latestImages.length} 张图片`);
+            } catch (error) {
+                state.latestImages = [];
+                renderEmptyState();
+                showNotice(error.message || "生成失败，请检查 API Key、接口地址或网络。");
+            } finally {
+                setGenerating(false);
+            }
+        }
+
+        function buildPayload(prompt) {
+            const count = Math.max(1, Math.min(10, Number(els.count.value || 1)));
+            const payload = {
+                model: els.model.value.trim() || "gpt-image-1",
+                prompt,
+                n: count,
+                size: els.size.value,
+                quality: els.quality.value
+            };
+
+            if (els.background.value) {
+                payload.background = els.background.value;
+            }
+
+            return payload;
+        }
+
+        function readApiError(data, status, model) {
+            const message = data?.error?.message || data?.message || data?.error || "";
+            if (typeof message === "string" && message.trim()) {
+                if (/incorrect model id|permission to use this model|model id/i.test(message)) {
+                    return `模型不可用：${model}。请把“模型”改成你账号模型页里有权限的生图模型 ID，再重新生成。接口原文：${message}`;
+                }
+                return `接口返回 ${status}: ${message}`;
+            }
+            return `接口返回 ${status}，请检查 API Key、余额、模型名称或接口地址。`;
+        }
+
+        function parseImages(data) {
+            const list = Array.isArray(data?.data) ? data.data : [];
+            return list.map((item) => {
+                if (item.b64_json) {
+                    const mime = item.mime_type || "image/png";
+                    return {
+                        src: `data:${mime};base64,${item.b64_json}`,
+                        type: "base64"
+                    };
+                }
+
+                if (item.url) {
+                    return {
+                        src: item.url,
+                        type: "url"
+                    };
+                }
+
+                return null;
+            }).filter(Boolean);
+        }
+
+        function setGenerating(isGenerating) {
+            state.isGenerating = isGenerating;
+            els.generateButton.disabled = isGenerating;
+            els.generateButton.querySelector("span").textContent = isGenerating ? "生成中..." : "开始生成";
+        }
+
+        function renderLoading() {
+            els.resultSummary.textContent = "正在向接口请求图片";
+            els.downloadAll.disabled = true;
+            els.resultStage.innerHTML = `
+                <div class="loading-board">
+                    <div class="loader-art" aria-hidden="true"></div>
+                    <h2>正在绘制中</h2>
+                    <p>请求已经发送，图片模型可能需要几十秒。你可以先检查提示词，等画面回来。</p>
+                </div>
+            `;
+        }
+
+        function renderResults() {
+            els.resultSummary.textContent = `${state.latestImages.length} 张图片已生成`;
+            els.downloadAll.disabled = state.latestImages.length === 0;
+            els.resultStage.innerHTML = `
+                <div class="result-grid">
+                    ${state.latestImages.map((image, index) => `
+                        <article class="image-card">
+                            <div class="image-frame">
+                                <img src="${escapeHtml(image.src)}" alt="AI 生成图片 ${index + 1}">
+                            </div>
+                            <div class="image-actions">
+                                <button class="text-button" type="button" data-action="download" data-index="${index}">
+                                    <i data-lucide="download"></i>
+                                    <span>下载</span>
+                                </button>
+                                <button class="text-button" type="button" data-action="open" data-index="${index}">
+                                    <i data-lucide="external-link"></i>
+                                    <span>新窗口</span>
+                                </button>
+                            </div>
+                        </article>
+                    `).join("")}
+                </div>
+            `;
+
+            els.resultStage.querySelectorAll("[data-action]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const image = state.latestImages[Number(button.dataset.index)];
+                    if (button.dataset.action === "download") {
+                        downloadImage(image);
+                    } else {
+                        window.open(image.src, "_blank", "noopener,noreferrer");
+                    }
+                });
+            });
+
+            refreshIcons();
+        }
+
+        function renderEmptyState() {
+            els.resultSummary.textContent = "还没有生成图片";
+            els.downloadAll.disabled = true;
+            els.resultStage.innerHTML = `
+                <div class="empty-state">
+                    <div class="sample-art" aria-hidden="true"></div>
+                    <h2>把一句想象变成一张图</h2>
+                    <p>先输入推理时代 / AiHubMix API Key，再写提示词。生成后可以预览、单张下载，也可以一键下载本次全部图片。</p>
+                </div>
+            `;
+        }
+
+        function makeFilename(index, model) {
+            const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+            return `yt-image-${model || "model"}-${stamp}-${index}.png`;
+        }
+
+        async function downloadImage(image) {
+            if (!image) return;
+            const link = document.createElement("a");
+            link.download = image.filename;
+            link.href = image.src;
+
+            if (image.type === "url") {
+                try {
+                    const blob = await fetch(image.src).then((response) => response.blob());
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+                    return;
+                } catch (error) {
+                    showToast("图片链接不允许直接下载，已改为新窗口打开");
+                    window.open(image.src, "_blank", "noopener,noreferrer");
+                    return;
+                }
+            }
+
+            link.click();
+        }
+
+        function downloadAllImages() {
+            state.latestImages.forEach((image, index) => {
+                setTimeout(() => downloadImage(image), index * 250);
+            });
+        }
+
+        function savePromptHistory(prompt, payload) {
+            const history = getHistory();
+            const next = [
+                {
+                    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+                    prompt,
+                    model: payload.model,
+                    size: payload.size,
+                    quality: payload.quality,
+                    count: payload.n,
+                    createdAt: new Date().toISOString()
+                },
+                ...history
+            ].slice(0, 18);
+
+            localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(next));
+        }
+
+        function getHistory() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEYS.history) || "[]");
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            if (!history.length) {
+                els.historyList.innerHTML = `
+                    <div class="small-note">这里会显示最近使用过的提示词，方便再次生成或改写。</div>
+                `;
+                return;
+            }
+
+            els.historyList.innerHTML = history.map((item) => `
+                <button class="history-item" type="button" data-id="${item.id}">
+                    <strong>${escapeHtml(item.prompt)}</strong>
+                    <span class="history-meta">
+                        <span>${escapeHtml(item.model || "model")}</span>
+                        <span>${escapeHtml(item.size || "auto")} / ${escapeHtml(item.quality || "auto")}</span>
+                    </span>
+                </button>
+            `).join("");
+
+            els.historyList.querySelectorAll(".history-item").forEach((item) => {
+                item.addEventListener("click", () => {
+                    const target = getHistory().find((entry) => entry.id === item.dataset.id);
+                    if (!target) return;
+                    els.prompt.value = target.prompt;
+                    els.model.value = target.model || els.model.value;
+                    els.size.value = target.size || "auto";
+                    els.quality.value = target.quality || "auto";
+                    els.count.value = target.count || 1;
+                    showToast("已载入历史提示词");
+                });
+            });
+        }
+
+        function clearHistory() {
+            localStorage.removeItem(STORAGE_KEYS.history);
+            renderHistory();
+            showToast("提示词历史已清空");
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function showNotice(message) {
+            els.noticeText.textContent = message;
+            els.notice.classList.add("show");
+        }
+
+        function hideNotice() {
+            els.notice.classList.remove("show");
+        }
+
+        let toastTimer = 0;
+        function showToast(message) {
+            window.clearTimeout(toastTimer);
+            els.toastText.textContent = message;
+            els.toast.classList.add("show");
+            toastTimer = window.setTimeout(() => {
+                els.toast.classList.remove("show");
+            }, 2800);
+        }
+
+        function refreshIcons() {
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        boot();
+    </script>
+</body>
+</html>
