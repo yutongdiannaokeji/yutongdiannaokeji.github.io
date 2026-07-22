@@ -6,11 +6,95 @@
     <meta name="theme-color" content="#071211" />
     <meta name="description" content="YT-AI 是由于桐电脑科技开发的本地中英双语大模型。" />
     <title>YT-AI｜本地中英双语大模型</title>
-    <link rel="preload" as="image" href="./assets/coast-hero.webp" type="image/webp" fetchpriority="high" />
-    <script defer src="./assets/app.js"></script>
-    <link rel="stylesheet" href="./assets/styles.css">
+    <link rel="preconnect" href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev" crossorigin />
+    <link rel="preload" as="image" href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" type="image/webp" fetchpriority="high" />
+    <style>
+      html,body{margin:0;background:#071211;color:#fff;font-family:Manrope,"Noto Sans SC","Microsoft YaHei",sans-serif}body{min-width:320px}.hero{position:relative;height:100svh;min-height:560px;overflow:hidden;background:#15302d}.hero-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,10,10,.08),rgba(3,10,10,.32))}.hero h1{position:absolute;z-index:1;inset:50% auto auto 50%;margin:0;transform:translate(-50%,-50%);white-space:nowrap;font-size:clamp(3rem,7.4vw,8rem);font-weight:400;letter-spacing:-.065em}.scene,.transition-shot,.download{min-height:100svh;background:#071211}
+    </style>
+    <link rel="stylesheet" href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/styles.css" />
+    <script defer src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/app.js"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <main>
+      <header class="floating-header" aria-label="页面导航">
+        <a href="#top" class="wordmark">YT-AI</a>
+        <a href="#download" class="header-link">下载 <span aria-hidden="true">↓</span></a>
+      </header>
+      <div class="progress" aria-hidden="true"><span></span></div>
+
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <img class="hero-image" src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" width="1920" height="1279" alt="云雾笼罩的海岸山脉" fetchpriority="high" decoding="async" />
+        <div class="hero-shade" aria-hidden="true"></div>
+        <h1 id="hero-title">Introducing YT-AI</h1>
+      </section>
+
+      <section class="scene scene-intro" aria-labelledby="intro-title">
+        <img data-parallax class="scene-image scene-image-intro" src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" width="1920" height="1279" alt="海岸线穿过晨雾" loading="lazy" decoding="async" />
+        <div class="scene-shade" aria-hidden="true"></div>
+        <div class="scene-copy reveal" data-reveal>
+          <p class="eyebrow">YT-AI</p>
+          <h2 id="intro-title">本地中英双语大模型</h2>
+          <p>由 于桐电脑科技 开发</p>
+        </div>
+      </section>
+
+      <section class="scene scene-capability" aria-labelledby="capability-title">
+        <img data-parallax class="scene-image scene-image-capability" src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" width="1920" height="1279" alt="深色海面与漂移的云层" loading="lazy" decoding="async" />
+        <div class="scene-shade scene-shade-deep" aria-hidden="true"></div>
+        <div class="scene-copy reveal" data-reveal>
+          <p class="eyebrow">对话 · 翻译 · 写作</p>
+          <h2 id="capability-title">无需联网</h2>
+          <p>模型在本地运行，数据留在你的设备中。</p>
+        </div>
+      </section>
+
+      <section class="transition-shot" aria-label="海岸景观">
+        <img data-parallax src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" width="1920" height="1279" alt="阳光照亮海岸山脊" loading="lazy" decoding="async" />
+        <p class="transition-caption reveal" data-reveal>自然地工作。</p>
+      </section>
+
+      <section class="download" id="download" aria-labelledby="download-title">
+        <img data-parallax class="download-image" src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" width="1920" height="1279" alt="俯瞰海岸与海浪" loading="lazy" decoding="async" />
+        <div class="download-shade" aria-hidden="true"></div>
+        <div class="download-inner reveal" data-reveal>
+          <div class="download-heading">
+            <p class="eyebrow">Android · Ollama · PocketPal · GGUF</p>
+            <h2 id="download-title">下载 YT-AI</h2>
+            <p>选择适合你的本地运行方式。</p>
+          </div>
+          <div class="format-list">
+            <button class="format-row" data-format="android"><span class="format-name">Android</span><span class="format-detail">已内置模型的本地应用</span><span class="format-action">下载 APK <span aria-hidden="true">→</span></span></button>
+            <button class="format-row" data-format="ollama"><span class="format-name">Ollama</span><span class="format-detail">在电脑上通过 Ollama 运行</span><span class="format-action">查看方法 <span aria-hidden="true">→</span></span></button>
+            <button class="format-row" data-format="pocketpal"><span class="format-name">PocketPal</span><span class="format-detail">导入 GGUF 后离线使用</span><span class="format-action">查看方法 <span aria-hidden="true">→</span></span></button>
+            <button class="format-row" data-format="gguf"><span class="format-name">GGUF</span><span class="format-detail">F16 完整模型文件</span><span class="format-action">下载模型 <span aria-hidden="true">→</span></span></button>
+          </div>
+          <footer><span>YT-AI</span><span>于桐电脑科技</span></footer>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="download-panel" id="ollama-panel" aria-labelledby="ollama-title">
+      <button class="panel-close" data-close aria-label="关闭">×</button>
+      <p class="panel-eyebrow">在电脑上运行</p>
+      <h2 id="ollama-title">Ollama</h2>
+      <p class="panel-body">下载模型与 Modelfile，然后在同一文件夹中执行下面的命令。</p>
+      <button class="command" id="copy-command"><code>ollama create yt-ai -f Modelfile</code><span aria-hidden="true">复制</span></button>
+      <div class="panel-actions">
+        <a href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/releases/Modelfile">下载 Modelfile</a>
+        <a href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/releases/yt-ai-v14-f16.gguf">下载 GGUF</a>
+      </div>
+    </dialog>
+
+    <dialog class="download-panel" id="pocketpal-panel" aria-labelledby="pocketpal-title">
+      <button class="panel-close" data-close aria-label="关闭">×</button>
+      <p class="panel-eyebrow">在移动端导入</p>
+      <h2 id="pocketpal-title">PocketPal</h2>
+      <p class="panel-body">下载 GGUF 模型，在 PocketPal 中选择本地模型文件并完成导入。</p>
+      <div class="panel-actions single">
+        <a href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/releases/yt-ai-v14-f16.gguf">下载 GGUF 模型</a>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </body>
 </html>
