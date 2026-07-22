@@ -5,6 +5,9 @@
   };
 
   const root = document.documentElement;
+  const searchParams = new URLSearchParams(location.search);
+  const hashTarget = ["#top", "#work", "#download"].includes(location.hash) ? location.hash : "";
+  const initialTarget = hashTarget || (searchParams.get("view") === "download" ? "#download" : "");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const toast = document.getElementById("toast");
   let frame = 0;
@@ -99,14 +102,18 @@
     showToast("命令已复制");
   });
 
-  const requestedPanel = new URLSearchParams(location.search).get("panel");
+  const requestedPanel = searchParams.get("panel");
   if (requestedPanel === "ollama" || requestedPanel === "pocketpal") {
     document.getElementById(`${requestedPanel}-panel`)?.showModal();
   }
 
-  const initialTarget = location.hash || (new URLSearchParams(location.search).get("view") === "download" ? "#download" : "");
   if (initialTarget) {
-    document.querySelector(initialTarget)?.scrollIntoView({ behavior: "instant" });
+    document.querySelector(initialTarget)?.scrollIntoView({ behavior: "auto" });
+  } else {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    window.addEventListener("pageshow", () => {
+      window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+    });
   }
 
   updateScrollEffects();
