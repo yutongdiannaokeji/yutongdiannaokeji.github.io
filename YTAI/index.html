@@ -12,6 +12,14 @@
       html,body{margin:0;background:#071211;color:#fff;font-family:Manrope,"Noto Sans SC","Microsoft YaHei",sans-serif}body{min-width:320px}.hero{position:relative;height:100svh;min-height:560px;overflow:hidden;background:#15302d}.hero-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,10,10,.08),rgba(3,10,10,.32))}.hero h1{position:absolute;z-index:1;inset:50% auto auto 50%;margin:0;transform:translate(-50%,-50%);white-space:nowrap;font-size:clamp(3rem,7.4vw,8rem);font-weight:400;letter-spacing:-.065em}.scene,.transition-shot,.download{min-height:100svh;background:#071211}
     </style>
     <link rel="stylesheet" href="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/styles.css" />
+    <style>
+      /* Keep the centered critical layout after the full stylesheet loads. */
+      .hero h1{inset:auto;width:100%;max-width:100%}
+      @media(max-width:760px){
+        .hero h1{inset:auto;width:100%;max-width:100%;padding:20px 12px;font-size:clamp(27px,8.5vw,34px);line-height:1.08;letter-spacing:-.045em;white-space:nowrap;transform:translateY(calc(var(--hero-progress) * -24px))}
+        .transition-caption{right:20px;left:20px;width:auto;max-width:none;text-align:center}
+      }
+    </style>
     <script defer src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/app.js"></script>
   </head>
   <body>
@@ -48,7 +56,7 @@
         </div>
       </section>
 
-      <section class="transition-shot" aria-label="海岸景观">
+      <section class="transition-shot" id="work" aria-label="海岸景观">
         <img data-parallax src="https://pub-5d19ea8d9a094a03840b7d49b7628fe1.r2.dev/site/ytai/v3/coast-hero.webp" width="1920" height="1279" alt="阳光照亮海岸山脊" loading="lazy" decoding="async" />
         <p class="transition-caption reveal" data-reveal>自然地工作。</p>
       </section>
